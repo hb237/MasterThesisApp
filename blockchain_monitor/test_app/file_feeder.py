@@ -4,9 +4,9 @@ import time
 import lxml.etree as ET
 from lxml.etree import Element
 from shutil import copy
+import constants as const
 
-FILES_LOCATION = './test_files'
-FILES_DESTINATION = "../blockchain_monitor/xes_files"
+
 
 
 def get_time(path: str) -> int:
@@ -16,12 +16,15 @@ def get_time(path: str) -> int:
     return timestamp
 
 def feed_files(speed: int):
+    print('Started file feeder.')
+    print('Start feeding files with speed: ' + str(speed))
+
     prev_block_time = -1
 
     # move files one by one
-    for filename in sorted(os.listdir(FILES_LOCATION)):
+    for filename in sorted(os.listdir(const.TEST_FILES_LOCATION)):
         if ".xes" in filename:
-            filepath = os.path.join(FILES_LOCATION, filename)
+            filepath = os.path.join(const.TEST_FILES_LOCATION, filename)
             current_block_time = get_time(filepath)
             waiting_time = 0
             if prev_block_time > -1:
@@ -29,7 +32,7 @@ def feed_files(speed: int):
             print('sleep for ' + str(waiting_time) + ' seconds')
             time.sleep(waiting_time)
             prev_block_time = current_block_time
-            copy(filepath, FILES_DESTINATION)
+            copy(filepath, const.TEST_FILES_DESTINATION)
             print('copied ' + filepath)
 
 if __name__ == '__main__':
@@ -41,5 +44,4 @@ if __name__ == '__main__':
             print('arg must be int')
             exit()
 
-    print('Start feed with speed: ' + str(speed))
     feed_files(speed)

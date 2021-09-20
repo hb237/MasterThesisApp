@@ -1,5 +1,6 @@
 import subprocess
 import multiprocessing
+from test_app import file_feeder
 import file_reader
 import file_processor
 import dashboard
@@ -28,5 +29,6 @@ if __name__ == '__main__':
     for p in processes:
         p.start()
 
+    feeder_process = multiprocessing.Process(target=file_feeder.feed_files(50))
+    feeder_process.start()
     # Start file feeder or start BLF extraction
-    
