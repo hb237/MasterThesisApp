@@ -1,5 +1,5 @@
 SET BLOCKCHAIN "Ethereum";
-SET OUTPUT FOLDER "../../xes_files";
+SET OUTPUT FOLDER "xes_files";
 SET EMISSION MODE "streaming"; 
 SET CONNECTION "wss://mainnet.infura.io/ws/v3/bcf5331eacae4b0c8fba1751b28c6768";
 

@@ -1,6 +1,4 @@
-#from web3 import Web3
-# import pm4py
-# lxml supports xPath 1.0
+# Keep in mind that lxml supports only xPath 1.0
 import lxml.etree as ET
 from lxml.etree import Element
 from lxml.etree import ElementTree
@@ -9,6 +7,7 @@ import time
 from watchdog.observers import Observer
 from watchdog.events import FileCreatedEvent, FileSystemEventHandler
 import constants as const
+#from web3 import Web3
 
 #w3 = Web3(Web3.WebsocketProvider('wss://mainnet.infura.io/ws/v3/bcf5331eacae4b0c8fba1751b28c6768'))
 
@@ -44,13 +43,15 @@ class InputHandler(FileSystemEventHandler):
         super().__init__()
         self.combined_log = combined_log
 
+    # Once BLF extracted a XES file from a new block write its trace to the combined log.
     def on_created(self, event):
         if type(event) == FileCreatedEvent:
                 add_traces(event.src_path, self.combined_log)
 
+def read_in():
+    print('Started file reader.')
 
-if __name__ == '__main__':
-    # Setup
+    # setup xes log structure
     combined_log = Element('log')
     combined_log.attrib['xes.version'] = '1.0'
     combined_log.attrib['xes.features'] = 'nested-attributes'
@@ -62,6 +63,7 @@ if __name__ == '__main__':
             path = os.path.join(const.XES_FILES_DIR, filename)
             add_traces(path, combined_log)
 
+    # save log to file
     with open(const.XES_FILES_COMBINED_PATH, 'wb') as f:
         tree = ElementTree(combined_log)
         tree.write(f)
@@ -72,6 +74,7 @@ if __name__ == '__main__':
     observer.schedule(input_handler, path=const.XES_FILES_DIR, recursive=False)
     observer.start()
 
+    # keep the programm running
     try:
         while True:
             time.sleep(1)
@@ -81,5 +84,5 @@ if __name__ == '__main__':
     observer.join()
 
 
-
-
+if __name__ == '__main__':
+    read_in()
