@@ -2,12 +2,10 @@ import subprocess
 import multiprocessing
 from test_app import file_feeder
 import file_reader
-import file_processor
-import dashboard
 import constants as const
 
 if __name__ == '__main__':
-    processes = []
+    #TODO think about remove all files in 'xes_files' before running app
 
     # Validate BLF manifest
     try:
@@ -15,20 +13,10 @@ if __name__ == '__main__':
     except subprocess.CalledProcessError as e:
         print('An error occured during BLF validation.')
 
-    # Create processes for file reader,  processor and dashboard
+    # Create processes for file reader TODO dashboard
     reader_process = multiprocessing.Process(target=file_reader.read_in)
-    processor_process = multiprocessing.Process(target=file_processor.process_data)
-    dashboard_process = multiprocessing.Process(target=dashboard.visualize)
-    
-    # Collect processes
-    processes.append(reader_process)
-    processes.append(processor_process)
-    processes.append(dashboard_process)
+    reader_process.start()
 
-    # Start all proccesses
-    for p in processes:
-        p.start()
-
-    feeder_process = multiprocessing.Process(target=file_feeder.feed_files(50))
-    feeder_process.start()
     # Start file feeder or start BLF extraction
+    feeder_process = multiprocessing.Process(target=file_feeder.feed_files(300))
+    feeder_process.start()

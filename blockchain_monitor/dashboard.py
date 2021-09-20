@@ -1,5 +1,5 @@
-def visualize():
+def run():
     print('Started dashboard.')
 
 if __name__ == 'main':
-    visualize()
+    run()

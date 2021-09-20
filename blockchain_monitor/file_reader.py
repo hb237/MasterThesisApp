@@ -1,75 +1,85 @@
 # Keep in mind that lxml supports only xPath 1.0
+#from web3 import Web3
+#w3 = Web3(Web3.WebsocketProvider('wss://mainnet.infura.io/ws/v3/bcf5331eacae4b0c8fba1751b28c6768'))
+from data_processor import DataProcessor
 import lxml.etree as ET
 from lxml.etree import Element
-from lxml.etree import ElementTree
 import os
 import time
 from watchdog.observers import Observer
 from watchdog.events import FileCreatedEvent, FileSystemEventHandler
 import constants as const
-#from web3 import Web3
 
-#w3 = Web3(Web3.WebsocketProvider('wss://mainnet.infura.io/ws/v3/bcf5331eacae4b0c8fba1751b28c6768'))
 
-def merge_trace(new_trace: Element, log: Element):
-    new_trace_piid = new_trace.find(".//string[@key='ident:piid']").get('value')
-    existing_piids = log.findall(".//string[@key='ident:piid']")
+def add_traces(path: str, dp: DataProcessor):
+    # read in new xes file as tree
+    tree = None
+    attempts = 0
+    while tree is None and attempts < 5:
+        try:
+            tree = ET.parse(path)
+            attempts += 1
+        except ET.XMLSyntaxError:
+            time.sleep(0.1)
+    
+    if tree is None:
+        raise Exception('Could not parse file: ' + path)
 
-    trace = None
-    for ep in existing_piids:
-        if(ep.get('value') == new_trace_piid):
-            trace = ep.find("..")
 
-    if(trace == None):
-        log.append(new_trace)
-    else:
-        new_events = new_trace.findall(".//event")
-        for event in new_events:
-            trace.append(event)
-
-def add_traces(path: str, log: Element):
-    tree = ET.parse(path)
+    # retreive all new trace from the xes file's tree
     root = tree.getroot()
 
-    for trace in root.iter('trace'):
-        merge_trace(trace, log)
+    for new_trace in root.iter('trace'):
+        new_trace_piid = new_trace.find(".//string[@key='ident:piid']").get('value')
+        existing_piids = dp.combined_log.findall(".//string[@key='ident:piid']")
 
-    with open(const.XES_FILES_COMBINED_PATH, 'wb') as f:
-        tree = ElementTree(log)
-        tree.write(f)
+        trace = None
+        for ep in existing_piids:
+            if(ep.get('value') == new_trace_piid):
+                trace = ep.find("..")
+
+        if(trace == None):
+            dp.combined_log.append(new_trace)
+        else:
+            new_events = new_trace.findall(".//event")
+            for event in new_events:
+                trace.append(event)
+
+    dp.process_data()
+
+
+
 
 class InputHandler(FileSystemEventHandler):
-    def __init__(self, combined_log) -> None:
+    def __init__(self, dp: DataProcessor) -> None:
         super().__init__()
-        self.combined_log = combined_log
+        self.dp = dp
 
     # Once BLF extracted a XES file from a new block write its trace to the combined log.
     def on_created(self, event):
         if type(event) == FileCreatedEvent:
-                add_traces(event.src_path, self.combined_log)
+            print('continuous')
+            add_traces(event.src_path, self.dp)
 
 def read_in():
     print('Started file reader.')
 
-    # setup xes log structure
-    combined_log = Element('log')
-    combined_log.attrib['xes.version'] = '1.0'
-    combined_log.attrib['xes.features'] = 'nested-attributes'
-    combined_log.attrib['openxes.version'] = '1.0RC7'
+    dp = DataProcessor()
 
-    # read in already existing files in xes_files folder
+    # setup xes log structure
+    dp.combined_log = Element('log')
+    dp.combined_log.attrib['xes.version'] = '1.0'
+    dp.combined_log.attrib['xes.features'] = 'nested-attributes'
+    dp.combined_log.attrib['openxes.version'] = '1.0RC7'
+
+    # read in already existing files in xes_files folder # TODO do I need that or should I delete it + file in xes_files_combined
     for filename in os.listdir(const.XES_FILES_DIR):
         if ".xes" in filename:
             path = os.path.join(const.XES_FILES_DIR, filename)
-            add_traces(path, combined_log)
-
-    # save log to file
-    with open(const.XES_FILES_COMBINED_PATH, 'wb') as f:
-        tree = ElementTree(combined_log)
-        tree.write(f)
+            add_traces(path, dp)
 
     # continuously monitor xes_files folder
-    input_handler = InputHandler(combined_log)
+    input_handler = InputHandler(dp)
     observer = Observer()
     observer.schedule(input_handler, path=const.XES_FILES_DIR, recursive=False)
     observer.start()
