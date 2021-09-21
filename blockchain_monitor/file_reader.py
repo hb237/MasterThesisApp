@@ -1,13 +1,13 @@
 # Keep in mind that lxml supports only xPath 1.0
 #from web3 import Web3
 #w3 = Web3(Web3.WebsocketProvider('wss://mainnet.infura.io/ws/v3/bcf5331eacae4b0c8fba1751b28c6768'))
-from data_processor import DataProcessor
-import lxml.etree as ET
-from lxml.etree import Element
 import os
 import time
+import lxml.etree as ET
+from lxml.etree import Element
 from watchdog.observers import Observer
 from watchdog.events import FileCreatedEvent, FileSystemEventHandler
+from data_processor import DataProcessor
 import constants as const
 
 
@@ -34,7 +34,7 @@ def add_traces(path: str, dp: DataProcessor):
 
     for new_trace in root.iter('trace'):
         new_trace_piid = new_trace.find(".//string[@key='ident:piid']").get('value')
-        existing_piids = dp.combined_log.findall(".//string[@key='ident:piid']")
+        existing_piids = dp.combined_xes.findall(".//string[@key='ident:piid']")
 
         # find if a trace with the new process instance id exists
         trace = None
@@ -45,7 +45,7 @@ def add_traces(path: str, dp: DataProcessor):
 
         # append the trace if it does not exist yet
         if(trace == None):
-            dp.combined_log.append(new_trace)
+            dp.combined_xes.append(new_trace)
         # add all new events to the existing trace
         else:
             new_events = new_trace.findall(".//event")
@@ -75,10 +75,10 @@ def read_in():
     dp = DataProcessor()
 
     # setup xes log structure
-    dp.combined_log = Element('log')
-    dp.combined_log.attrib['xes.version'] = '1.0'
-    dp.combined_log.attrib['xes.features'] = 'nested-attributes'
-    dp.combined_log.attrib['openxes.version'] = '1.0RC7'
+    dp.combined_xes = Element('log')
+    dp.combined_xes.attrib['xes.version'] = '1.0'
+    dp.combined_xes.attrib['xes.features'] = 'nested-attributes'
+    dp.combined_xes.attrib['openxes.version'] = '1.0RC7'
 
     # read in already existing files in xes_files folder # TODO do I need that or should I delete it + file in xes_files_combined
     for filename in os.listdir(const.XES_FILES_DIR):
