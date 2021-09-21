@@ -15,6 +15,9 @@ def add_traces(path: str, dp: DataProcessor):
     # read in new xes file as tree
     tree = None
     attempts = 0
+    # Sometimes the file is not fully created yet. 
+    # However, the parser already tries to read the empty file.
+    # A few milliseconds later the file should not be empty anymore.
     while tree is None and attempts < 5:
         try:
             tree = ET.parse(path)
@@ -33,18 +36,23 @@ def add_traces(path: str, dp: DataProcessor):
         new_trace_piid = new_trace.find(".//string[@key='ident:piid']").get('value')
         existing_piids = dp.combined_log.findall(".//string[@key='ident:piid']")
 
+        # find if a trace with the new process instance id exists
         trace = None
         for ep in existing_piids:
             if(ep.get('value') == new_trace_piid):
                 trace = ep.find("..")
+                break
 
+        # append the trace if it does not exist yet
         if(trace == None):
             dp.combined_log.append(new_trace)
+        # add all new events to the existing trace
         else:
             new_events = new_trace.findall(".//event")
             for event in new_events:
                 trace.append(event)
 
+    # after all traces and events were added process the new data
     dp.process_data()
 
 
