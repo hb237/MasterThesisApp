@@ -4,10 +4,12 @@ import pm4py
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.algo.discovery.dfg import algorithm as dfg_discovery
+from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
+from pm4py.objects.log.obj import EventLog
 from pm4py.visualization.dfg import visualizer as dfg_visualization
 from pm4py.algo.filtering.log.attributes import attributes_filter
 from pm4py.objects.conversion.log.variants.to_event_log import Parameters
-from pm4py.statistics.traces.generic.log import case_statistics
+from pm4py.objects.conversion.bpmn import converter as bpmn_converter
 import constants as const
 from datetime import datetime
 from web3 import Web3
@@ -17,7 +19,7 @@ class DataProcessor():
         self.combined_xes: Element = None
         self.combined_xes =  ET.parse(const.XES_FILES_COMBINED_PATH) # TODO remove
 
-    def add_time_stamps(self):
+    def add_time_stamps(self) -> None:
         events = self.combined_xes.findall(".//event")
         for e in events:
             block_timestamp = int(e.find(".//int[@key='block_timestamp']").get('value'))
@@ -27,7 +29,7 @@ class DataProcessor():
             data_time.attrib['key'] = 'time:timestamp'
             data_time.attrib['value'] = date_time_value
 
-    def add_cost(self):
+    def add_cost(self) -> None:
         events = self.combined_xes.findall(".//event")
         for e in events:
             gas_price = int(e.find(".//int[@key='gas_price']").get('value'))
@@ -42,18 +44,16 @@ class DataProcessor():
             data_time.attrib['key'] = 'cost:total'
             data_time.attrib['value'] = str(ether_cost)
 
-    def save_combined_xes_to_file(self):
+    def save_combined_xes_to_file(self) -> None:
         with open(const.XES_FILES_COMBINED_PATH_TEST, 'wb') as f: # TODO change path
-            # tree = ElementTree(self.combined_xes)
-            # tree.write(f)
             self.combined_xes.write(f)
 
-    def transform_data(self):
+    def transform_data(self) -> None:
         self.add_time_stamps()
         self.add_cost()
         self.save_combined_xes_to_file()
 
-def read_log_filtered(from_block: int, to_block: int):
+def read_log_filtered(from_block: int, to_block: int) -> EventLog:
     log = xes_importer.apply(const.XES_FILES_COMBINED_PATH_TEST) # TODO change path
     filtered_log = attributes_filter.apply_numeric(log, from_block, to_block, 
     parameters={Parameters.CASE_ATTRIBUTE_PREFIX: '',
@@ -65,7 +65,15 @@ def read_log_filtered(from_block: int, to_block: int):
 def get_petri_net(from_block: int, to_block: int):
     log = read_log_filtered(from_block, to_block)
     net, initial_marking, final_marking = inductive_miner.apply(log)
-    pm4py.view_petri_net(net, initial_marking, final_marking, format='png')  #TODO remove visualization and save png
+    return net, initial_marking, final_marking
+    # pm4py.view_petri_net(net, initial_marking, final_marking, format='png') 
+    # TODO remove visualization and save png
+
+def get_bmpn(from_block: int, to_block: int, noise_threshold:float = 0.8):
+    log = read_log_filtered(from_block, to_block)
+    bpmn_graph = pm4py.discover_bpmn_inductive(log, noise_threshold)
+    pm4py.view_bpmn(bpmn_graph, format='png') 
+    return bpmn_graph
 
 def get_dfg_frequency(from_block: int, to_block: int):
     log = read_log_filtered(from_block, to_block)
@@ -119,17 +127,21 @@ def get_receiver_stats(from_block: int, to_block: int):
     log = read_log_filtered(from_block, to_block)
     receiver_stats = attributes_filter.get_attribute_values(log, "tx_to")
     return receiver_stats
+ 
+def conformance_checking(from_block: int, to_block: int):
+    log = read_log_filtered(from_block, to_block)
+    bpmn_graph = get_bmpn(6605100, 6606100, 1) #TODO remove
+    # bpmn_graph = pm4py.read_bpmn("path_to_bpmn") #TODO change path and check if path location not empty
+    net, initial_marking, final_marking = bpmn_converter.apply(bpmn_graph)
+    replayed_traces = token_replay.apply(log, net, initial_marking, final_marking) 
+    return replayed_traces
 
-def get_throughput_time(from_block: int, to_block: int):
+def save_bpmn_model(bpmn_model):
+    # bpmn modul MUST ONLY contain 
+    # Events (start / end events)
+    # Tasks
+    # Gateways (exclusive, parallel, inclusive)
     return
-
-# for conformance checking
-def set_process_model(process_model):
-    return
-
-def do_conformance_checking(from_block: int, to_block: int):
-    #TODO rename, what is the output?
-    return 
 
 def set_manifest_file(mainfest):
     return
@@ -159,3 +171,4 @@ def reset_application():
 if __name__ == '__main__':
     dp = DataProcessor()
     dp.transform_data()
+    print(conformance_checking(6605100, 6606100))
