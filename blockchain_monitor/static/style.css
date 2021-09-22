@@ -1,0 +1,7 @@
+.search-left div.dataTables_filter {
+    text-align: left !important;
+}
+
+.pagination-left ul {
+    justify-content: flex-start !important;
+}

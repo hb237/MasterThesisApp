@@ -6,7 +6,7 @@ SET CONNECTION "wss://mainnet.infura.io/ws/v3/bcf5331eacae4b0c8fba1751b28c6768";
 int[] kitties = newIntArray();
 string logName = "cryptokitties0";
 
-BLOCKS (6605100) (6606100) {
+BLOCKS (6609562) (6615100) {
     LOG ENTRIES (0x06012c8cf97BEaD5deAe237070F9587f8E7A266d) (Birth(address owner, uint256 kittyId, uint256 matronId, uint256 sireId, uint256 genes)) {
         add(kitties, kittyId);
         EMIT XES EVENT (logName)(kittyId)()
