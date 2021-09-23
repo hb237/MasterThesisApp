@@ -141,3 +141,4 @@ cython_debug/
 blf/*.jar
 xes_files/
 xes_files_combined/
+static/diagrams

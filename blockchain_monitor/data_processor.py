@@ -70,19 +70,25 @@ def read_log_filtered(from_block: int, to_block: int) -> EventLog:
     return filtered_log
 
 
-def get_petri_net(from_block: int, to_block: int):
+def get_petri_net(from_block: int, to_block: int) -> str:
     log = read_log_filtered(from_block, to_block)
     net, initial_marking, final_marking = inductive_miner.apply(log)
-    return net, initial_marking, final_marking
+    path = "static/diagrams/pteri_net_" + \
+        str(from_block) + "-" + str(to_block) + ".png"
+    pm4py.save_vis_petri_net(net, initial_marking,
+                             final_marking, path)  # TODO use constant
+    return path
     # pm4py.view_petri_net(net, initial_marking, final_marking, format='png')
     # TODO remove visualization and save png
 
 
-def get_bmpn(from_block: int, to_block: int, noise_threshold: float = 0.8):
+def get_bmpn_diagram(from_block: int, to_block: int, noise_threshold: float = 0.8) -> str:
     log = read_log_filtered(from_block, to_block)
     bpmn_graph = pm4py.discover_bpmn_inductive(log, noise_threshold)
-    pm4py.view_bpmn(bpmn_graph, format='png')
-    return bpmn_graph
+    path = "static/diagrams/bpmn_diagram" + \
+        str(from_block) + "-" + str(to_block) + ".png"
+    pm4py.save_vis_bpmn(bpmn_graph, path)
+    return path
 
 
 def get_dfg_frequency(from_block: int, to_block: int):
@@ -136,7 +142,7 @@ def get_current_block_stats() -> dict:
     w3 = Web3(Web3.WebsocketProvider('ws://127.0.0.1:8546'))
     current_block_number = int(w3.eth.get_block_number())
     current_block_timestamp = datetime.utcfromtimestamp(int(w3.eth.getBlock(
-        current_block_number).timestamp)).strftime('%Y-%m-%dT%H:%M:%SZ')
+        current_block_number).timestamp)).strftime('%Y-%m-%d %H:%M:%S UTC+0')
     return {'current_block_number': current_block_number, 'current_block_timestamp': current_block_timestamp}
 
 
@@ -161,7 +167,7 @@ def get_receiver_stats(from_block: int, to_block: int):
 
 def conformance_checking(from_block: int, to_block: int):
     log = read_log_filtered(from_block, to_block)
-    bpmn_graph = get_bmpn(6605100, 6606100, 1)  # TODO remove
+    bpmn_graph = get_bmpn_diagram(6605100, 6606100, 1)  # TODO remove
     # bpmn_graph = pm4py.read_bpmn("path_to_bpmn") #TODO change path and check if path location not empty
     net, initial_marking, final_marking = bpmn_converter.apply(bpmn_graph)
     replayed_traces = token_replay.apply(
