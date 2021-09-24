@@ -10,8 +10,6 @@ from pm4py.algo.filtering.log.attributes import attributes_filter
 from pm4py.objects.conversion.log.variants.to_event_log import Parameters
 from pm4py.objects.conversion.bpmn import converter as bpmn_converter
 import constants as const
-from datetime import datetime
-from web3 import Web3
 import requests
 
 
@@ -34,15 +32,14 @@ class DataProcessor():
 
     def get_petri_net(self) -> str:
         net, initial_marking, final_marking = inductive_miner.apply(self.log)
-        path = "static/diagrams/pteri_net_" + \
+        path = const.DIAGRAMS_PATH + "pteri_net_" + \
             str(self.from_block) + "-" + str(self.to_block) + ".png"
-        pm4py.save_vis_petri_net(net, initial_marking,
-                                 final_marking, path)  # TODO use constant
+        pm4py.save_vis_petri_net(net, initial_marking, final_marking, path)
         return path
 
     def get_bmpn_diagram(self, noise_threshold: float = 0.8) -> str:
         bpmn_graph = pm4py.discover_bpmn_inductive(self.log, noise_threshold)
-        path = "static/diagrams/bpmn_diagram" + \
+        path = const.DIAGRAMS_PATH + "bpmn_diagram" + \
             str(self.from_block) + "-" + str(self.to_block) + ".png"
         pm4py.save_vis_bpmn(bpmn_graph, path)
         return path
@@ -50,19 +47,27 @@ class DataProcessor():
     def get_dfg_frequency(self):
         dfg = dfg_discovery.apply(
             self.log, variant=dfg_discovery.Variants.FREQUENCY)
-        # TODO remove visualization and save png
+        parameters = {
+            dfg_visualization.Variants.FREQUENCY.value.Parameters.FORMAT: "png"}
         gviz = dfg_visualization.apply(
-            dfg, log=self.log, variant=dfg_visualization.Variants.FREQUENCY)
-        dfg_visualization.view(gviz)
+            dfg, log=self.log, variant=dfg_visualization.Variants.FREQUENCY, parameters=parameters)
+        path = const.DIAGRAMS_PATH + "dfg_diagramm_frequency" + \
+            str(self.from_block) + "-" + str(self.to_block) + ".png"
+        dfg_visualization.save(gviz, path)
+        return path
 
     def get_dfg_performance(self):
-        # annotate with gas costs?
+        # TODO annotate with gas costs!!?
         dfg = dfg_discovery.apply(
             self.log, variant=dfg_discovery.Variants.PERFORMANCE)
-        # TODO remove visualization and save png
+        parameters = {
+            dfg_visualization.Variants.PERFORMANCE.value.Parameters.FORMAT: "png"}
         gviz = dfg_visualization.apply(
-            dfg, log=self.log, variant=dfg_visualization.Variants.PERFORMANCE)
-        dfg_visualization.view(gviz)
+            dfg, log=self.log, variant=dfg_visualization.Variants.PERFORMANCE, parameters=parameters)
+        path = const.DIAGRAMS_PATH + "dfg_diagramm_performance" + \
+            str(self.from_block) + "-" + str(self.to_block) + ".png"
+        dfg_visualization.save(gviz, path)
+        return path
 
     def get_last_events(self, number_events):
         xes_log = ET.parse(const.XES_FILES_COMBINED_PATH_TEST)
@@ -85,16 +90,6 @@ class DataProcessor():
         res = requests.get(
             'https://api.coinbase.com/v2/exchange-rates?currency=ETH')
         return res.json()['data']['rates']
-
-    def get_current_block_stats(self) -> dict:
-        # TODO launch geth client with:
-        # set --datadir appropriately
-        # geth --syncmode "light" --ws --ws.addr 127.0.0.1 --ws.port 8546 --datadir="/media/hendrik/SSD-1TB/geth"
-        w3 = Web3(Web3.WebsocketProvider('ws://127.0.0.1:8546'))
-        current_block_number = int(w3.eth.get_block_number())
-        current_block_timestamp = datetime.utcfromtimestamp(int(w3.eth.getBlock(
-            current_block_number).timestamp)).strftime('%Y-%m-%d %H:%M:%S UTC+0')
-        return {'current_block_number': current_block_number, 'current_block_timestamp': current_block_timestamp}
 
     def get_block_stats(self) -> dict:
         '''Returns a dictionary with all blocks as key and how many events happend in that block.'''
