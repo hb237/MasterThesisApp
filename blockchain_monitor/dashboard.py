@@ -24,3 +24,5 @@ class Dashboard():
         self.petri_net_path = dp.get_petri_net(0, self.current_block_number)
         self.bpmn_diagram_path = dp.get_bmpn_diagram(
             0, self.current_block_number)
+        dp.get_dfg_frequency()
+        dp.get_dfg_performance()

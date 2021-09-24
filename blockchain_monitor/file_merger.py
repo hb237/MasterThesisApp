@@ -7,15 +7,15 @@ import lxml.etree as ET
 from lxml.etree import Element
 from watchdog.observers import Observer
 from watchdog.events import FileCreatedEvent, FileSystemEventHandler
-from data_processor import DataProcessor
+from data_transformer import DataTransformer
 import constants as const
 
 
-def add_traces(path: str, dp: DataProcessor):
+def add_traces(path: str, dp: DataTransformer):
     # read in new xes file as tree
     tree = None
     attempts = 0
-    # Sometimes the file is not fully created yet. 
+    # Sometimes the file is not fully created yet.
     # However, the parser already tries to read the empty file.
     # A few milliseconds later the file should not be empty anymore.
     while tree is None and attempts < 5:
@@ -24,17 +24,18 @@ def add_traces(path: str, dp: DataProcessor):
             attempts += 1
         except ET.XMLSyntaxError:
             time.sleep(0.1)
-    
+
     if tree is None:
         raise Exception('Could not parse file: ' + path)
-
 
     # retreive all new trace from the xes file's tree
     root = tree.getroot()
 
     for new_trace in root.iter('trace'):
-        new_trace_piid = new_trace.find(".//string[@key='ident:piid']").get('value')
-        existing_piids = dp.combined_xes.findall(".//string[@key='ident:piid']")
+        new_trace_piid = new_trace.find(
+            ".//string[@key='ident:piid']").get('value')
+        existing_piids = dp.combined_xes.findall(
+            ".//string[@key='ident:piid']")
 
         # find if a trace with the new process instance id exists
         trace = None
@@ -53,13 +54,11 @@ def add_traces(path: str, dp: DataProcessor):
                 trace.append(event)
 
     # after all traces and events were added process the new data
-    dp.process_data()
-
-
+    dp.transform_data()
 
 
 class InputHandler(FileSystemEventHandler):
-    def __init__(self, dp: DataProcessor) -> None:
+    def __init__(self, dp: DataTransformer) -> None:
         super().__init__()
         self.dp = dp
 
@@ -69,10 +68,11 @@ class InputHandler(FileSystemEventHandler):
             print('continuous')
             add_traces(event.src_path, self.dp)
 
+
 def read_in():
     print('Started file reader.')
 
-    dp = DataProcessor()
+    dp = DataTransformer()
 
     # setup xes log structure
     dp.combined_xes = Element('log')
@@ -98,7 +98,7 @@ def read_in():
             time.sleep(1)
     except KeyboardInterrupt:
         observer.stop()
-    
+
     observer.join()
 
 

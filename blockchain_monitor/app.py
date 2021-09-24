@@ -1,11 +1,58 @@
 import subprocess
 import multiprocessing
 from test_app import file_feeder
-import file_reader
 import constants as const
 
+
+def save_bpmn_model(bpmn_model):
+    # bpmn modul MUST ONLY contain
+    # Events (start / end events)
+    # Tasks
+    # Gateways (exclusive, parallel, inclusive)
+    return
+
+
+def save_manifest_file(mainfest):
+    return
+
+
+def set_input_src(type, speed):
+    # type : feeder, blf
+    # speed of file feeder
+    # either file feeder or blf
+    return
+
+
+def validate_current_manifest():
+    return
+
+
+def launch_file_reader():
+    return
+
+
+def launch_file_feeder():
+    return
+
+
+def launch_blf():
+    return
+
+
+def reset_application():
+    # delete all gathered data
+    return
+
+
+def set_input_mode():
+    # Streaming BLF
+    # Streaming Test Data
+    # Static Test Data
+    return
+
+
 if __name__ == '__main__':
-    #TODO think about remove all files in 'xes_files' before running app
+    # TODO think about remove all files in 'xes_files' before running app
 
     # # Validate BLF manifest
     # try:
