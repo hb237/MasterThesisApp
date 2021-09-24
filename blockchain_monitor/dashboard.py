@@ -16,6 +16,9 @@ class Dashboard():
 
     # TODO called when underlying xes_file changes or when the user selects a new option
     # TODO use variables from_block and  to_block, perhaps use ENUM for most current block
+    # TODO only execute the visible modules, add visibility flag
+    # TODO what about mutliple users
+    # TODO save settings as cookie
     def update(self):
         # TODO delete old visualizations
         # TODO perhaps do not store images only send them out
@@ -31,3 +34,6 @@ class Dashboard():
         self.bpmn_diagram_path = dp.get_bmpn_diagram()
         self.dfg_frequency_path = dp.get_dfg_frequency()
         self.dfg_performance_path = dp.get_dfg_performance()
+        dp.get_eth_rates()
+        dp.get_events()
+        dp.conformance_checking()

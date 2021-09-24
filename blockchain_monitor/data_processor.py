@@ -1,4 +1,7 @@
+from sys import gettrace
+from typing import List
 import lxml.etree as ET
+from lxml.etree import Element
 import pm4py
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
@@ -26,66 +29,74 @@ def read_log_filtered(from_block: int, to_block: int) -> EventLog:
 
 class DataProcessor():
     def __init__(self, from_block: int, to_block: int) -> None:
-        self.log = read_log_filtered(from_block, to_block)
+        # TODO trigger only if needed
+        self.pm4py_log = read_log_filtered(from_block, to_block)
+        # TODO trigger only if needed
+        self.xes_log_tree = ET.parse(const.XES_FILES_COMBINED_PATH_TEST)
         self.from_block = from_block
         self.to_block = to_block
 
     def get_petri_net(self) -> str:
-        net, initial_marking, final_marking = inductive_miner.apply(self.log)
+        net, initial_marking, final_marking = inductive_miner.apply(
+            self.pm4py_log)
         path = const.DIAGRAMS_PATH + "pteri_net_" + \
             str(self.from_block) + "-" + str(self.to_block) + ".png"
         pm4py.save_vis_petri_net(net, initial_marking, final_marking, path)
         return path
 
     def get_bmpn_diagram(self, noise_threshold: float = 0.8) -> str:
-        bpmn_graph = pm4py.discover_bpmn_inductive(self.log, noise_threshold)
+        bpmn_graph = pm4py.discover_bpmn_inductive(
+            self.pm4py_log, noise_threshold)
         path = const.DIAGRAMS_PATH + "bpmn_diagram" + \
             str(self.from_block) + "-" + str(self.to_block) + ".png"
         pm4py.save_vis_bpmn(bpmn_graph, path)
         return path
 
-    def get_dfg_frequency(self):
+    # TODO reuse bpmn graph
+    # TODO reuse get_events result
+    # TODO reuse get eth rates
+    def get_bpmn_diagram_with_costs(self, noise_threshold: float = 0.8) -> str:
+
+        return
+
+    # TODO enable filtering
+    def get_dfg_frequency(self) -> str:
         dfg = dfg_discovery.apply(
-            self.log, variant=dfg_discovery.Variants.FREQUENCY)
+            self.pm4py_log, variant=dfg_discovery.Variants.FREQUENCY)
         parameters = {
             dfg_visualization.Variants.FREQUENCY.value.Parameters.FORMAT: "png"}
         gviz = dfg_visualization.apply(
-            dfg, log=self.log, variant=dfg_visualization.Variants.FREQUENCY, parameters=parameters)
+            dfg, log=self.pm4py_log, variant=dfg_visualization.Variants.FREQUENCY, parameters=parameters)
         path = const.DIAGRAMS_PATH + "dfg_diagramm_frequency" + \
             str(self.from_block) + "-" + str(self.to_block) + ".png"
         dfg_visualization.save(gviz, path)
         return path
 
-    def get_dfg_performance(self):
-        # TODO annotate with gas costs!!?
+    # TODO enable filtering
+    def get_dfg_performance(self) -> str:
         dfg = dfg_discovery.apply(
-            self.log, variant=dfg_discovery.Variants.PERFORMANCE)
+            self.pm4py_log, variant=dfg_discovery.Variants.PERFORMANCE)
         parameters = {
             dfg_visualization.Variants.PERFORMANCE.value.Parameters.FORMAT: "png"}
         gviz = dfg_visualization.apply(
-            dfg, log=self.log, variant=dfg_visualization.Variants.PERFORMANCE, parameters=parameters)
+            dfg, log=self.pm4py_log, variant=dfg_visualization.Variants.PERFORMANCE, parameters=parameters)
         path = const.DIAGRAMS_PATH + "dfg_diagramm_performance" + \
             str(self.from_block) + "-" + str(self.to_block) + ".png"
         dfg_visualization.save(gviz, path)
         return path
 
-    def get_last_events(self, number_events):
-        xes_log = ET.parse(const.XES_FILES_COMBINED_PATH_TEST)
-        events = xes_log.findall(".//event")
-        events = sorted(events, key=lambda e: int(
-            e.find(".//int[@key='tx_blocknumber']").get('value')), reverse=True)
-        return events[:number_events]
+    def get_traces(self) -> List[Element]:
+        return self.xes_log_tree.findall(".//trace")
 
-    def get_events(self):
-        xes_log = ET.parse(const.XES_FILES_COMBINED_PATH_TEST)
-        events = xes_log.findall(".//event")
+    def get_events(self) -> List[Element]:
+        events = self.xes_log_tree.findall(".//event")
         events = filter(lambda e: self.from_block <= int(
             e.find(".//int[@key='tx_blocknumber']").get('value')) <= self.to_block, events)
         events = sorted(events, key=lambda e: int(
             e.find(".//int[@key='tx_blocknumber']").get('value')), reverse=True)
         return events
 
-    def get_eth_rates(self):
+    def get_eth_rates(self) -> dict:
         'Retrieves the current currency rates fro a multitude of currencies to pay for 1 ETH.'
         res = requests.get(
             'https://api.coinbase.com/v2/exchange-rates?currency=ETH')
@@ -94,20 +105,20 @@ class DataProcessor():
     def get_block_stats(self) -> dict:
         '''Returns a dictionary with all blocks as key and how many events happend in that block.'''
         return attributes_filter.get_attribute_values(
-            self.log, "tx_blocknumber")
+            self.pm4py_log, "tx_blocknumber")
 
-    def get_sender_stats(self):
+    def get_sender_stats(self) -> dict:
         return attributes_filter.get_attribute_values(
-            self.log, "tx_from")
+            self.pm4py_log, "tx_from")
 
-    def get_receiver_stats(self):
+    def get_receiver_stats(self) -> dict:
         return attributes_filter.get_attribute_values(
-            self.log, "tx_to")
+            self.pm4py_log, "tx_to")
 
-    def conformance_checking(self):
+    def conformance_checking(self):  # TODO not done yet
         bpmn_graph = self.get_bmpn_diagram(6605100, 6606100, 1)  # TODO remove
         # bpmn_graph = pm4py.read_bpmn("path_to_bpmn") #TODO change path and check if path location not empty
         net, initial_marking, final_marking = bpmn_converter.apply(bpmn_graph)
         replayed_traces = token_replay.apply(
-            self.log, net, initial_marking, final_marking)
+            self.pm4py_log, net, initial_marking, final_marking)
         return replayed_traces
