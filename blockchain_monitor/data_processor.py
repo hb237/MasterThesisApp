@@ -14,6 +14,8 @@ from pm4py.objects.conversion.log.variants.to_event_log import Parameters
 from pm4py.objects.conversion.bpmn import converter as bpmn_converter
 import constants as const
 import requests
+import bpmn_with_costs
+from pm4py.visualization.bpmn import visualizer as bpmn_visualizer
 
 
 def read_log_filtered(from_block: int, to_block: int) -> EventLog:
@@ -55,9 +57,16 @@ class DataProcessor():
     # TODO reuse bpmn graph
     # TODO reuse get_events result
     # TODO reuse get eth rates
-    def get_bpmn_diagram_with_costs(self, noise_threshold: float = 0.8) -> str:
-
-        return
+    def get_bpmn_diagram_with_costs(self, currency: str, currency_rate: float, noise_threshold: float = 0.8) -> str:
+        bpmn_graph = pm4py.discover_bpmn_inductive(
+            self.pm4py_log, noise_threshold)
+        path = const.DIAGRAMS_PATH + "bpmn_diagram_with_costs" + \
+            str(self.from_block) + "-" + str(self.to_block) + ".png"
+        format = path[path.index(".") + 1:].lower()
+        gviz = bpmn_with_costs.apply(
+            bpmn_graph, self.xes_log_tree, currency, currency_rate, ndigits=2, format=format)
+        bpmn_visualizer.save(gviz, path)
+        return path
 
     # TODO enable filtering
     def get_dfg_frequency(self) -> str:
@@ -98,19 +107,30 @@ class DataProcessor():
 
     def get_eth_rates(self) -> dict:
         'Retrieves the current currency rates fro a multitude of currencies to pay for 1 ETH.'
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36', }
         res = requests.get(
-            'https://api.coinbase.com/v2/exchange-rates?currency=ETH')
-        return res.json()['data']['rates']
+            'https://api.coinbase.com/v2/exchange-rates?currency=ETH', headers=headers, timeout=1)
+        rates = res.json()['data']['rates']
+        for rate in rates:
+            rates[rate] = float(rates[rate])
+        return rates
 
+    def get_attribute_stats(self, attribute_name: str) -> dict:
+        return attributes_filter.get_attribute_values(self.pm4py_log, attribute_name)
+
+    # TODO remove and use get_attribute_stats
     def get_block_stats(self) -> dict:
         '''Returns a dictionary with all blocks as key and how many events happend in that block.'''
         return attributes_filter.get_attribute_values(
             self.pm4py_log, "tx_blocknumber")
 
+    # TODO remove and use get_attribute_stats
     def get_sender_stats(self) -> dict:
         return attributes_filter.get_attribute_values(
             self.pm4py_log, "tx_from")
 
+    # TODO remove and use get_attribute_stats
     def get_receiver_stats(self) -> dict:
         return attributes_filter.get_attribute_values(
             self.pm4py_log, "tx_to")
