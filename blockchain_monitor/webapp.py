@@ -1,5 +1,6 @@
 from flask import Flask
 from flask import render_template
+from flask.templating import render_template_string
 from dashboard import Dashboard
 
 app = Flask(__name__)
@@ -7,6 +8,10 @@ dashboard = Dashboard()
 
 
 @app.route("/")
+def show_index():
+    return render_template("layout.html")
+
+
 @app.route("/dashboard/")
 def show_dashboard():
     dashboard.update()

@@ -36,10 +36,10 @@ class Dashboard():
         # self.bpmn_diagram_path = dp.get_bmpn_diagram()
         # self.dfg_frequency_path = dp.get_dfg_frequency()
         # self.dfg_performance_path = dp.get_dfg_performance()
-        self.eth_rates = dp.get_eth_rates()
-        eth_to_eur = self.eth_rates.get('EUR')
-        self.bpmn_diagram_with_costs_path = dp.get_bpmn_diagram_with_costs(
-            'EUR', eth_to_eur)
+        # self.eth_rates = dp.get_eth_rates()
+        # eth_to_eur = self.eth_rates.get('EUR')
+        # self.bpmn_diagram_with_costs_path = dp.get_bpmn_diagram_with_costs(
+        #     'EUR', eth_to_eur)
         # dp.get_events()
         # dp.conformance_checking()
 
