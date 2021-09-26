@@ -10,14 +10,18 @@
     <title>
         Blockchain Monitor - {% block title %}{% endblock %}
     </title>
+    <!-- Favicon -->
     <link rel="icon" href="{{ url_for('static', filename='/icons/reshot-icon-magnifier-analytics.svg') }}">
+    <!-- Simple Datatables (style sheet order matters) -->
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+    <!-- Startbootstrap Dashboard style sheet -->
     <link href="{{ url_for('static', filename='css/startbootstrap-sb-admin.css') }}" rel="stylesheet" />
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
         crossorigin="anonymous"></script>
-    <!-- Datatables -->
-    <link rel="stylesheet" type="text/css"
-        href="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.11.2/datatables.min.css" />
-    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.11.2/datatables.min.js"></script>
     {% block javascript %}
     {% endblock %}
 </head>
@@ -87,10 +91,15 @@
             </main>
         </div>
     </div>
+    <!-- Bootstrap -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
         crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <!-- Startbootstrap Dashboard -->
+    <script src="{{ url_for('static', filename='js/startbootstrap-sb-admin.js') }}"></script>
+    <!-- Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <!-- Simple Datatables -->
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
 </body>
 
 </html>

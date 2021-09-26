@@ -1,5 +1,18 @@
 import blockchain_connector as bc
 from data_processor import DataProcessor
+from flask import Blueprint
+
+cbs = bc.get_current_block_stats()
+current_block_number = cbs['current_block_number']
+current_block_timestamp = cbs['current_block_timestamp']
+dp = DataProcessor(0, current_block_number)
+
+dashbord_bp = Blueprint('dashboard', __name__, template_folder='templates')
+
+
+@ dashbord_bp.route("/api/sender_stats", methods=['GET'])
+def get_sender_stats():
+    return dp.get_sender_stats()
 
 
 class Dashboard():

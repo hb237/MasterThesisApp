@@ -16,6 +16,7 @@ import constants as const
 import requests
 import bpmn_with_costs
 from pm4py.visualization.bpmn import visualizer as bpmn_visualizer
+import json
 
 
 def read_log_filtered(from_block: int, to_block: int) -> EventLog:
@@ -127,8 +128,12 @@ class DataProcessor():
 
     # TODO remove and use get_attribute_stats
     def get_sender_stats(self) -> dict:
-        return attributes_filter.get_attribute_values(
+        sender_stats = attributes_filter.get_attribute_values(
             self.pm4py_log, "tx_from")
+        result = []
+        for sender, cnt in sender_stats.items():
+            result.append({'Sender': sender, 'Number of Events': str(cnt)})
+        return json.dumps(result)
 
     # TODO remove and use get_attribute_stats
     def get_receiver_stats(self) -> dict:
