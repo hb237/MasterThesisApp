@@ -7,22 +7,57 @@ app = Flask(__name__)
 dashboard = Dashboard()
 
 
-@app.route("/")
-def show_index():
-    return render_template("layout.html")
+@app.route("/index")
+def show_start_page():
+    return render_template("index.html")
 
 
-@app.route("/dashboard/")
-def show_dashboard():
-    dashboard.update()
-    return render_template("dashboard.html", dashboard=dashboard)
+@app.route("/dashboards/primary")
+def show_dashboard_primary():
+    return render_template("dashboards/primary.html")
 
 
-@app.route("/manifest/")
-def show_manifest():
-    return render_template("manifest.html")
+@app.route("/dashboards/secondary")
+def show_dashboard_secondary():
+    return render_template("dashboards/secondary.html")
 
 
-@app.route("/process_model/")
-def show_process_model():
-    return render_template("process_model.html")
+@app.route("/dashboards/tertiary")
+def show_dashboard_tertiary():
+    return render_template("dashboards/tertiary.html")
+
+
+@app.route("/settings/general")
+def show_settings_general():
+    return render_template("/settings/settings-general.html")
+
+
+# @app.route("/dashboards/tertiary")
+# def show_dashboard_tertiary():
+#     return render_template("dashboards/tertiary.html")
+
+
+# @app.route("/dashboards/tertiary")
+# def show_dashboard_tertiary():
+#     return render_template("dashboards/tertiary.html")
+
+
+# @app.route("/dashboards/tertiary")
+# def show_dashboard_tertiary():
+#     return render_template("dashboards/tertiary.html")
+
+
+# @app.route("/dashboard/")
+# def show_dashboard():
+#     dashboard.update()
+#     return render_template("dashboard.html", dashboard=dashboard)
+
+
+# @app.route("/manifest/")
+# def show_manifest():
+#     return render_template("manifest.html")
+
+
+@app.route("/help/documentation")
+def show_documentationl():
+    return render_template("/help/documentation.html")
