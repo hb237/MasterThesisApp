@@ -2,6 +2,44 @@
 {% block title %}
 BLF Manifest
 {% endblock %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function () {
+        var editor = ace.edit("editor");
+        editor.setAutoScrollEditorIntoView(true);
+        document.getElementById('editor').style.fontSize = '1.25rem';
+    });
+</script>
+{% endblock %}
+
 {% block main_content %}
-Set the Manifest.
+<div class="row">
+    <div class="col-md-8">
+        <div class="input-group mb-3">
+            <!-- <div class="form-group d-flex flex-row align-items-end"> -->
+            <div>
+                <label class="btn btn-sm btn-light border-2 border-dark" for="blf-mainfest">Upload manifest</label>
+                <input style="display:none;" type="file" id="blf-mainfest" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <form>
+        <div class="col-md-6" id="parent">
+            <div id="editor">some text</div>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <a class="btn btn-sm btn-primary border-2 border-dark" href="path_to_file" download="proposed_file_name">Save to
+            Server</a>
+        <a class="btn btn-sm btn-light border-2 border-dark" href="path_to_file" download="proposed_file_name">Download
+            manifest</a>
+    </div>
+</div>
 {% endblock %}

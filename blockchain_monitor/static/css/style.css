@@ -1,7 +1,21 @@
-.search-left div.dataTables_filter {
-    text-align: left !important;
+#parent {
+    height: 500px;
+    display: inline-block;
+    position: relative;
 }
 
-.pagination-left ul {
-    justify-content: flex-start !important;
+#editor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
+label {
+    /* Other styling... */
+    text-align: right;
+    clear: both;
+    float: left;
+    margin-right: 15px;
 }
