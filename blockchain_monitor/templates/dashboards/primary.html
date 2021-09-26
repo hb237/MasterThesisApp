@@ -8,14 +8,25 @@ Primary Dashboard
 <script>
     $(document).ready(function () {
         /* TODO change to web-socket or query every second */
-        datatable = new simpleDatatables.DataTable(document.getElementById('sender-stats'))
+        sender_stats = new simpleDatatables.DataTable(document.getElementById('sender-stats'))
+        receiver_stats = new simpleDatatables.DataTable(document.getElementById('receiver-stats'))
 
         $.ajax({
             url: "/api/sender_stats",
             type: 'GET',
             success: function (res) {
-                console.log(res)
-                datatable.import({
+                sender_stats.import({
+                    type: "json",
+                    data: res
+                });
+            }
+        });
+
+        $.ajax({
+            url: "/api/receiver_stats",
+            type: 'GET',
+            success: function (res) {
+                receiver_stats.import({
                     type: "json",
                     data: res
                 });
@@ -31,7 +42,7 @@ Primary Dashboard
         <div class="card mb-4">
             <div class="card-header">
                 <i class="fas fa-table me-1"></i>
-                DataTable Example
+                Sender Statistics
             </div>
             <div class="card-body">
                 <table id="sender-stats">
@@ -43,7 +54,7 @@ Primary Dashboard
         <div class="card mb-4">
             <div class="card-header">
                 <i class="fas fa-table me-1"></i>
-                DataTable Example
+                Receiver Statistics
             </div>
             <div class="card-body">
                 <table id="receiver-stats">

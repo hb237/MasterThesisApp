@@ -137,8 +137,12 @@ class DataProcessor():
 
     # TODO remove and use get_attribute_stats
     def get_receiver_stats(self) -> dict:
-        return attributes_filter.get_attribute_values(
+        sender_stats = attributes_filter.get_attribute_values(
             self.pm4py_log, "tx_to")
+        result = []
+        for sender, cnt in sender_stats.items():
+            result.append({'Receiver': sender, 'Number of Events': str(cnt)})
+        return json.dumps(result)
 
     def conformance_checking(self):  # TODO not done yet
         bpmn_graph = self.get_bmpn_diagram(6605100, 6606100, 1)  # TODO remove

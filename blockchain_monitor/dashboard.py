@@ -15,6 +15,11 @@ def get_sender_stats():
     return dp.get_sender_stats()
 
 
+@ dashbord_bp.route("/api/receiver_stats", methods=['GET'])
+def get_receiver_stats():
+    return dp.get_receiver_stats()
+
+
 class Dashboard():
     def __init__(self) -> None:
         self.current_block_number = 0
