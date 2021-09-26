@@ -32,32 +32,21 @@ def show_settings_general():
     return render_template("/settings/settings-general.html")
 
 
-# @app.route("/dashboards/tertiary")
-# def show_dashboard_tertiary():
-#     return render_template("dashboards/tertiary.html")
+@app.route("/settings/manifest")
+def show_manifest():
+    return render_template("settings/blf-manifest.html")
 
 
-# @app.route("/dashboards/tertiary")
-# def show_dashboard_tertiary():
-#     return render_template("dashboards/tertiary.html")
+@app.route("/settings/process-model")
+def show_process_model():
+    return render_template("settings/bpmn-process-model.html")
 
 
-# @app.route("/dashboards/tertiary")
-# def show_dashboard_tertiary():
-#     return render_template("dashboards/tertiary.html")
-
-
-# @app.route("/dashboard/")
-# def show_dashboard():
-#     dashboard.update()
-#     return render_template("dashboard.html", dashboard=dashboard)
-
-
-# @app.route("/manifest/")
-# def show_manifest():
-#     return render_template("manifest.html")
+@app.route("/settings/ethereum")
+def show_ethereum_connection():
+    return render_template("settings/ethereum-connection.html")
 
 
 @app.route("/help/documentation")
-def show_documentationl():
+def show_documentation():
     return render_template("/help/documentation.html")

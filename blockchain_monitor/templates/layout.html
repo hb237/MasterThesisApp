@@ -11,10 +11,15 @@
         Blockchain Monitor - {% block title %}{% endblock %}
     </title>
     <link rel="icon" href="{{ url_for('static', filename='/icons/reshot-icon-magnifier-analytics.svg') }}">
-    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
     <link href="{{ url_for('static', filename='css/startbootstrap-sb-admin.css') }}" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"
         crossorigin="anonymous"></script>
+    <!-- Datatables -->
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.11.2/datatables.min.css" />
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/jq-3.6.0/dt-1.11.2/datatables.min.js"></script>
+    {% block javascript %}
+    {% endblock %}
 </head>
 
 <body class="sb-nav-fixed">
@@ -86,7 +91,6 @@
         crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
 </body>
 
 </html>
