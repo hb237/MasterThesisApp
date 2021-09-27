@@ -1,8 +1,9 @@
+import re
 from werkzeug.utils import redirect
 import blockchain_connector as bc
 from data_processor import DataProcessor
 import os
-from flask import Blueprint, request, render_template, jsonify, send_file
+from flask import Blueprint, request, make_response, send_file
 import constants as const
 
 cbs = bc.get_current_block_stats()
@@ -18,11 +19,14 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in const.ALLOWED_EXTENSIONS
 
 
-@dashbord_bp.route('/api/manifest', methods=['POST', 'GET'])
+@dashbord_bp.route('/api/manifest', methods=['POST', 'GET', 'DELETE'])
 def handle_mainfest():
-    if request.method == 'GET':
+    if request.method == 'DELETE':
+        open(const.MANIFEST_PATH, 'w').close()
+        return make_response('', 200)
+    elif request.method == 'GET':
         return send_file(const.MANIFEST_PATH)
-    if request.method == 'POST':
+    elif request.method == 'POST':
         # check if the post request has the file part
         if 'blf-manifest' in request.files:
             file = request.files['blf-manifest']
@@ -31,7 +35,11 @@ def handle_mainfest():
             if file.filename != '' and file and allowed_file(file.filename):
                 # filename = secure_filename(file.filename)
                 file.save(os.path.join(const.MANIFEST_PATH))
-                # return redirect(url_for('download_file', name=filename))
+        else:
+            editor_content = request.form['editor_content']
+            with open(const.MANIFEST_PATH, "w") as text_file:
+                text_file.write(editor_content)
+            return make_response('', 200)
     return redirect('/settings/manifest')
 
 

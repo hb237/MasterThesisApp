@@ -5,31 +5,56 @@ BLF Manifest
 
 {% block javascript %}
 <script>
+    var editor;
     $(document).ready(function () {
-        var editor = ace.edit("editor");
+        editor = ace.edit("editor");
         editor.setAutoScrollEditorIntoView(true);
         document.getElementById('editor').style.fontSize = '1.25rem';
         editor.setOptions({
             placeholder: "Upload a manifest or write a new one ...",
         });
-        var session = editor.session
 
+        // get current manifest stored on server
+        var session = editor.session
         $.ajax({
             url: "/api/manifest",
             type: 'GET',
             success: function (res) {
-                console.log(res)
                 session.insert({
                     row: 0,
                     column: 0
                 }, res)
-
-            },
-            complete: function () {
-
             }
         });
     });
+
+    function save_changes() {
+        $.ajax({
+            url: '/api/manifest',
+            type: 'POST',
+            data: {
+                editor_content: editor.getValue()
+            },
+            dataType: 'json',
+            complete: function () {
+                location.reload();
+            }
+        });
+    };
+
+    function reset_manifest() {
+        $.ajax({
+            url: '/api/manifest',
+            type: 'DELETE',
+            complete: function () {
+                location.reload();
+            }
+        });
+    };
+
+    function hide_save_success() {
+
+    }
 </script>
 {% endblock %}
 
@@ -51,27 +76,24 @@ BLF Manifest
 </div>
 
 <div class="row">
-    <form>
+    <div>
         <div class="col-md-12 border" id="parent">
-            <div id="editor"></div>
+            <div id="editor" name="editor"></div>
         </div>
-    </form>
+    </div>
 </div>
 
 <div class="row">
     <div class="col-md-6">
         <div class="mt-2">
-            <a class="btn btn-sm btn-primary border-2 border-dark" href="path_to_file" download="proposed_file_name">
-                <i class="fas fa-save"></i><span class="ms-2">Save</span></a>
-            <a class="btn btn-sm btn-light border-2 border-dark ms-1" href="path_to_file" download="proposed_file_name">
-                <i class="fas fa-check"></i><span class="ms-2">Validate</span>
-            </a>
-            <a class="btn btn-sm btn-light border-2 border-dark ms-1" href="path_to_file"
-                download="proposed_file_name"><i class="fas fa-download"></i><span class="ms-2">Download</span></a>
-            <a class="btn btn-sm btn-danger border-2 border-dark ms-1" href="path_to_file"
-                download="proposed_file_name">
-                <i class="fas fa-trash-alt"></i></i><span class="ms-2">Delete</span></a>
-
+            <button class="btn btn-sm btn-primary border-2 border-dark" onclick="save_changes();"><i
+                    class="fas fa-save"></i><span class="ms-2">Save</span></a></button>
+            <a class="btn btn-sm btn-light border-2 border-dark ms-1" href="/api/manifest" download="manifest.bcql">
+                <i class="fas fa-check"></i><span class="ms-2">Validate</span></a>
+            <a class="btn btn-sm btn-light border-2 border-dark ms-1" href="/api/manifest" download="manifest.bcql"><i
+                    class="fas fa-download"></i><span class="ms-2">Download</span></a>
+            <button class="btn btn-sm btn-danger border-2 border-dark ms-1" onclick="reset_manifest();">
+                <i class="fas fa-trash-alt"></i></i><span class="ms-2">Reset</span></button>
         </div>
     </div>
 </div>
