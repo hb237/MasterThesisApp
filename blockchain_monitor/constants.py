@@ -7,5 +7,5 @@ BLF_EXTRACT = 'extract'
 TEST_FILES_LOCATION = './test_app/test_files'
 TEST_FILES_DESTINATION = "./xes_files"
 DIAGRAMS_PATH = 'static/diagrams/'  # Do not add './' to the front.
-UPLOAD_PATH = 'static/user_uploads'
+MANIFEST_PATH = 'static/user_uploads/manifest.bcql'
 ALLOWED_EXTENSIONS = {'txt', 'bcql', 'bpmn'}

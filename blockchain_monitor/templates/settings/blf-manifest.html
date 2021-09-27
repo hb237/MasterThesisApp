@@ -11,7 +11,24 @@ BLF Manifest
         document.getElementById('editor').style.fontSize = '1.25rem';
         editor.setOptions({
             placeholder: "Upload a manifest or write a new one ...",
-        })
+        });
+        var session = editor.session
+
+        $.ajax({
+            url: "/api/manifest",
+            type: 'GET',
+            success: function (res) {
+                console.log(res)
+                session.insert({
+                    row: 0,
+                    column: 0
+                }, res)
+
+            },
+            complete: function () {
+
+            }
+        });
     });
 </script>
 {% endblock %}
@@ -19,7 +36,7 @@ BLF Manifest
 {% block main_content %}
 <div class="row">
     <div class="col-md-8">
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data" action="/api/manifest">
             <div class="input-group my-2">
                 <!-- <div class="form-group d-flex flex-row align-items-end"> -->
                 <div>
