@@ -1,6 +1,9 @@
 import blockchain_connector as bc
 from data_processor import DataProcessor
-from flask import Blueprint
+import os
+from flask import Blueprint, request, render_template
+from werkzeug.utils import secure_filename
+import constants as const
 
 cbs = bc.get_current_block_stats()
 current_block_number = cbs['current_block_number']
@@ -8,6 +11,33 @@ current_block_timestamp = cbs['current_block_timestamp']
 dp = DataProcessor(0, current_block_number)
 
 dashbord_bp = Blueprint('dashboard', __name__, template_folder='templates')
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in const.ALLOWED_EXTENSIONS
+
+
+@dashbord_bp.route('/settings/manifest', methods=['POST'])
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'blf-manifest' not in request.files:
+            # flash('No file part')
+            # return redirect(request.url)
+            return
+        file = request.files['blf-manifest']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            # flash('No selected file')
+            # return redirect(request.url)
+            return
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(const.UPLOAD_PATH, filename))
+            # return redirect(url_for('download_file', name=filename))
+    return render_template('settings/blf-manifest.html')
 
 
 @ dashbord_bp.route("/api/sender_stats", methods=['GET'])

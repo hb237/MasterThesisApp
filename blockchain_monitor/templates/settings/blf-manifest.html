@@ -19,14 +19,17 @@ BLF Manifest
 {% block main_content %}
 <div class="row">
     <div class="col-md-8">
-        <div class="input-group my-2">
-            <!-- <div class="form-group d-flex flex-row align-items-end"> -->
-            <div>
-                <label class="btn btn-sm btn-light border-2 border-dark" for="blf-mainfest">
-                    <i class="fas fa-upload"></i> Upload manifest</label>
-                <input style="display:none;" type="file" id="blf-mainfest" />
+        <form method="POST" enctype="multipart/form-data">
+            <div class="input-group my-2">
+                <!-- <div class="form-group d-flex flex-row align-items-end"> -->
+                <div>
+                    <label class="btn btn-sm btn-light border-2 border-dark" for="blf-manifest">
+                        <i class="fas fa-upload"></i><span class="ms-2">Upload</span></label>
+                    <input style="display:none;" type="file" id="blf-manifest" name="blf-manifest"
+                        onchange="this.form.submit()" />
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -42,12 +45,16 @@ BLF Manifest
     <div class="col-md-6">
         <div class="mt-2">
             <a class="btn btn-sm btn-primary border-2 border-dark" href="path_to_file" download="proposed_file_name">
-                <i class="fas fa-save"></i> Save to Server</a>
+                <i class="fas fa-save"></i><span class="ms-2">Save</span></a>
             <a class="btn btn-sm btn-light border-2 border-dark ms-1" href="path_to_file" download="proposed_file_name">
-                <i class="fas fa-check"></i> Validate manifest
+                <i class="fas fa-check"></i><span class="ms-2">Validate</span>
             </a>
             <a class="btn btn-sm btn-light border-2 border-dark ms-1" href="path_to_file"
-                download="proposed_file_name"><i class="fas fa-download"></i> Download manifest</a>
+                download="proposed_file_name"><i class="fas fa-download"></i><span class="ms-2">Download</span></a>
+            <a class="btn btn-sm btn-danger border-2 border-dark ms-1" href="path_to_file"
+                download="proposed_file_name">
+                <i class="fas fa-trash-alt"></i></i><span class="ms-2">Delete</span></a>
+
         </div>
     </div>
 </div>
