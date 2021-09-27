@@ -1,3 +1,4 @@
+from werkzeug.utils import redirect
 import blockchain_connector as bc
 from data_processor import DataProcessor
 import os
@@ -31,7 +32,7 @@ def handle_mainfest():
                 # filename = secure_filename(file.filename)
                 file.save(os.path.join(const.MANIFEST_PATH))
                 # return redirect(url_for('download_file', name=filename))
-    return render_template('settings/blf-manifest.html')
+    return redirect('/settings/manifest')
 
 
 @ dashbord_bp.route("/api/sender_stats", methods=['GET'])

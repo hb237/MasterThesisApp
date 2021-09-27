@@ -142,3 +142,4 @@ blf/*.jar
 xes_files/
 xes_files_combined/
 static/diagrams
+static/user_uploads
