@@ -9,6 +9,9 @@ BLF Manifest
         var editor = ace.edit("editor");
         editor.setAutoScrollEditorIntoView(true);
         document.getElementById('editor').style.fontSize = '1.25rem';
+        editor.setOptions({
+            placeholder: "Upload a manifest or write a new one ...",
+        })
     });
 </script>
 {% endblock %}
@@ -16,10 +19,11 @@ BLF Manifest
 {% block main_content %}
 <div class="row">
     <div class="col-md-8">
-        <div class="input-group mb-3">
+        <div class="input-group my-2">
             <!-- <div class="form-group d-flex flex-row align-items-end"> -->
             <div>
-                <label class="btn btn-sm btn-light border-2 border-dark" for="blf-mainfest">Upload manifest</label>
+                <label class="btn btn-sm btn-light border-2 border-dark" for="blf-mainfest">
+                    <i class="fas fa-upload"></i> Upload manifest</label>
                 <input style="display:none;" type="file" id="blf-mainfest" />
             </div>
         </div>
@@ -28,18 +32,23 @@ BLF Manifest
 
 <div class="row">
     <form>
-        <div class="col-md-6" id="parent">
-            <div id="editor">some text</div>
+        <div class="col-xl-6 col-md-12 border" id="parent">
+            <div id="editor"></div>
         </div>
     </form>
 </div>
 
 <div class="row">
     <div class="col-md-6">
-        <a class="btn btn-sm btn-primary border-2 border-dark" href="path_to_file" download="proposed_file_name">Save to
-            Server</a>
-        <a class="btn btn-sm btn-light border-2 border-dark" href="path_to_file" download="proposed_file_name">Download
-            manifest</a>
+        <div class="mt-2">
+            <a class="btn btn-sm btn-primary border-2 border-dark" href="path_to_file" download="proposed_file_name">
+                <i class="fas fa-save"></i> Save to Server</a>
+            <a class="btn btn-sm btn-light border-2 border-dark ms-1" href="path_to_file" download="proposed_file_name">
+                <i class="fas fa-check"></i> Validate manifest
+            </a>
+            <a class="btn btn-sm btn-light border-2 border-dark ms-1" href="path_to_file"
+                download="proposed_file_name"><i class="fas fa-download"></i> Download manifest</a>
+        </div>
     </div>
 </div>
 {% endblock %}
