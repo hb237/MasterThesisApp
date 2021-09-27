@@ -24,7 +24,13 @@ def set_input_src(type, speed):
 
 
 def validate_current_manifest():
-    return
+    msg = ""
+    try:
+        msg = subprocess.check_output(
+            ['java', '-jar', const.BLF_JAR_PATH, const.BLF_VALIDATE, const.MANIFEST_PATH])
+    except subprocess.CalledProcessError as e:
+        msg = 'An error occured during BLF validation.'
+    return msg
 
 
 def launch_file_reader():

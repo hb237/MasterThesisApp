@@ -28,20 +28,6 @@ BLF Manifest
         });
     });
 
-    function save_changes() {
-        $.ajax({
-            url: '/api/manifest',
-            type: 'POST',
-            data: {
-                editor_content: editor.getValue()
-            },
-            dataType: 'json',
-            complete: function () {
-                location.reload();
-            }
-        });
-    };
-
     function reset_manifest() {
         $.ajax({
             url: '/api/manifest',
@@ -52,8 +38,24 @@ BLF Manifest
         });
     };
 
-    function hide_save_success() {
-
+    function save_and_validate_manifest() {
+        $.ajax({
+            url: '/api/manifest',
+            type: 'POST',
+            data: {
+                editor_content: editor.getValue()
+            },
+            dataType: 'json',
+            complete: function () {
+                $.ajax({
+                    url: '/api/manifest',
+                    type: 'VALIDATE',
+                    complete: function (res) {
+                        $('#error-msg').text(res.responseText)
+                    }
+                });
+            }
+        });
     }
 </script>
 {% endblock %}
@@ -61,17 +63,22 @@ BLF Manifest
 {% block main_content %}
 <div class="row">
     <div class="col-md-8">
-        <form method="POST" enctype="multipart/form-data" action="/api/manifest">
-            <div class="input-group my-2">
-                <!-- <div class="form-group d-flex flex-row align-items-end"> -->
-                <div>
-                    <label class="btn btn-sm btn-light border-2 border-dark" for="blf-manifest">
-                        <i class="fas fa-upload"></i><span class="ms-2">Upload</span></label>
-                    <input style="display:none;" type="file" id="blf-manifest" name="blf-manifest"
-                        onchange="this.form.submit()" />
+        <div class="my-2 d-flex">
+            <div class=" d-inline-block">
+                <div class="input-group">
+                    <div>
+                        <form method="POST" enctype="multipart/form-data" action="/api/manifest">
+                            <label class=" btn btn-sm btn-light border-2 border-dark" for="blf-manifest">
+                                <i class="fas fa-upload"></i><span class="ms-2">Upload</span></label>
+                            <input style="display:none;" type="file" id="blf-manifest" name="blf-manifest"
+                                onchange="this.form.submit()" />
+                        </form>
+                    </div>
                 </div>
             </div>
-        </form>
+            <a class="btn btn-sm btn-light border-2 border-dark" href="/api/manifest" download="manifest.bcql"><i
+                    class="fas fa-download"></i><span class="ms-2">Download</span></a>
+        </div>
     </div>
 </div>
 
@@ -86,14 +93,24 @@ BLF Manifest
 <div class="row">
     <div class="col-md-6">
         <div class="mt-2">
-            <button class="btn btn-sm btn-primary border-2 border-dark" onclick="save_changes();"><i
-                    class="fas fa-save"></i><span class="ms-2">Save</span></a></button>
-            <a class="btn btn-sm btn-light border-2 border-dark ms-1" href="/api/manifest" download="manifest.bcql">
-                <i class="fas fa-check"></i><span class="ms-2">Validate</span></a>
-            <a class="btn btn-sm btn-light border-2 border-dark ms-1" href="/api/manifest" download="manifest.bcql"><i
-                    class="fas fa-download"></i><span class="ms-2">Download</span></a>
-            <button class="btn btn-sm btn-danger border-2 border-dark ms-1" onclick="reset_manifest();">
+            <button class="btn btn-sm btn-primary border-2 border-dark" onclick="save_and_validate_manifest();">
+                <i class="fas fa-save"></i><span class="ms-2">Save and Validate</span></button>
+            <button class="btn btn-sm btn-danger border-2 border-dark ms-2" onclick="reset_manifest();">
                 <i class="fas fa-trash-alt"></i></i><span class="ms-2">Reset</span></button>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-md-4">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> The manifest validation completed successfully.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Not valid!</strong> The manifest raised the following errors:<br />
+            <span id="error-msg">Err</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     </div>
 </div>

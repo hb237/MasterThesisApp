@@ -1,10 +1,11 @@
-import re
 from werkzeug.utils import redirect
 import blockchain_connector as bc
 from data_processor import DataProcessor
 import os
 from flask import Blueprint, request, make_response, send_file
 import constants as const
+import app
+import re
 
 cbs = bc.get_current_block_stats()
 current_block_number = cbs['current_block_number']
@@ -19,13 +20,17 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in const.ALLOWED_EXTENSIONS
 
 
-@dashbord_bp.route('/api/manifest', methods=['POST', 'GET', 'DELETE'])
+@dashbord_bp.route('/api/manifest', methods=['POST', 'GET', 'DELETE', 'VALIDATE'])
 def handle_mainfest():
     if request.method == 'DELETE':
         open(const.MANIFEST_PATH, 'w').close()
         return make_response('', 200)
     elif request.method == 'GET':
         return send_file(const.MANIFEST_PATH)
+    elif request.method == 'VALIDATE':
+        result = app.validate_current_manifest()
+        # if re.search('error', result, re.IGNORECASE):
+        return make_response(result, 200)
     elif request.method == 'POST':
         # check if the post request has the file part
         if 'blf-manifest' in request.files:
