@@ -28,6 +28,7 @@ BLF Manifest
         });
     });
 
+
     function reset_manifest() {
         $.ajax({
             url: '/api/manifest',
@@ -37,10 +38,6 @@ BLF Manifest
             }
         });
     };
-
-    function hide(id) {
-        $('#' + id).addClass('d-none')
-    }
 
     function save_and_validate_manifest() {
         $.ajax({
@@ -70,6 +67,10 @@ BLF Manifest
             }
         });
     }
+
+    function hide(id) {
+        $('#' + id).addClass('d-none')
+    }
 </script>
 {% endblock %}
 
@@ -80,11 +81,11 @@ BLF Manifest
             <div class=" d-inline-block">
                 <div class="input-group">
                     <div>
-                        <form method="POST" enctype="multipart/form-data" action="/api/manifest">
+                        <form id="manifest-form" method="POST" enctype="multipart/form-data" action="/api/manifest">
                             <label class=" btn btn-sm btn-light border-2 border-dark" for="blf-manifest">
                                 <i class="fas fa-upload"></i><span class="ms-2">Upload</span></label>
                             <input style="display:none;" type="file" id="blf-manifest" name="blf-manifest"
-                                onchange="this.form.submit()" />
+                                onchange="this.form.submit();" />
                         </form>
                     </div>
                 </div>

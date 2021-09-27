@@ -8,8 +8,12 @@ import app
 import re
 
 cbs = bc.get_current_block_stats()
-current_block_number = cbs['current_block_number']
-current_block_timestamp = cbs['current_block_timestamp']
+current_block_number = 100000000  # TODO
+current_block_timestamp = None
+if cbs is not None:
+    current_block_number = cbs['current_block_number']
+    current_block_timestamp = cbs['current_block_timestamp']
+
 dp = DataProcessor(0, current_block_number)
 
 dashbord_bp = Blueprint('dashboard', __name__, template_folder='templates')
@@ -29,7 +33,6 @@ def handle_mainfest():
         return send_file(const.MANIFEST_PATH)
     elif request.method == 'VALIDATE':
         result = app.validate_current_manifest()
-        # if re.search('error', result, re.IGNORECASE):
         return make_response(result, 200)
     elif request.method == 'POST':
         # check if the post request has the file part
@@ -40,6 +43,7 @@ def handle_mainfest():
             if file.filename != '' and file and allowed_file(file.filename):
                 # filename = secure_filename(file.filename)
                 file.save(os.path.join(const.MANIFEST_PATH))
+                return make_response('', 200)
         else:
             editor_content = request.form['editor_content']
             with open(const.MANIFEST_PATH, "w") as text_file:
