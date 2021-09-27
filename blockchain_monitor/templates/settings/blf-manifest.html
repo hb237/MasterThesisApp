@@ -38,6 +38,10 @@ BLF Manifest
         });
     };
 
+    function hide(id) {
+        $('#' + id).addClass('d-none')
+    }
+
     function save_and_validate_manifest() {
         $.ajax({
             url: '/api/manifest',
@@ -51,7 +55,16 @@ BLF Manifest
                     url: '/api/manifest',
                     type: 'VALIDATE',
                     complete: function (res) {
-                        $('#error-msg').text(res.responseText)
+                        validation_msg = res.responseText
+                        if (validation_msg) {
+                            $('#validation-error').removeClass('d-none')
+                            $('#validation-error-msg').text(res.responseText)
+                        } else {
+                            $('#validation-success').removeClass('d-none')
+                            $("#validation-success").delay(3000).queue(function () {
+                                $(this).addClass("d-none").dequeue();
+                            });
+                        }
                     }
                 });
             }
@@ -103,14 +116,14 @@ BLF Manifest
 
 <div class="row mt-2">
     <div class="col-md-4">
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div id="validation-success" class="d-none alert alert-success alert-dismissible fade show">
             <strong>Success!</strong> The manifest validation completed successfully.
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" aria-label="Close" onclick="hide('validation-success');"></button>
         </div>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div id="validation-error" class="d-none alert alert-danger alert-dismissible fade show">
             <strong>Not valid!</strong> The manifest raised the following errors:<br />
-            <span id="error-msg">Err</span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <span id="validation-error-msg">Err</span>
+            <button type="button" class="btn-close" aria-label="Close" onclick="hide('validation-error');"></button>
         </div>
     </div>
 </div>
