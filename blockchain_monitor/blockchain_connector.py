@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 def get_current_block_stats() -> dict:
-    # TODO launch geth client with:
+    # launch geth client with:
     # TODO set constants
     # TODO set --datadir appropriately
     # geth --syncmode "light" --ws --ws.addr 127.0.0.1 --ws.port 8546 --datadir="/media/hendrik/SSD-1TB/geth"
