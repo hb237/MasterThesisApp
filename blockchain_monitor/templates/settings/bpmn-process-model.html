@@ -9,19 +9,22 @@ Process Model
     <div class="col-md-12">
         <div class="my-2 btn-toolbar">
             <div class="file-mgmt-btn">
-                <button id="save-button" class="btn border-2 border-dark" onclick="exportDiagram()"
-                    title="download as BPMN 2.0 diagram"><i class="fas fa-download"></i></button>
-                <button id="new-diagram-button" class="btn border-2 border-dark" onclick="createNewDiagram()"
-                    title="create new BPMN diagram"><i class="fas fa-file"></i></button>
-                <button id="import-bpmn-button" class="btn border-2 border-dark" onclick="importBPMN()"
+                <a id="save-button" class="btn btn-light border-2 border-dark" href="/api/process_model"
+                    download="diagram.bpmn" title="download currently stored BPMN 2.0 diagram"><i
+                        class="fas fa-download"></i></a>
+                <button id="import-bpmn-button" class="btn btn-light border-2 border-dark" onclick="importBPMN()"
                     title="upload BPMN diagram"><i class="fas fa-upload"></i></button>
+                <button id="new-diagram-button" class="btn btn-outline-danger border-2" onclick="resetDiagram()"
+                    title="replace current BPMN diagram with an empty one"><i class="fas fa-trash"></i></button>
+                <button class="btn btn-outline-primary border-2" onclick="save_and_validate_process_diagram();">
+                    <i class="fas fa-save"></i><span class="ms-2">Save + Validate</span></button>
             </div>
-            <div class="ms-4 zoom-buttons">
-                <button id="zoomin-button" class="btn border-2 border-dark" onclick="zoomIn()" title="zoom in"><i
-                        class="fas fa-plus"></i></button>
-                <button id="zoomout-button" class="btn border-2 border-dark" onclick="zoomOut()" title="zoom out"><i
-                        class="fas fa-minus"></i></button>
-                <button id="zoomreset-button" class="btn border-2 border-dark" onclick="zoomReset()"
+            <div class="ms-5 zoom-buttons">
+                <button id="zoomin-button" class="btn btn-light border-2 border-dark" onclick="zoomIn()"
+                    title="zoom in"><i class="fas fa-plus"></i></button>
+                <button id="zoomout-button" class="btn btn-light border-2 border-dark" onclick="zoomOut()"
+                    title="zoom out"><i class="fas fa-minus"></i></button>
+                <button id="zoomreset-button" class="btn btn-light border-2 border-dark" onclick="zoomReset()"
                     title="reset zoom"><i class="fas fa-crosshairs"></i></button>
             </div>
         </div>
@@ -49,7 +52,6 @@ Process Model
         url: "/api/process_model",
         type: 'GET',
         success: function (res) {
-            console.log(res)
             openDiagram(res)
         }
     });
@@ -71,22 +73,30 @@ Process Model
 
     }
 
-    function createNewDiagram() {
+    function resetDiagram() {
+        // TODO true reset
         var diagramUrl = '/static/empty-diagram.bpmn';
         // load inital diagram file via AJAX and open it
         $.get(diagramUrl, openDiagram, 'text');
     }
 
+    async function uploadDiagram() {
+        try {
+
+        } catch (err) {
+            console.error('could not upload BPMN 2.0 diagram', err);
+        }
+    }
+
     /**
      * Save diagram contents and print them to the console.
      */
-    async function exportDiagram() {
+    async function downloadDiagram() {
         try {
             var result = await bpmnModeler.saveXML({ format: true });
-            alert('Diagram exported. Check the developer tools!');
             console.log('DIAGRAM', result.xml);
         } catch (err) {
-            console.error('could not save BPMN 2.0 diagram', err);
+            console.error('could not download BPMN 2.0 diagram', err);
         }
     }
 
