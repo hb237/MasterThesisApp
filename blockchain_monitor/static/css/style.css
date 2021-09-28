@@ -1,3 +1,7 @@
+#canvas {
+    height: 700px;
+}
+
 #ace-editor-parent {
     height: 500px;
     display: inline-block;
