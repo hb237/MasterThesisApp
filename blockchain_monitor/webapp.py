@@ -6,9 +6,9 @@ app = Flask(__name__)
 app.register_blueprint(dashbord_bp)
 
 
-@app.route("/test")
-def test_bpmn_js():
-    return render_template("modeler.html")
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
 @ app.route("/index")
@@ -44,11 +44,6 @@ def show_manifest():
 @ app.route("/settings/process-model")
 def show_process_model():
     return render_template("settings/bpmn-process-model.html")
-
-
-@ app.route("/settings/ethereum")
-def show_ethereum_connection():
-    return render_template("settings/ethereum-connection.html")
 
 
 @ app.route("/help/documentation")
