@@ -6,6 +6,11 @@ app = Flask(__name__)
 app.register_blueprint(dashbord_bp)
 
 
+@app.route("/test")
+def test_bpmn_js():
+    return render_template("modeler.html")
+
+
 @ app.route("/index")
 def show_start_page():
     return render_template("index.html")

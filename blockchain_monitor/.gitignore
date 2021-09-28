@@ -143,3 +143,4 @@ xes_files/
 xes_files_combined/
 static/diagrams
 static/user_uploads
+static/node_modules
