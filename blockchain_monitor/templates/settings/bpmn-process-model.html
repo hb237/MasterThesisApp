@@ -8,15 +8,24 @@ Process Model
 <div class="row">
     <div class="col-md-12">
         <div class="my-2 btn-toolbar">
-            <div class="file-mgmt-btn">
-                <a id="save-button" class="btn btn-light border-2 border-dark" href="/api/process_model"
+            <div class="d-flex">
+                <div class="input-group">
+                    <form id="bpmn-diagram-form" method="POST" enctype="multipart/form-data"
+                        action="/api/process_model">
+                        <label class=" btn btn-light border-2 border-dark" for="bpmn-diagram"
+                            title="upload BPMN diagram">
+                            <i class="fas fa-upload"></i></label>
+                        <input style="display:none;" type="file" id="bpmn-diagram" name="bpmn-diagram"
+                            onchange="this.form.submit();" />
+                    </form>
+                </div>
+
+                <a id="save-button" class="btn btn-light border-2 border-dark ms-1" href="/api/process_model"
                     download="diagram.bpmn" title="download currently stored BPMN 2.0 diagram"><i
                         class="fas fa-download"></i></a>
-                <button id="import-bpmn-button" class="btn btn-light border-2 border-dark" onclick="uploadDiagram()"
-                    title="upload BPMN diagram"><i class="fas fa-upload"></i></button>
-                <button id="new-diagram-button" class="btn btn-outline-danger border-2" onclick="resetDiagram()"
+                <button id="new-diagram-button" class="btn btn-outline-danger border-2 ms-1" onclick="resetDiagram()"
                     title="replace current BPMN diagram with an empty one"><i class="fas fa-trash"></i></button>
-                <button class="btn btn-outline-primary border-2" onclick="saveProcessDiagram();"
+                <button class="btn btn-outline-primary border-2 ms-1" onclick="saveProcessDiagram();"
                     title="save the displayed model to the server">
                     <i class="fas fa-save"></i></button>
             </div>
@@ -71,10 +80,13 @@ Process Model
     }
 
     function resetDiagram() {
-        // TODO true reset
-        var diagramUrl = '/static/empty-diagram.bpmn';
-        // load inital diagram file via AJAX and open it
-        $.get(diagramUrl, openDiagram, 'text');
+        $.ajax({
+            url: '/api/process_model',
+            type: 'DELETE',
+            complete: function () {
+                location.reload();
+            }
+        });
     }
 
     async function uploadDiagram() {
@@ -82,18 +94,6 @@ Process Model
 
         } catch (err) {
             console.error('could not upload BPMN 2.0 diagram', err);
-        }
-    }
-
-    /**
-     * Save diagram contents and print them to the console.
-     */
-    async function downloadDiagram() {
-        try {
-            var result = await bpmnModeler.saveXML({ format: true });
-            console.log('DIAGRAM', result.xml);
-        } catch (err) {
-            console.error('could not save BPMN 2.0 diagram', err);
         }
     }
 

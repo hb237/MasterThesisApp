@@ -33,12 +33,17 @@ def handle_process_model():
     elif request.method == 'GET':
         return send_file(const.BPMN_PATH)
     elif request.method == 'POST':
-        if request.data:
+        if 'bpmn-diagram' in request.files:  # upload file
+            file = request.files['bpmn-diagram']
+            if file.filename != '' and file and allowed_file(file.filename, const.ALLOWED_BPMN_EXTENSIONS):
+                file.save(os.path.join(const.BPMN_PATH))
+                return redirect('/settings/process-model')
+        elif request.data:  # save file
             canvas_content = str(request.data, 'utf-8')
             with open(const.BPMN_PATH, "w") as text_file:
                 text_file.write(canvas_content)
             return make_response('', 200)
-    return redirect('settings/process-model')
+    return redirect('/settings/process-model')
 
 
 @dashbord_bp.route('/api/manifest', methods=['POST', 'GET', 'DELETE', 'VALIDATE'])
@@ -52,16 +57,12 @@ def handle_mainfest():
         result = app.validate_current_manifest()
         return make_response(result, 200)
     elif request.method == 'POST':
-        # check if the post request has the file part
-        if 'blf-manifest' in request.files:
+        if 'blf-manifest' in request.files:  # upload file
             file = request.files['blf-manifest']
-            # If the user does not select a file, the browser submits an
-            # empty file without a filename.
             if file.filename != '' and file and allowed_file(file.filename, const.ALLOWED_MANIFEST_EXTENSIONS):
-                # filename = secure_filename(file.filename)
                 file.save(os.path.join(const.MANIFEST_PATH))
                 return redirect('/settings/manifest')
-        else:
+        else:  # save file
             editor_content = request.form['editor_content']
             with open(const.MANIFEST_PATH, "w") as text_file:
                 text_file.write(editor_content)
