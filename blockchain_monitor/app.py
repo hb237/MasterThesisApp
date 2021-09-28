@@ -4,18 +4,6 @@ from test_app import file_feeder
 import constants as const
 
 
-def save_bpmn_model(bpmn_model):
-    # bpmn modul MUST ONLY contain
-    # Events (start / end events)
-    # Tasks
-    # Gateways (exclusive, parallel, inclusive)
-    return
-
-
-def save_manifest_file(mainfest):
-    return
-
-
 def set_input_src(type, speed):
     # type : feeder, blf
     # speed of file feeder
@@ -46,6 +34,7 @@ def launch_blf():
 
 
 def reset_application():
+    # TODO think about remove all files in 'xes_files' before running app
     # delete all gathered data
     return
 
@@ -58,8 +47,6 @@ def set_input_mode():
 
 
 if __name__ == '__main__':
-    # TODO think about remove all files in 'xes_files' before running app
-
     # # Create processes for file reader TODO dashboard
     # reader_process = multiprocessing.Process(target=file_reader.read_in)
     # reader_process.start()

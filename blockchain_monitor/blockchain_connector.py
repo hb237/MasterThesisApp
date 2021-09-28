@@ -3,7 +3,6 @@ from datetime import datetime
 
 
 def get_current_block_stats() -> dict:
-    # TODO if error
     # TODO launch geth client with:
     # TODO set constants
     # TODO set --datadir appropriately
