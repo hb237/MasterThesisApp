@@ -5,7 +5,7 @@ import os
 from flask import Blueprint, request, make_response, send_file
 import constants as const
 import app
-import re
+import shutil
 
 cbs = bc.get_current_block_stats()
 current_block_number = 100000000  # TODO
@@ -19,9 +19,23 @@ dp = DataProcessor(0, current_block_number)
 dashbord_bp = Blueprint('dashboard', __name__, template_folder='templates')
 
 
-def allowed_file(filename):
+def allowed_file(filename, allow_extensions):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in const.ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1].lower(
+           ) in allow_extensions
+
+
+@dashbord_bp.route('/api/process_model', methods=['POST', 'GET', 'DELETE'])
+def handle_process_model():
+    if request.method == 'DELETE':
+        shutil.copy2(const.BPMN_EMPTY_PATH, const.BPMN_PATH)
+        return make_response('', 200)
+    elif request.method == 'GET':
+        return send_file(const.BPMN_PATH)
+    elif request.method == 'POST':
+        # TODO
+        return
+    return redirect('settings/process-model')
 
 
 @dashbord_bp.route('/api/manifest', methods=['POST', 'GET', 'DELETE', 'VALIDATE'])
@@ -40,7 +54,7 @@ def handle_mainfest():
             file = request.files['blf-manifest']
             # If the user does not select a file, the browser submits an
             # empty file without a filename.
-            if file.filename != '' and file and allowed_file(file.filename):
+            if file.filename != '' and file and allowed_file(file.filename, const.ALLOWED_MANIFEST_EXTENSIONS):
                 # filename = secure_filename(file.filename)
                 file.save(os.path.join(const.MANIFEST_PATH))
                 return redirect('/settings/manifest')
