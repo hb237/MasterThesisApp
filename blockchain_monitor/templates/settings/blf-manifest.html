@@ -3,7 +3,51 @@
 BLF Manifest
 {% endblock %}
 
-{% block javascript %}
+{% block main_content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="my-2 btn-toolbar">
+            <div class="input-group">
+                <form id="manifest-form" method="POST" enctype="multipart/form-data" action="/api/manifest">
+                    <label class="btn btn-light border-2 border-dark" for="blf-manifest" title="upload manifest"><i
+                            class="fas fa-upload"></i></label>
+                    <input style="display:none;" type="file" id="blf-manifest" name="blf-manifest"
+                        onchange="this.form.submit();" />
+                </form>
+            </div>
+            <a class="btn btn-light border-2 border-dark ms-1" href="/api/manifest" download="manifest.bcql"
+                title="download currently stored manifest"><i class="fas fa-download"></i></a>
+            <button class="btn btn-outline-danger border-2 ms-1" onclick="reset_manifest();"
+                title="replace current manifest with an empty one">
+                <i class="fas fa-trash-alt"></i></i></button>
+            <button class="btn btn-outline-primary border-2 ms-1" onclick="save_and_validate_manifest();">
+                <i class="fas fa-save"></i><span class="ms-2">Save + Validate</span></button>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div>
+        <div class="col-md-12 border" id="ace-editor-parent">
+            <div id="ace-editor" name="ace-editor"></div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-md-4">
+        <div id="validation-success" class="d-none alert alert-success alert-dismissible fade show">
+            <strong>Success!</strong> The manifest validation completed successfully.
+            <button type="button" class="btn-close" aria-label="Close" onclick="hide('validation-success');"></button>
+        </div>
+        <div id="validation-error" class="d-none alert alert-danger alert-dismissible fade show">
+            <strong>Not valid!</strong> The manifest raised the following errors:<br />
+            <span id="validation-error-msg">Err</span>
+            <button type="button" class="btn-close" aria-label="Close" onclick="hide('validation-error');"></button>
+        </div>
+    </div>
+</div>
+
 <script>
     var editor;
     $(document).ready(function () {
@@ -72,50 +116,4 @@ BLF Manifest
         $('#' + id).addClass('d-none')
     }
 </script>
-{% endblock %}
-
-{% block main_content %}
-<div class="row">
-    <div class="col-md-12">
-        <div class="my-2 btn-toolbar">
-            <div class="input-group">
-                <form id="manifest-form" method="POST" enctype="multipart/form-data" action="/api/manifest">
-                    <label class="btn btn-light border-2 border-dark" for="blf-manifest" title="upload manifest"><i
-                            class="fas fa-upload"></i></label>
-                    <input style="display:none;" type="file" id="blf-manifest" name="blf-manifest"
-                        onchange="this.form.submit();" />
-                </form>
-            </div>
-            <a class="btn btn-light border-2 border-dark ms-1" href="/api/manifest" download="manifest.bcql"
-                title="download currently stored manifest"><i class="fas fa-download"></i></a>
-            <button class="btn btn-outline-danger border-2 ms-1" onclick="reset_manifest();"
-                title="replace current manifest with an empty one">
-                <i class="fas fa-trash-alt"></i></i></button>
-            <button class="btn btn-outline-primary border-2 ms-1" onclick="save_and_validate_manifest();">
-                <i class="fas fa-save"></i><span class="ms-2">Save + Validate</span></button>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div>
-        <div class="col-md-12 border" id="ace-editor-parent">
-            <div id="ace-editor" name="ace-editor"></div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-2">
-    <div class="col-md-4">
-        <div id="validation-success" class="d-none alert alert-success alert-dismissible fade show">
-            <strong>Success!</strong> The manifest validation completed successfully.
-            <button type="button" class="btn-close" aria-label="Close" onclick="hide('validation-success');"></button>
-        </div>
-        <div id="validation-error" class="d-none alert alert-danger alert-dismissible fade show">
-            <strong>Not valid!</strong> The manifest raised the following errors:<br />
-            <span id="validation-error-msg">Err</span>
-            <button type="button" class="btn-close" aria-label="Close" onclick="hide('validation-error');"></button>
-        </div>
-    </div>
-</div>
 {% endblock %}

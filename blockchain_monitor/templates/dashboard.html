@@ -2,34 +2,7 @@
 {% block title %}
 Dashboard
 {% endblock %}
-{% block javascript %}
-<script>
-    $(document).ready(function () {
-        $('#block_statistic').DataTable({
-            "dom":
-                "<'row'<'col search-left'f>>" +
-                "<'row'<'col't>>" +
-                "<'row'<'col pagination-sm pagination-left'p>>",
-        });
-    });
-    $(document).ready(function () {
-        $('#sender_statistic').DataTable({
-            "dom":
-                "<'row'<'col search-left'f>>" +
-                "<'row'<'col't>>" +
-                "<'row'<'col pagination-sm pagination-left'p>>",
-        });
-    });
-    $(document).ready(function () {
-        $('#receiver_statistic').DataTable({
-            "dom":
-                "<'row'<'col search-left'f>>" +
-                "<'row'<'col't>>" +
-                "<'row'<'col pagination-sm pagination-left'p>>",
-        });
-    });
-</script>
-{% endblock %}
+
 {% block main_content %}
 <div class="row">
     <div class="col-3">
@@ -125,4 +98,30 @@ Dashboard
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $('#block_statistic').DataTable({
+            "dom":
+                "<'row'<'col search-left'f>>" +
+                "<'row'<'col't>>" +
+                "<'row'<'col pagination-sm pagination-left'p>>",
+        });
+    });
+    $(document).ready(function () {
+        $('#sender_statistic').DataTable({
+            "dom":
+                "<'row'<'col search-left'f>>" +
+                "<'row'<'col't>>" +
+                "<'row'<'col pagination-sm pagination-left'p>>",
+        });
+    });
+    $(document).ready(function () {
+        $('#receiver_statistic').DataTable({
+            "dom":
+                "<'row'<'col search-left'f>>" +
+                "<'row'<'col't>>" +
+                "<'row'<'col pagination-sm pagination-left'p>>",
+        });
+    });
+</script>
 {% endblock %}

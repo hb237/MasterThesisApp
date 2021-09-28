@@ -4,7 +4,34 @@
 Primary Dashboard
 {% endblock %}
 
-{% block javascript %}
+{% block main_content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                Sender Statistics
+            </div>
+            <div class="card-body">
+                <table id="sender-stats">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                Receiver Statistics
+            </div>
+            <div class="card-body">
+                <table id="receiver-stats">
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
         /* TODO change to web-socket or query every second */
@@ -34,33 +61,4 @@ Primary Dashboard
         });
     });
 </script>
-{% endblock %}
-
-{% block main_content %}
-<div class="row">
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-table me-1"></i>
-                Sender Statistics
-            </div>
-            <div class="card-body">
-                <table id="sender-stats">
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-table me-1"></i>
-                Receiver Statistics
-            </div>
-            <div class="card-body">
-                <table id="receiver-stats">
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
 {% endblock %}
