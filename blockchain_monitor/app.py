@@ -52,5 +52,6 @@ def set_input_mode():
 
 
 if __name__ == '__main__':
+    # TODO launch file merger
     from webapp import app
     app.run(debug=True)
