@@ -1,21 +1,13 @@
-#parent {
+#ace-editor-parent {
     height: 500px;
     display: inline-block;
     position: relative;
 }
 
-#editor {
+#ace-editor {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-}
-
-label {
-    /* Other styling... */
-    text-align: right;
-    clear: both;
-    float: left;
-    margin-right: 15px;
 }

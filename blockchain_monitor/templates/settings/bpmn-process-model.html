@@ -5,26 +5,34 @@ Process Model
 {% endblock %}
 
 {% block main_content %}
-<div class="d-flex buttons mb-2">
-    <div class="file-mgmt-btn">
-        <button id="save-button" class="btn border-2 border-dark" onclick="exportDiagram()"
-            title="download as BPMN 2.0 diagram"><i class="fas fa-download"></i></button>
-        <button id="new-diagram-button" class="btn border-2 border-dark" onclick="createNewDiagram()"
-            title="create new BPMN diagram"><i class="fas fa-file"></i></button>
-        <button id="import-bpmn-button" class="btn border-2 border-dark" onclick="importBPMN()"
-            title="upload BPMN diagram"><i class="fas fa-upload"></i></button>
-    </div>
-    <div class="ms-4 zoom-buttons">
-        <button id="zoomin-button" class="btn border-2 border-dark" onclick="zoomIn()" title="zoom in"><i
-                class="fas fa-plus"></i></button>
-        <button id="zoomout-button" class="btn border-2 border-dark" onclick="zoomOut()" title="zoom out"><i
-                class="fas fa-minus"></i></button>
-        <button id="zoomreset-button" class="btn border-2 border-dark" onclick="zoomReset()" title="reset zoom"><i
-                class="fas fa-crosshairs"></i></button>
+<div class="row">
+    <div class="col-md-12">
+        <div class="my-2 d-flex buttons">
+            <div class="file-mgmt-btn">
+                <button id="save-button" class="btn border-2 border-dark" onclick="exportDiagram()"
+                    title="download as BPMN 2.0 diagram"><i class="fas fa-download"></i></button>
+                <button id="new-diagram-button" class="btn border-2 border-dark" onclick="createNewDiagram()"
+                    title="create new BPMN diagram"><i class="fas fa-file"></i></button>
+                <button id="import-bpmn-button" class="btn border-2 border-dark" onclick="importBPMN()"
+                    title="upload BPMN diagram"><i class="fas fa-upload"></i></button>
+            </div>
+            <div class="ms-4 zoom-buttons">
+                <button id="zoomin-button" class="btn border-2 border-dark" onclick="zoomIn()" title="zoom in"><i
+                        class="fas fa-plus"></i></button>
+                <button id="zoomout-button" class="btn border-2 border-dark" onclick="zoomOut()" title="zoom out"><i
+                        class="fas fa-minus"></i></button>
+                <button id="zoomreset-button" class="btn border-2 border-dark" onclick="zoomReset()"
+                    title="reset zoom"><i class="fas fa-crosshairs"></i></button>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="border" id="canvas">
+<div class="row">
+    <div class="col-md-12">
+        <div class="border" style="height: 500px;" id="canvas">
+        </div>
+    </div>
 </div>
 
 <script>
