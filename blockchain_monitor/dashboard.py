@@ -1,11 +1,12 @@
 from werkzeug.utils import redirect
 import blockchain_connector as bc
 from data_processor import DataProcessor
-import os
 from flask import Blueprint, request, make_response, send_file
 import constants as const
+import os
 import app
 import shutil
+import json
 
 cbs = bc.get_current_block_stats()
 current_block_number = 100000000  # TODO
@@ -17,6 +18,21 @@ if cbs is not None:
 dp = DataProcessor(0, current_block_number)
 
 dashbord_bp = Blueprint('dashboard', __name__, template_folder='templates')
+
+
+def process_settings(form_dict: dict):
+    with open(const.SETTINGS_PATH, "w") as settings_file:
+        json.dump(form_dict, settings_file, indent=4, sort_keys=True)
+    # TODO set important variables
+
+
+@dashbord_bp.route('/api/settings', methods=['POST', 'GET'])
+def handle_settings():
+    if request.method == 'POST':
+        process_settings(request.form)
+        return redirect('/settings/general')
+    elif request.method == 'GET':
+        return send_file(const.SETTINGS_PATH)
 
 
 def allowed_file(filename, allow_extensions):

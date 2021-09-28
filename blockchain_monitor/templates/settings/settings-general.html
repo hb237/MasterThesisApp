@@ -4,27 +4,27 @@ General Settings
 {% endblock %}
 {% block main_content %}
 <form id="settings-form" class="mt-3" method="POST" action="/api/settings">
-    Ehtereum Client connection
-    <div class="row g-3">
+    <div class="row g-3 me-xl-5">
         <div class="col-xl-3">
-            <label for="inputStartBlock" class="form-label">Start block</label>
-            <input type="number" class="form-control" id="inputStartBlock" step="1" min="0">
+            <label for="inputStartBlock" class="form-label">Start block:</label>
+            <input type="number" class="form-control" id="inputStartBlock" name="inputStartBlock" step="1" min="0">
         </div>
         <div class="col-xl-3">
-            <label for="inputEndBlock" class="form-label">End block</label>
-            <input type="number" class="form-control" id="inputEndBlock" step="1" min="0">
+            <label for="inputEndBlock" class="form-label">End block:</label>
+            <input type="number" class="form-control" id="inputEndBlock" name="inputEndBlock" step="1" min="0">
         </div>
         <div class="col-xl-3">
-            <label for="inputRefreshRate" class="form-label">Refresh rate</label>
+            <label for="inputRefreshRate" class="form-label">Refresh rate:</label>
             <div class="input-group mb-3">
                 <span class="input-group-text">every</span>
-                <input type="number" class="form-control text-center" id="inputRefreshRate" step="0.1" min="0.1">
+                <input type="number" class="form-control text-center" id="inputRefreshRate" name="inputRefreshRate"
+                    step="0.1" min="0.1">
                 <span class="input-group-text">seconds</span>
             </div>
         </div>
         <div class="col-xl-3">
             <label for="selectInputMode" class="form-label">Input mode:</label>
-            <select id="selectInputMode" class="form-select">
+            <select id="selectInputMode" name="selectInputMode" class="form-select">
                 <option disabled selected value>Select an input mode ...</option>
                 <option value="streaming-live-data">Streaming - live data</option>
                 <option value="streaming-example-data">Streaming - example data</option>
@@ -36,7 +36,7 @@ General Settings
         <!-- add to js on load -->
         <div class="col-xl-3">
             <label for="selectDataSet" class="form-label">Example data set:</label>
-            <select id="selectDataSet" class="form-select">
+            <select id="selectDataSet" name="selectDataSet" class="form-select">
                 <option disabled selected value>Select an example data set ...</option>
                 <!-- get options from server -->
             </select>
@@ -44,21 +44,23 @@ General Settings
         <!-- applies only for streaming mode example data -->
         <div class="col-xl-3">
             <label for="inputReplaySpeed" class="form-label">Replay speed:</label>
-            <input type="number" class="form-control text-center" id="inputReplaySpeed" step="0.1" min="0.1">
+            <input type="number" class="form-control" id="inputReplaySpeed" name="inputReplaySpeed" step="0.1"
+                min="0.1">
         </div>
         <!-- applies only for live mode  -->
         <div class="col-xl-3">
             <label for="inputConfirmationBlocks" class="form-label">Number of confirmation blocks</label>
-            <input type="number" class="form-control" id="inputConfirmationBlocks" min="0">
+            <input type="number" class="form-control" id="inputConfirmationBlocks" name="inputConfirmationBlocks"
+                min="0">
         </div>
         <!-- Geth WebSocket connection -->
         <div class="col-xl-3">
-            <label for="inputGethIP" class="form-label">Geth node IP address</label>
-            <input type="text" class="form-control" id="inputGethIP" min="0">
+            <label for="inputGethIP" class="form-label">Geth node IP address:</label>
+            <input type="text" class="form-control" id="inputGethIP" name="inputGethIP" min="0">
         </div>
         <div class="col-xl-3">
-            <label for="inputGethPort" class="form-label">Geth node port</label>
-            <input type="number" class="form-control" id="inputGethPort" step="1" min="0">
+            <label for="inputGethPort" class="form-label">Geth node port:</label>
+            <input type="number" class="form-control" id="inputGethPort" name="inputGethPort" step="1" min="0">
         </div>
         <!-- geth test connection?? -->
         <div class="col-xl-3">
@@ -66,4 +68,17 @@ General Settings
         </div>
     </div>
 </form>
+
+<script>
+    // get current settings stored on server
+    $.ajax({
+        url: "/api/settings",
+        type: 'GET',
+        success: function (res) {
+            Object.keys(res).forEach(function (key) {
+                $('#' + key).val(res[key])
+            });
+        }
+    });
+</script>
 {% endblock %}

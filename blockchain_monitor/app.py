@@ -22,10 +22,15 @@ def validate_current_manifest():
 
 
 def launch_file_reader():
+    # TODO either launch at start up or by user request
+    # reader_process = multiprocessing.Process(target=file_reader.read_in)
+    # reader_process.start()
     return
 
 
 def launch_file_feeder():
+    # feeder_process = multiprocessing.Process(target=file_feeder.feed_files(300))
+    # feeder_process.start()
     return
 
 
@@ -47,13 +52,5 @@ def set_input_mode():
 
 
 if __name__ == '__main__':
-    # # Create processes for file reader TODO dashboard
-    # reader_process = multiprocessing.Process(target=file_reader.read_in)
-    # reader_process.start()
-
-    # # Start file feeder or start BLF extraction
-    # feeder_process = multiprocessing.Process(target=file_feeder.feed_files(300))
-    # feeder_process.start()
-
     from webapp import app
     app.run(debug=True)

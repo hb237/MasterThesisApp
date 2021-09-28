@@ -12,3 +12,4 @@ BPMN_PATH = 'static/user_uploads/diagram.bpmn'
 BPMN_EMPTY_PATH = 'static/empty-diagram.bpmn'
 ALLOWED_MANIFEST_EXTENSIONS = {'txt', 'bcql'}
 ALLOWED_BPMN_EXTENSIONS = {'xml', 'bpmn'}
+SETTINGS_PATH = 'static/user_uploads/settings.json'
