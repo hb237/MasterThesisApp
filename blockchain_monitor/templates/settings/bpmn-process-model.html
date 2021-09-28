@@ -5,12 +5,29 @@ Process Model
 {% endblock %}
 
 {% block main_content %}
-<div id="canvas"></div>
+<div class="d-flex buttons mb-2">
+    <div class="file-mgmt-btn">
+        <button id="save-button" class="btn border-2 border-dark" onclick="exportDiagram()"
+            title="download as BPMN 2.0 diagram"><i class="fas fa-download"></i></button>
+        <button id="new-diagram-button" class="btn border-2 border-dark" onclick="createNewDiagram()"
+            title="create new BPMN diagram"><i class="fas fa-file"></i></button>
+        <button id="import-bpmn-button" class="btn border-2 border-dark" onclick="importBPMN()"
+            title="upload BPMN diagram"><i class="fas fa-upload"></i></button>
+    </div>
+    <div class="ms-4 zoom-buttons">
+        <button id="zoomin-button" class="btn border-2 border-dark" onclick="zoomIn()" title="zoom in"><i
+                class="fas fa-plus"></i></button>
+        <button id="zoomout-button" class="btn border-2 border-dark" onclick="zoomOut()" title="zoom out"><i
+                class="fas fa-minus"></i></button>
+        <button id="zoomreset-button" class="btn border-2 border-dark" onclick="zoomReset()" title="reset zoom"><i
+                class="fas fa-crosshairs"></i></button>
+    </div>
+</div>
 
-<button id="save-button">print to console</button>
+<div class="border" id="canvas">
+</div>
 
 <script>
-
     var diagramUrl = 'https://cdn.staticaly.com/gh/bpmn-io/bpmn-js-examples/dfceecba/starter/diagram.bpmn';
 
     // modeler instance
@@ -21,20 +38,31 @@ Process Model
         }
     });
 
+    function zoomIn() {
+        bpmnModeler.get('zoomScroll').stepZoom(1);
+    }
+
+    function zoomOut() {
+        bpmnModeler.get('zoomScroll').stepZoom(-1);
+    }
+
+    function zoomReset() {
+        bpmnModeler.get('zoomScroll').reset();
+    }
+
+    function importBPMN() {
+        $.get(diagramUrl, openDiagram, 'text');
+    }
+
     /**
      * Save diagram contents and print them to the console.
      */
     async function exportDiagram() {
-
         try {
-
             var result = await bpmnModeler.saveXML({ format: true });
-
             alert('Diagram exported. Check the developer tools!');
-
             console.log('DIAGRAM', result.xml);
         } catch (err) {
-
             console.error('could not save BPMN 2.0 diagram', err);
         }
     }
@@ -45,16 +73,13 @@ Process Model
      * @param {String} bpmnXML diagram to display
      */
     async function openDiagram(bpmnXML) {
-
         // import diagram
         try {
-
             await bpmnModeler.importXML(bpmnXML);
 
             // access modeler components
             var canvas = bpmnModeler.get('canvas');
             var overlays = bpmnModeler.get('overlays');
-
 
             // zoom to fit full viewport
             canvas.zoom('fit-viewport');
@@ -71,33 +96,11 @@ Process Model
             // add marker
             canvas.addMarker('SCAN_OK', 'needs-discussion');
         } catch (err) {
-
             console.error('could not import BPMN 2.0 diagram', err);
         }
     }
 
-
     // load external diagram file via AJAX and open it
     $.get(diagramUrl, openDiagram, 'text');
-
-    // wire save button
-    $('#save-button').click(exportDiagram);
 </script>
-<!--
-      Thanks for trying out our BPMN toolkit!
-
-      This example uses the pre-built distribution of the bpmn-js modeler.
-      Consider rolling your own distribution to have more flexibility
-      regarding which features to include.
-
-      Checkout our advanced examples section to learn more:
-      * https://github.com/bpmn-io/bpmn-js-examples#advanced
-
-      To get a bit broader overview over how bpmn-js works,
-      follow our walkthrough:
-      * https://bpmn.io/toolkit/bpmn-js/walkthrough/
-
-      Related starters:
-      * https://raw.githubusercontent.com/bpmn-io/bpmn-js-examples/starter/viewer.html
-    -->
 {% endblock %}
