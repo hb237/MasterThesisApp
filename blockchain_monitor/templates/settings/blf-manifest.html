@@ -77,21 +77,26 @@ BLF Manifest
 {% block main_content %}
 <div class="row">
     <div class="col-md-8">
-        <div class="my-2 d-flex">
-            <div class=" d-inline-block">
+        <div class="my-2 btn-toolbar">
+            <div class="d-inline-block">
                 <div class="input-group">
                     <div>
                         <form id="manifest-form" method="POST" enctype="multipart/form-data" action="/api/manifest">
-                            <label class=" btn btn-sm btn-light border-2 border-dark" for="blf-manifest">
-                                <i class="fas fa-upload"></i><span class="ms-2">Upload</span></label>
+                            <label class="btn btn-light border-2 border-dark me-0" for="blf-manifest"
+                                title="upload manifest"><i class="fas fa-upload"></i></label>
                             <input style="display:none;" type="file" id="blf-manifest" name="blf-manifest"
                                 onchange="this.form.submit();" />
                         </form>
                     </div>
                 </div>
             </div>
-            <a class="btn btn-sm btn-light border-2 border-dark" href="/api/manifest" download="manifest.bcql"><i
-                    class="fas fa-download"></i><span class="ms-2">Download</span></a>
+            <a class="btn btn-light border-2 border-dark ms-1" href="/api/manifest" download="manifest.bcql"
+                title="download manifest"><i class="fas fa-download"></i></a>
+            <button class="btn btn-outline-primary border-2 ms-1" onclick="save_and_validate_manifest();">
+                <i class="fas fa-save"></i><span class="ms-2">Save + Validate</span></button>
+            <button class="btn btn-outline-danger border-2 ms-1" onclick="reset_manifest();"
+                title="replace current manifest with an empty one">
+                <i class="fas fa-trash-alt"></i></i></button>
         </div>
     </div>
 </div>
@@ -100,17 +105,6 @@ BLF Manifest
     <div>
         <div class="col-md-12 border" id="parent">
             <div id="editor" name="editor"></div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-6">
-        <div class="mt-2">
-            <button class="btn btn-sm btn-primary border-2 border-dark" onclick="save_and_validate_manifest();">
-                <i class="fas fa-save"></i><span class="ms-2">Save and Validate</span></button>
-            <button class="btn btn-sm btn-danger border-2 border-dark ms-2" onclick="reset_manifest();">
-                <i class="fas fa-trash-alt"></i></i><span class="ms-2">Reset</span></button>
         </div>
     </div>
 </div>

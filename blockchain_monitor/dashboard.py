@@ -43,7 +43,7 @@ def handle_mainfest():
             if file.filename != '' and file and allowed_file(file.filename):
                 # filename = secure_filename(file.filename)
                 file.save(os.path.join(const.MANIFEST_PATH))
-                return make_response('', 200)
+                return redirect('/settings/manifest')
         else:
             editor_content = request.form['editor_content']
             with open(const.MANIFEST_PATH, "w") as text_file:
