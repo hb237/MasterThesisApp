@@ -12,14 +12,15 @@ Process Model
                 <a id="save-button" class="btn btn-light border-2 border-dark" href="/api/process_model"
                     download="diagram.bpmn" title="download currently stored BPMN 2.0 diagram"><i
                         class="fas fa-download"></i></a>
-                <button id="import-bpmn-button" class="btn btn-light border-2 border-dark" onclick="importBPMN()"
+                <button id="import-bpmn-button" class="btn btn-light border-2 border-dark" onclick="uploadDiagram()"
                     title="upload BPMN diagram"><i class="fas fa-upload"></i></button>
                 <button id="new-diagram-button" class="btn btn-outline-danger border-2" onclick="resetDiagram()"
                     title="replace current BPMN diagram with an empty one"><i class="fas fa-trash"></i></button>
-                <button class="btn btn-outline-primary border-2" onclick="save_and_validate_process_diagram();">
-                    <i class="fas fa-save"></i><span class="ms-2">Save + Validate</span></button>
+                <button class="btn btn-outline-primary border-2" onclick="saveProcessDiagram();"
+                    title="save the displayed model to the server">
+                    <i class="fas fa-save"></i></button>
             </div>
-            <div class="ms-5 zoom-buttons">
+            <div class="ms-4 zoom-buttons">
                 <button id="zoomin-button" class="btn btn-light border-2 border-dark" onclick="zoomIn()"
                     title="zoom in"><i class="fas fa-plus"></i></button>
                 <button id="zoomout-button" class="btn btn-light border-2 border-dark" onclick="zoomOut()"
@@ -69,10 +70,6 @@ Process Model
         bpmnModeler.get('zoomScroll').reset();
     }
 
-    function importBPMN() {
-
-    }
-
     function resetDiagram() {
         // TODO true reset
         var diagramUrl = '/static/empty-diagram.bpmn';
@@ -96,8 +93,28 @@ Process Model
             var result = await bpmnModeler.saveXML({ format: true });
             console.log('DIAGRAM', result.xml);
         } catch (err) {
-            console.error('could not download BPMN 2.0 diagram', err);
+            console.error('could not save BPMN 2.0 diagram', err);
         }
+    }
+
+    async function saveProcessDiagram() {
+        try {
+            var result = await bpmnModeler.saveXML({ format: true });
+            $.ajax({
+                url: '/api/process_model',
+                type: 'POST',
+                contentType: "text/xml",
+                dataType: "text",
+                data: result.xml,
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+                }
+            });
+        } catch (err) {
+            console.error('could not save BPMN 2.0 diagram', err);
+        }
+
     }
 
     /**

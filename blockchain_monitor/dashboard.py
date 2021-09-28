@@ -33,8 +33,11 @@ def handle_process_model():
     elif request.method == 'GET':
         return send_file(const.BPMN_PATH)
     elif request.method == 'POST':
-        # TODO
-        return
+        if request.data:
+            canvas_content = str(request.data, 'utf-8')
+            with open(const.BPMN_PATH, "w") as text_file:
+                text_file.write(canvas_content)
+            return make_response('', 200)
     return redirect('settings/process-model')
 
 
