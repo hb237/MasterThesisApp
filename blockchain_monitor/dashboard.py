@@ -12,35 +12,26 @@ dp = DataProcessor()
 dashboard_bp = Blueprint('dashboard', __name__, template_folder='templates')
 
 
-def validate_settings(from_dict: dict) -> bool:
-    # TODO
-    return
+@dashboard_bp.route('/api/start_monitoring', methods=['GET'])
+def start_monitoring():
+    dp.init_processing()
+    return '', 202
 
 
-def process_settings(form_dict: dict):
-    with open(const.SETTINGS_PATH, "w") as settings_file:
-        const.SETTINGS = form_dict
-        # settings_file.write(const.SETTINGS)
-        json.dump(form_dict, settings_file, indent=4, sort_keys=True)
-    # validate_settings()  # TODO
-    dp.start_processing()
+@dashboard_bp.route('/api/stop_monitoring', methods=['GET'])
+def stop_monitoring():
+    dp.stop_processing()
+    return '', 202
 
 
 @dashboard_bp.route('/api/settings', methods=['POST', 'GET'])
 def handle_settings():
     if request.method == 'POST':
-        process_settings(request.form)
+        with open(const.SETTINGS_PATH, "w") as settings_file:
+            json.dump(request.form, settings_file, indent=4, sort_keys=True)
         return redirect('/settings/general')
     elif request.method == 'GET':
         return send_file(const.SETTINGS_PATH)
-
-
-@dashboard_bp.route('/api/monitoring_status', methods=['GET'])
-def get_monitoring_status():
-    if dp.process == None:
-        return "stopped", 200
-    else:
-        return "running", 200
 
 
 def allowed_file(filename, allow_extensions):

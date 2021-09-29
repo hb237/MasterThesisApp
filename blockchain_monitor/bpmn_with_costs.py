@@ -2,11 +2,14 @@ from graphviz import Digraph
 from pandas.core.frame import DataFrame
 from pm4py.objects.bpmn.obj import BPMN
 from pm4py.objects.bpmn.util.sorting import get_sorted_nodes_edges
+import tempfile
 
 
 def apply(bpmn_graph, xes_log_tree, currency: str, currency_rate: float, ndigits=int(2), format="png", rankdir="LR", font_size=12):
     font_size = str(font_size)
-    viz = Digraph(engine='dot', graph_attr={'bgcolor': 'transparent'})
+    filename = tempfile.NamedTemporaryFile(suffix='.gv')
+    viz = Digraph(filename=filename.name, engine='dot', graph_attr={
+                  'bgcolor': 'transparent'})
     viz.graph_attr['rankdir'] = rankdir
 
     nodes, edges = get_sorted_nodes_edges(bpmn_graph)

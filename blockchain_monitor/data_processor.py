@@ -1,24 +1,20 @@
-from os import stat
-from typing import List
 import lxml.etree as ET
-from lxml.etree import Element
 import pm4py
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.algo.discovery.dfg import algorithm as dfg_discovery
 from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
-from pm4py.objects.log.obj import EventLog
 from pm4py.visualization.dfg import visualizer as dfg_visualization
 from pm4py.algo.filtering.log.attributes import attributes_filter
 from pm4py.objects.conversion.log.variants.to_event_log import Parameters
 from pm4py.objects.conversion.bpmn import converter as bpmn_converter
+from pm4py.visualization.bpmn import visualizer as bpmn_visualizer
+from multiprocessing import Process, process
 import constants as const
 import blockchain_connector as bc
 import requests
 import bpmn_with_costs
-from pm4py.visualization.bpmn import visualizer as bpmn_visualizer
 import json
-from enum import Enum
 
 
 STREAM_LIVE = 'streaming-live-data'
@@ -28,31 +24,56 @@ STATIC = 'static'
 
 class DataProcessor():
     def __init__(self) -> None:
-        self.process = None
+        self.analysis_process: Process = None
 
-        self.pm4py_log = None
-        self.from_block = 0
-        self.to_block = 100000000
-        self.current_block_number = 100000000
-        self.current_block_timestamp = None
-        self.xes_log_tree = None
-        self.confirmation_blocks = 0
-        self.refresh_rate = 1
-        self.replay_speed = 1
-        self.input_mode = None
+    def set_settings(self):
+        with open(const.SETTINGS_PATH) as json_file:
+            config = json.loads(json_file.read())
 
-    #  TODO trigger when manifest saved? or when user presses start button
-    def start_processing(self):
+        self.last_x_blocks: bool = json.loads(
+            config.get('chkLastXBlocks', 'false'))
+        self.recent_block: bool = json.loads(
+            config.get('chkRecentBlock', 'false'))
+        self.confirmation_blocks = int(config.get(
+            'inputConfirmationBlocks', 0))
+        self.end_block = int(config.get(
+            'inputEndBlock', 0))
+        self.start_block = int(config.get(
+            'inputStartBlock', 0))
+        self.refresh_rate = int(config.get(
+            'inputRefreshRate', 1))
+        self.replay_speed = int(config.get(
+            'inputReplaySpeed', 1))
+        self.noise_threshold = float(config.get(
+            'inputNoiseThreshold', 0.8))
+        self.currency = self.geth_ip = str(
+            config.get('selectCurrency', 'EUR'))
+        self.data_set = str(
+            config.get('selectDataSet', ''))
+        self.input_mode = str(
+            config.get('selectInputMode', STREAM_EXAMPLE))
+
+    def stop_processing(self):
+        process
+        return
+
+    def init_processing(self):
+        self.set_settings()
+
+        # Terminate running process
+        if self.analysis_process is not None:
+            self.analysis_process.terminate()
+
         # Fixed range: start = static and end = static
         # Floating range: start = current and end = current - x blocks
         # Growing range: start = current and end = static
 
-        # TODO delete old visualizations
-        self.input_mode = const.SETTINGS.get('selectInputMode')
-        # TODO delete data?? or just one file per diagram
         if self.input_mode == STATIC:
-            # TODO Static mode
-            pass
+            self.analysis_process = Process(
+                target=self.process_data,
+                daemon=True
+            )
+            self.analysis_process.start()
         elif self.input_mode == STREAM_EXAMPLE:
             # TODO launch file feeder
             # TODO get selected example files
@@ -62,33 +83,21 @@ class DataProcessor():
             pass
 
         if self.input_mode == STREAM_EXAMPLE or self.input_mode == STREAM_LIVE:
-            if self.process is None:
-                # TODO launch new process
-                pass
-            else:
-                # TODO stop running process and launch a new one
-                pass
+            self.analysis_process = Process(
+                target=self.continuously_process_data,
+                daemon=True
+            )
+            self.analysis_process.start()
+
+    def continuously_process_data(self):
+        pass
+        # while(True):
+        #     self.process_data()
 
     def process_data(self):
-        cbs = bc.get_current_block_stats()
-        if cbs is not None:
-            self.current_block_number = cbs['current_block_number']
-            self.current_block_timestamp = cbs['current_block_timestamp']
-        # TODO implement last x-blocks + variable for most recent block
-        self.from_block = int(const.SETTINGS.get('inputStartBlock'))
-        self.to_block = int(const.SETTINGS.get('inputEndBlock'))
-        self.read_log_filtered()
-        self.xes_log_tree = ET.parse(const.XES_FILES_COMBINED_PATH_TEST)
-        self.confirmation_blocks = int(
-            const.SETTINGS.get('inputConfirmationBlocks'))
+        self.create_shared_datastructures()
 
-        self.traces = None
-        self.events = None
-        self.rates = {}
-        self.block_stats = {}
-        self.sender_stats = {}
-        self.receiver_stats = {}
-
+        # Execute all analysis methods
         self.create_petri_net()
         self.create_bmpn_diagram(noise_threshold=0.8)
         self.create_bpmn_diagram_with_costs(
@@ -100,17 +109,31 @@ class DataProcessor():
         self.retreive_eth_rates()
         self.reitreive_sender_stats()
         self.retreive_receiver_stats()
-        self.execute_conformance_checking()
-        return
+        # self.execute_conformance_checking() TODO
 
-    def read_log_filtered(self) -> EventLog:
+    def create_shared_datastructures(self):
+        # Default values
+        self.pm4py_log = None
+        self.xes_log_tree = None
+        self.current_block_number = 100200300
+        self.current_block_timestamp = None
+
+        # Get current block number and its timestamp
+        cbs = bc.get_current_block_stats()
+        if cbs is not None:
+            self.current_block_number = cbs['current_block_number']
+            self.current_block_timestamp = cbs['current_block_timestamp']
+
+        # Create a pm4py log as on input for further analysis
         log = xes_importer.apply(
             const.XES_FILES_COMBINED_PATH_TEST)  # TODO change path
-        self.pm4py_log = attributes_filter.apply_numeric(log, self.from_block, self.to_block,
+        self.pm4py_log = attributes_filter.apply_numeric(log, self.start_block, self.end_block,
                                                          parameters={Parameters.CASE_ATTRIBUTE_PREFIX: '',
                                                                      attributes_filter.Parameters.CASE_ID_KEY: 'ident:piid',
                                                                      attributes_filter.Parameters.ATTRIBUTE_KEY: 'tx_blocknumber',
                                                                      attributes_filter.Parameters.POSITIVE: True})
+        # Read in log as tree
+        self.xes_log_tree = ET.parse(const.XES_FILES_COMBINED_PATH_TEST)
 
     def create_petri_net(self):
         net, initial_marking, final_marking = inductive_miner.apply(
@@ -130,7 +153,6 @@ class DataProcessor():
             bpmn_graph, self.xes_log_tree, currency, currency_rate, ndigits=2, format='png')
         bpmn_visualizer.save(gviz, const.BPMN_COSTS_DIAGRAM)
 
-    # TODO enable filtering
     def create_dfg_frequency(self):
         dfg = dfg_discovery.apply(
             self.pm4py_log, variant=dfg_discovery.Variants.FREQUENCY)
@@ -140,7 +162,6 @@ class DataProcessor():
             dfg, log=self.pm4py_log, variant=dfg_visualization.Variants.FREQUENCY, parameters=parameters)
         dfg_visualization.save(gviz, const.DFG_FREQUENCY)
 
-    # TODO enable filtering
     def create_dfg_performance(self) -> str:
         dfg = dfg_discovery.apply(
             self.pm4py_log, variant=dfg_discovery.Variants.PERFORMANCE)
@@ -155,8 +176,8 @@ class DataProcessor():
 
     def retreive_events(self):
         events = self.xes_log_tree.findall(".//event")
-        events = filter(lambda e: self.from_block <= int(
-            e.find(".//int[@key='tx_blocknumber']").get('value')) <= self.to_block, events)
+        events = filter(lambda e: self.start_block <= int(
+            e.find(".//int[@key='tx_blocknumber']").get('value')) <= self.end_block, events)
         events = sorted(events, key=lambda e: int(
             e.find(".//int[@key='tx_blocknumber']").get('value')), reverse=True)
         self.events = events

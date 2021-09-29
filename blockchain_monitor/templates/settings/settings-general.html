@@ -25,7 +25,7 @@ General Settings
                 <div class="input-group-text">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="chkLastXBlocks" name="chkLastXBlocks"
-                            value="on">
+                            value="true">
                         <label class="form-check-label" for="chkLastXBlocks">Use as last blocks</label>
                     </div>
                 </div>
@@ -41,7 +41,8 @@ General Settings
                 <input type="number" class="form-control" id="inputEndBlock" name="inputEndBlock" step="1" min="0">
                 <div class="input-group-text">
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="chkRecentBlock" name="chkRecentBlock">
+                        <input class="form-check-input" type="checkbox" id="chkRecentBlock" name="chkRecentBlock"
+                            value="true">
                         <label class="form-check-label" for="chkRecentBlock">Use most recent block</label>
                     </div>
                 </div>
@@ -72,8 +73,8 @@ General Settings
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
             <select id="selectCurrency" name="selectCurrency" class="form-select">
                 <option disabled selected value>Select a currency ...</option>
-                <option value="test">EUR</option>
-                <option value="test">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="USD">USD</option>
                 <!-- get options from server -->
             </select>
         </div>
@@ -101,7 +102,7 @@ General Settings
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
             <select id="selectDataSet" name="selectDataSet" class="form-select">
                 <option disabled selected value>Select an example data set ...</option>
-                <option value="test">Cryptokitties</option>
+                <option value="Cryptokitties">Cryptokitties</option>
                 <!-- get options from server -->
             </select>
         </div>
@@ -135,22 +136,15 @@ General Settings
                 min="0" max="1">
         </div>
     </div>
-    <div class="row mb-2">
-        <div class="col-md-4 col-xl-3">
-            <label for="inputNoiseThreshold" class="col-form-label form-label">Monitoring status:</label>
-        </div>
-        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-            <div id="monitoring-status" class="col-form-label">running or stopped</div>
-        </div>
-    </div>
     <div class="row mt-3">
         <div class="col-md-4 col-xl-3"></div>
         <div class="col">
             <button type="submit" class="btn btn-outline-primary border-2" title="save settings to server"><i
                     class="fas fa-save"></i></button>
-            <button class="btn btn-outline-success border-2" title="save settings and start new monitoring"><i
-                    class="fas fa-play"></i></button>
-            <button class="btn btn-outline-danger border-2" title="stop monitoring"><i class="fas fa-stop"></i></button>
+            <button type="button" onclick="start_monitoring();" class="btn btn-outline-success border-2"
+                title="save settings and start new monitoring"><i class="fas fa-play"></i></button>
+            <button type="button" class="btn btn-outline-danger border-2" title="stop monitoring"><i
+                    class="fas fa-stop"></i></button>
         </div>
     </div>
 </form>
@@ -164,7 +158,7 @@ General Settings
                 val = res[key]
                 input_elem = $('#' + key)
                 if (input_elem.attr('type') == 'checkbox') {
-                    input_elem.prop('checked', val == 'on');
+                    input_elem.prop('checked', val == 'true');
                 } else {
                     input_elem.val(val)
                 }
@@ -172,12 +166,18 @@ General Settings
         }
     });
 
-    $.ajax({
-        url: "/api/monitoring_status",
-        type: 'GET',
-        success: function (res) {
-            $('#monitoring-status').text(res)
-        }
-    });
+    function start_monitoring() {
+        $.ajax({
+            url: "/api/start_monitoring",
+            type: 'GET'
+        });
+    }
+
+    function stop_monitoring() {
+        $.ajax({
+            url: "/api/stop_monitoring",
+            type: 'GET'
+        });
+    }
 </script>
 {% endblock %}

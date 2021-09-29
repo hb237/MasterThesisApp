@@ -8,7 +8,8 @@
             "name": "Python: Module",
             "type": "python",
             "request": "launch",
-            "module": "app"
+            "module": "app",
+            "justMyCode": false
         }
     ]
 }

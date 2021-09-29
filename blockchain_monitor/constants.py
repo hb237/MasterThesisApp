@@ -12,7 +12,6 @@ BPMN_EMPTY_PATH = 'static/empty-diagram.bpmn'
 ALLOWED_MANIFEST_EXTENSIONS = {'txt', 'bcql'}
 ALLOWED_BPMN_EXTENSIONS = {'xml', 'bpmn'}
 SETTINGS_PATH = 'static/user_uploads/settings.json'
-SETTINGS = {}
 
 DIAGRAMS_DIR = 'static/diagrams/'  # Do not add './' to the front.
 PETRI_NET = DIAGRAMS_DIR + 'petri_net.png'
