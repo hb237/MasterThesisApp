@@ -141,6 +141,6 @@ cython_debug/
 blf/*.jar
 xes_files/
 xes_files_combined/
-static/diagrams
+static/monitoring_data/*
 static/user_uploads
 static/node_modules

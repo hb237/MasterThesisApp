@@ -69,11 +69,12 @@ class DataProcessor():
         # Growing range: start = current and end = static
 
         if self.input_mode == STATIC:
-            self.analysis_process = Process(
-                target=self.process_data,
-                daemon=True
-            )
-            self.analysis_process.start()
+            self.process_data()
+            # self.analysis_process = Process(
+            #     target=self.process_data,
+            #     daemon=True
+            # )
+            # self.analysis_process.start()
         elif self.input_mode == STREAM_EXAMPLE:
             # TODO launch file feeder
             # TODO get selected example files
@@ -107,7 +108,8 @@ class DataProcessor():
         self.create_dfg_performance()
         self.retreive_traces()
         self.retreive_events()
-        self.reitreive_sender_stats()
+        self.retreive_block_stats()
+        self.retreive_sender_stats()
         self.retreive_receiver_stats()
         # self.execute_conformance_checking() TODO
 
@@ -172,7 +174,9 @@ class DataProcessor():
         dfg_visualization.save(gviz, const.DFG_PERFORMANCE)
 
     def retreive_traces(self):
-        self.traces = self.xes_log_tree.findall(".//trace")
+        traces = self.xes_log_tree.findall(".//trace")  # TODO
+        # with open(const.TRACES, "w") as file:
+        #     json.dump(traces, file, indent=4, sort_keys=True)
 
     def retreive_events(self):
         events = self.xes_log_tree.findall(".//event")
@@ -180,7 +184,8 @@ class DataProcessor():
             e.find(".//int[@key='tx_blocknumber']").get('value')) <= self.end_block, events)
         events = sorted(events, key=lambda e: int(
             e.find(".//int[@key='tx_blocknumber']").get('value')), reverse=True)
-        self.events = events
+        # with open(const.EVENTS, "w") as file: #TODO
+        #     json.dump(events, file, indent=4, sort_keys=True)
 
     def retreive_eth_rates(self):
         'Retrieves the current currency rates fro a multitude of currencies to pay for 1 ETH.'
@@ -191,20 +196,28 @@ class DataProcessor():
         rates = res.json()['data']['rates']
         for rate in rates:
             rates[rate] = float(rates[rate])
-        self.eth_rates = rates
+        self.rates = rates
+        with open(const.ETH_RATES, "w") as file:
+            json.dump(rates, file)
 
-    def retreive_block_stats(self) -> dict:
+    def retreive_block_stats(self) -> dict:  # TODO
         '''Returns a dictionary with all blocks as key and how many events happend in that block.'''
-        self.block_stats = attributes_filter.get_attribute_values(
+        stats = attributes_filter.get_attribute_values(
             self.pm4py_log, "tx_blocknumber")
+        result = []
+        for sender, cnt in stats.items():
+            result.append({'Sender': sender, 'Number of Events': str(cnt)})
+        with open(const.BLOCK_STATS, "w") as file:
+            json.dump(result, file)
 
-    def reitreive_sender_stats(self) -> dict:
-        sender_stats = attributes_filter.get_attribute_values(
+    def retreive_sender_stats(self) -> dict:
+        stats = attributes_filter.get_attribute_values(
             self.pm4py_log, "tx_from")
         result = []
-        for sender, cnt in sender_stats.items():
+        for sender, cnt in stats.items():
             result.append({'Sender': sender, 'Number of Events': str(cnt)})
-        self.sender_stats = json.dumps(result)
+        with open(const.SENDER_STATS, "w") as file:
+            json.dump(result, file)
 
     def retreive_receiver_stats(self) -> dict:
         sender_stats = attributes_filter.get_attribute_values(
@@ -212,7 +225,9 @@ class DataProcessor():
         result = []
         for sender, cnt in sender_stats.items():
             result.append({'Receiver': sender, 'Number of Events': str(cnt)})
-        self.receiver_stats = json.dumps(result)
+        self.receiver_stats = result
+        with open(const.RECEIVER_STATS, "w") as file:
+            json.dump(result, file)
 
     def execute_conformance_checking(self):  # TODO not done yet
         bpmn_graph = self.create_bmpn_diagram(

@@ -13,9 +13,16 @@ ALLOWED_MANIFEST_EXTENSIONS = {'txt', 'bcql'}
 ALLOWED_BPMN_EXTENSIONS = {'xml', 'bpmn'}
 SETTINGS_PATH = 'static/user_uploads/settings.json'
 
-DIAGRAMS_DIR = 'static/diagrams/'  # Do not add './' to the front.
-PETRI_NET = DIAGRAMS_DIR + 'petri_net.png'
-BPMN_DIAGRAM = DIAGRAMS_DIR + 'bpmn_diagram.png'
-BPMN_COSTS_DIAGRAM = DIAGRAMS_DIR + 'bpmn_costs_diagram.png'
-DFG_FREQUENCY = DIAGRAMS_DIR + 'dfg_frequency.png'
-DFG_PERFORMANCE = DIAGRAMS_DIR + 'dfg_performance.png'
+# Do not add './' to the front.
+MONITORING_DATA_DIR = 'static/monitoring_data/'
+PETRI_NET = MONITORING_DATA_DIR + 'petri_net.png'
+BPMN_DIAGRAM = MONITORING_DATA_DIR + 'bpmn_diagram.png'
+BPMN_COSTS_DIAGRAM = MONITORING_DATA_DIR + 'bpmn_costs_diagram.png'
+DFG_FREQUENCY = MONITORING_DATA_DIR + 'dfg_frequency.png'
+DFG_PERFORMANCE = MONITORING_DATA_DIR + 'dfg_performance.png'
+EVENTS = MONITORING_DATA_DIR + 'events.json'
+TRACES = MONITORING_DATA_DIR + 'traces.json'
+BLOCK_STATS = MONITORING_DATA_DIR + 'block_stats.json'
+SENDER_STATS = MONITORING_DATA_DIR + 'sender_stats.json'
+RECEIVER_STATS = MONITORING_DATA_DIR + 'receiver_stats.json'
+ETH_RATES = MONITORING_DATA_DIR + 'eth_rates.json'

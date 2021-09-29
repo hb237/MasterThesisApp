@@ -1,6 +1,6 @@
 from werkzeug.utils import redirect
 from data_processor import DataProcessor
-from flask import Blueprint, request, make_response, send_file
+from flask import Blueprint, request, make_response, send_file, jsonify
 import constants as const
 import os
 import app
@@ -86,25 +86,36 @@ def handle_mainfest():
 
 
 @dashboard_bp.route('/api/events', methods=['GET'])
-def get_traces():
-    return dp.events
+def get_events():
+    with open(const.EVENTS) as f:
+        return json.load(f)
 
 
 @dashboard_bp.route('/api/traces', methods=['GET'])
 def get_traces():
-    return dp.traces
+    with open(const.TRACES) as f:
+        return json.load(f)
+
+
+@dashboard_bp.route('/api/block_stats', methods=['GET'])
+def get_block_stats():
+    with open(const.BLOCK_STATS) as f:
+        return json.dumps(json.load(f))
 
 
 @dashboard_bp.route('/api/sender_stats', methods=['GET'])
 def get_sender_stats():
-    return dp.sender_stats
+    with open(const.SENDER_STATS) as f:
+        return json.dumps(json.load(f))
 
 
 @dashboard_bp.route('/api/receiver_stats', methods=['GET'])
 def get_receiver_stats():
-    return dp.receiver_stats
+    with open(const.RECEIVER_STATS) as f:
+        return json.dumps(json.load(f))
 
 
 @dashboard_bp.route('/api/eth_rates', methods=['GET'])
 def get_eth_rates():
-    return dp.eth_rates
+    with open(const.ETH_RATES) as f:
+        return json.dumps(json.load(f))
