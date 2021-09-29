@@ -9,13 +9,13 @@ BLF Manifest
         <div class="my-2 btn-toolbar hstack gap-1">
             <div class="input-group">
                 <form id="manifest-form" method="POST" enctype="multipart/form-data" action="/api/manifest">
-                    <label class="btn btn-light border-2 border-dark" for="blf-manifest" title="upload manifest"><i
+                    <label class="btn btn-outline-dark border-2" for="blf-manifest" title="upload manifest"><i
                             class="fas fa-upload"></i></label>
                     <input style="display:none;" type="file" id="blf-manifest" name="blf-manifest"
                         onchange="this.form.submit();" />
                 </form>
             </div>
-            <a class="btn btn-light border-2 border-dark" href="/api/manifest" download="manifest.bcql"
+            <a class="btn btn-outline-dark border-2" href="/api/manifest" download="manifest.bcql"
                 title="download currently stored manifest"><i class="fas fa-download"></i></a>
             <button class="btn btn-outline-danger border-2" onclick="reset_manifest();"
                 title="replace current manifest with an empty one">

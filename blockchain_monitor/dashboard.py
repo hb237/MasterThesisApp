@@ -9,17 +9,24 @@ import json
 
 
 dp = DataProcessor()
-dashbord_bp = Blueprint('dashboard', __name__, template_folder='templates')
+dashboard_bp = Blueprint('dashboard', __name__, template_folder='templates')
+
+
+def validate_settings(from_dict: dict) -> bool:
+    # TODO
+    return
 
 
 def process_settings(form_dict: dict):
     with open(const.SETTINGS_PATH, "w") as settings_file:
-        const.SETTINGS = json.dumps(form_dict, indent=4, sort_keys=True)
-        settings_file.write(const.SETTINGS)
+        const.SETTINGS = form_dict
+        # settings_file.write(const.SETTINGS)
+        json.dump(form_dict, settings_file, indent=4, sort_keys=True)
+    # validate_settings()  # TODO
     dp.start_processing()
 
 
-@dashbord_bp.route('/api/settings', methods=['POST', 'GET'])
+@dashboard_bp.route('/api/settings', methods=['POST', 'GET'])
 def handle_settings():
     if request.method == 'POST':
         process_settings(request.form)
@@ -34,7 +41,7 @@ def allowed_file(filename, allow_extensions):
            ) in allow_extensions
 
 
-@dashbord_bp.route('/api/process_model', methods=['POST', 'GET', 'DELETE'])
+@dashboard_bp.route('/api/process_model', methods=['POST', 'GET', 'DELETE'])
 def handle_process_model():
     if request.method == 'DELETE':
         shutil.copy2(const.BPMN_EMPTY_PATH, const.BPMN_PATH)
@@ -55,7 +62,7 @@ def handle_process_model():
     return redirect('/settings/process-model')
 
 
-@dashbord_bp.route('/api/manifest', methods=['POST', 'GET', 'DELETE', 'VALIDATE'])
+@dashboard_bp.route('/api/manifest', methods=['POST', 'GET', 'DELETE', 'VALIDATE'])
 def handle_mainfest():
     if request.method == 'DELETE':
         open(const.MANIFEST_PATH, 'w').close()
@@ -79,11 +86,11 @@ def handle_mainfest():
     return redirect('/settings/manifest')
 
 
-@ dashbord_bp.route("/api/sender_stats", methods=['GET'])
+@ dashboard_bp.route("/api/sender_stats", methods=['GET'])
 def get_sender_stats():
     return dp.reitreive_sender_stats()
 
 
-@ dashbord_bp.route("/api/receiver_stats", methods=['GET'])
+@ dashboard_bp.route("/api/receiver_stats", methods=['GET'])
 def get_receiver_stats():
     return dp.retreive_receiver_stats()

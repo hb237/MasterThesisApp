@@ -12,14 +12,13 @@ Process Model
                 <div class="input-group">
                     <form id="bpmn-diagram-form" method="POST" enctype="multipart/form-data"
                         action="/api/process_model">
-                        <label class=" btn btn-light border-2 border-dark" for="bpmn-diagram"
-                            title="upload BPMN diagram">
+                        <label class=" btn btn-outline-dark border-2" for="bpmn-diagram" title="upload BPMN diagram">
                             <i class="fas fa-upload"></i></label>
                         <input style="display:none;" type="file" id="bpmn-diagram" name="bpmn-diagram"
                             onchange="this.form.submit();" />
                     </form>
                 </div>
-                <a id="save-button" class="btn btn-light border-2 border-dark" href="/api/process_model"
+                <a id="save-button" class="btn btn-outline-dark border-2" href="/api/process_model"
                     download="diagram.bpmn" title="download currently stored BPMN 2.0 diagram"><i
                         class="fas fa-download"></i></a>
                 <button id="new-diagram-button" class="btn btn-outline-danger border-2" onclick="resetDiagram()"
@@ -29,11 +28,11 @@ Process Model
                     <i class="fas fa-save"></i></button>
             </div>
             <div class="ms-4 zoom-buttons hstack gap-1">
-                <button id="zoomin-button" class="btn btn-light border-2 border-dark" onclick="zoomIn()"
-                    title="zoom in"><i class="fas fa-plus"></i></button>
-                <button id="zoomout-button" class="btn btn-light border-2 border-dark" onclick="zoomOut()"
+                <button id="zoomin-button" class="btn btn-outline-dark border-2" onclick="zoomIn()" title="zoom in"><i
+                        class="fas fa-plus"></i></button>
+                <button id="zoomout-button" class="btn btn-outline-dark border-2" onclick="zoomOut()"
                     title="zoom out"><i class="fas fa-minus"></i></button>
-                <button id="zoomreset-button" class="btn btn-light border-2 border-dark" onclick="zoomReset()"
+                <button id="zoomreset-button" class="btn btn-outline-dark border-2" onclick="zoomReset()"
                     title="reset zoom"><i class="fas fa-crosshairs"></i></button>
             </div>
         </div>

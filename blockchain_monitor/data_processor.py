@@ -21,15 +21,14 @@ import json
 from enum import Enum
 
 
-class InputMode(Enum):
-    STREAM_LIVE = 'streaming-live-data'
-    STREAM_EXAMPLE = 'streaming-example-data'
-    STATIC = 'static'
+STREAM_LIVE = 'streaming-live-data'
+STREAM_EXAMPLE = 'streaming-example-data'
+STATIC = 'static'
 
 
 class DataProcessor():
     def __init__(self) -> None:
-        process = None
+        self.process = None
 
         self.pm4py_log = None
         self.from_block = 0
@@ -44,26 +43,30 @@ class DataProcessor():
 
     #  TODO trigger when manifest saved? or when user presses start button
     def start_processing(self):
+        # Fixed range: start = static and end = static
+        # Floating range: start = current and end = current - x blocks
+        # Growing range: start = current and end = static
+
         # TODO delete old visualizations
         self.input_mode = const.SETTINGS.get('selectInputMode')
         # TODO delete data?? or just one file per diagram
-        if self.input_mode in InputMode.STATIC:
+        if self.input_mode == STATIC:
             # TODO Static mode
             pass
-        elif self.input_mode in InputMode.STREAM_EXAMPLE:
+        elif self.input_mode == STREAM_EXAMPLE:
             # TODO launch file feeder
             # TODO get selected example files
             pass
-        elif self.input_mode in InputMode.STREAM_LIVE:
+        elif self.input_mode == STREAM_LIVE:
             # TODO launch BLF
             pass
 
-        if self.input_mode in InputMode.STREAM_EXAMPLE or self.input_mode in InputMode.STREAM_LIVE:
+        if self.input_mode == STREAM_EXAMPLE or self.input_mode == STREAM_LIVE:
             if self.process is None:
                 # TODO launch new process
                 pass
             else:
-                # TODO stop running pross and lauch a new one
+                # TODO stop running process and launch a new one
                 pass
 
     def process_data(self):
@@ -88,7 +91,8 @@ class DataProcessor():
 
         self.create_petri_net()
         self.create_bmpn_diagram(noise_threshold=0.8)
-        self.create_bpmn_diagram_with_costs()
+        self.create_bpmn_diagram_with_costs(
+            currency='EUR', currency_rate=1.0, noise_threshold=0.8)
         self.create_dfg_frequency()
         self.create_dfg_performance()
         self.retreive_traces()

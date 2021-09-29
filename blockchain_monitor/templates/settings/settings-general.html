@@ -3,27 +3,86 @@
 General Settings
 {% endblock %}
 {% block main_content %}
-<form id="settings-form" class="mt-3" method="POST" action="/api/settings">
-    <div class="row g-3 me-xl-5">
-        <div class="col-xl-3">
-            <label for="inputStartBlock" class="form-label">Start block:</label>
-            <input type="number" class="form-control" id="inputStartBlock" name="inputStartBlock" step="1" min="0">
+<form id="settings-form" class="mt-3 me-xl-5" method="POST" action="/api/settings">
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputRefreshRate" class="col-form-label form-label">Dashboard refresh rate:</label>
         </div>
-        <div class="col-xl-3">
-            <label for="inputEndBlock" class="form-label">End block:</label>
-            <input type="number" class="form-control" id="inputEndBlock" name="inputEndBlock" step="1" min="0">
-        </div>
-        <div class="col-xl-3">
-            <label for="inputRefreshRate" class="form-label">Refresh rate:</label>
-            <div class="input-group mb-3">
-                <span class="input-group-text">every</span>
-                <input type="number" class="form-control text-center" id="inputRefreshRate" name="inputRefreshRate"
-                    step="0.1" min="0.1">
-                <span class="input-group-text">seconds</span>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <div class="input-group">
+                <input type="number" class="form-control" id="inputRefreshRate" name="inputRefreshRate" step="0.1"
+                    min="0.1">
             </div>
         </div>
-        <div class="col-xl-3">
-            <label for="selectInputMode" class="form-label">Input mode:</label>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputStartBlock" class="col-form-label form-label">Start block:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <div class=" input-group">
+                <input type="number" class="form-control" id="inputStartBlock" name="inputStartBlock" step="1" min="0">
+                <div class="input-group-text">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="chkLastXBlocks" name="chkLastXBlocks"
+                            value="on">
+                        <label class="form-check-label" for="chkLastXBlocks">Use as last blocks</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputEndBlock" class="col-form-label form-label">End block:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <div class=" input-group">
+                <input type="number" class="form-control" id="inputEndBlock" name="inputEndBlock" step="1" min="0">
+                <div class="input-group-text">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="chkRecentBlock" name="chkRecentBlock">
+                        <label class="form-check-label" for="chkRecentBlock">Use most recent block</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Mention it is a Websocket connection -->
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputGethIP" class="col-form-label form-label">Geth node IP address:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="text" class="form-control" id="inputGethIP" name="inputGethIP" min="0">
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputGethPort" class="col-form-label form-label">Geth node port:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="number" class="form-control" id="inputGethPort" name="inputGethPort" step="1" min="0">
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="selectCurrency" class="col-form-label form-label">Convert ETH to currency:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <select id="selectCurrency" name="selectCurrency" class="form-select">
+                <option disabled selected value>Select a currency ...</option>
+                <option value="test">EUR</option>
+                <option value="test">USD</option>
+                <!-- get options from server -->
+            </select>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="selectInputMode" class="col-form-label form-label">Data input mode:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
             <select id="selectInputMode" name="selectInputMode" class="form-select">
                 <option disabled selected value>Select an input mode ...</option>
                 <option value="streaming-live-data">Streaming - live data</option>
@@ -31,44 +90,67 @@ General Settings
                 <option value="static">Static</option>
             </select>
         </div>
-        <!-- if example data of static select xes input source -->
-        <!-- some js like: if option = static or streaming-example-data then enable select else diable select -->
-        <!-- add to js on load -->
-        <div class="col-xl-3">
-            <label for="selectDataSet" class="form-label">Example data set:</label>
+    </div>
+    <!-- if example data or static select xes input source -->
+    <!-- some js like: if option = static or streaming-example-data then enable select else disable select -->
+    <!-- add to js on load -->
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="selectDataSet" class="col-form-label form-label">Example data set:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
             <select id="selectDataSet" name="selectDataSet" class="form-select">
                 <option disabled selected value>Select an example data set ...</option>
+                <option value="test">Cryptokitties</option>
                 <!-- get options from server -->
             </select>
         </div>
-        <!-- applies only for streaming mode example data -->
-        <div class="col-xl-3">
-            <label for="inputReplaySpeed" class="form-label">Replay speed:</label>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <!-- applies only for streaming mode example data -->
+            <label for="inputReplaySpeed" class="col-form-label form-label">Replay speed:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
             <input type="number" class="form-control" id="inputReplaySpeed" name="inputReplaySpeed" step="0.1"
                 min="0.1">
         </div>
-        <!-- applies only for live mode  -->
-        <div class="col-xl-3">
-            <label for="inputConfirmationBlocks" class="form-label">Number of confirmation blocks</label>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <!-- applies only for live mode  -->
+            <label for="inputConfirmationBlocks" class="col-form-label form-label">Confirmation blocks</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
             <input type="number" class="form-control" id="inputConfirmationBlocks" name="inputConfirmationBlocks"
                 min="0">
         </div>
-        <!-- Geth WebSocket connection -->
-        <div class="col-xl-3">
-            <label for="inputGethIP" class="form-label">Geth node IP address:</label>
-            <input type="text" class="form-control" id="inputGethIP" name="inputGethIP" min="0">
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputNoiseThreshold" class="col-form-label form-label">Noise threshold:</label>
         </div>
-        <div class="col-xl-3">
-            <label for="inputGethPort" class="form-label">Geth node port:</label>
-            <input type="number" class="form-control" id="inputGethPort" name="inputGethPort" step="1" min="0">
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="number" class="form-control" id="inputNoiseThreshold" name="inputNoiseThreshold" step="0.01"
+                min="0" max="1">
         </div>
-        <!-- geth test connection?? -->
-        <div class="col-xl-3">
-            <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-4 col-xl-3"></div>
+        <div class="col">
+            <button type="submit" class="btn btn-outline-primary border-2" title="save settings to server"><i
+                    class="fas fa-save"></i></button>
+            <button class="btn btn-outline-success border-2" title="save settings start monitoring"><i
+                    class="fas fa-play"></i></button>
+            <button class="btn btn-outline-dark border-2" title="restart monitoring with current settings">
+                <span class="fa-flip-horizontal" style="display: inline-block;">
+                    <i class="fas fa-redo-alt"></i>
+                </span>
+            </button>
+            <button class="btn btn-outline-danger border-2" title="stop monitoring"><i class="fas fa-stop"></i></button>
         </div>
     </div>
 </form>
-
 <script>
     // get current settings stored on server
     $.ajax({
@@ -76,7 +158,13 @@ General Settings
         type: 'GET',
         success: function (res) {
             Object.keys(res).forEach(function (key) {
-                $('#' + key).val(res[key])
+                val = res[key]
+                input_elem = $('#' + key)
+                if (input_elem.attr('type') == 'checkbox') {
+                    input_elem.prop('checked', val == 'on');
+                } else {
+                    input_elem.val(val)
+                }
             });
         }
     });

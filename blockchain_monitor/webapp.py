@@ -1,9 +1,9 @@
 from flask import Flask
 from flask import render_template
-from dashboard import dashbord_bp
+from dashboard import dashboard_bp
 
 app = Flask(__name__)
-app.register_blueprint(dashbord_bp)
+app.register_blueprint(dashboard_bp)
 
 
 @app.errorhandler(404)
