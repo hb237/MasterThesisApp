@@ -6,7 +6,7 @@ BLF Manifest
 {% block main_content %}
 <div class="row">
     <div class="col-md-12">
-        <div class="my-2 btn-toolbar">
+        <div class="my-2 btn-toolbar hstack gap-1">
             <div class="input-group">
                 <form id="manifest-form" method="POST" enctype="multipart/form-data" action="/api/manifest">
                     <label class="btn btn-light border-2 border-dark" for="blf-manifest" title="upload manifest"><i
@@ -15,12 +15,12 @@ BLF Manifest
                         onchange="this.form.submit();" />
                 </form>
             </div>
-            <a class="btn btn-light border-2 border-dark ms-1" href="/api/manifest" download="manifest.bcql"
+            <a class="btn btn-light border-2 border-dark" href="/api/manifest" download="manifest.bcql"
                 title="download currently stored manifest"><i class="fas fa-download"></i></a>
-            <button class="btn btn-outline-danger border-2 ms-1" onclick="reset_manifest();"
+            <button class="btn btn-outline-danger border-2" onclick="reset_manifest();"
                 title="replace current manifest with an empty one">
                 <i class="fas fa-trash-alt"></i></i></button>
-            <button class="btn btn-outline-primary border-2 ms-1" onclick="save_and_validate_manifest();">
+            <button class="btn btn-outline-primary border-2" onclick="save_and_validate_manifest();">
                 <i class="fas fa-save"></i><span class="ms-2">Save + Validate</span></button>
         </div>
     </div>
