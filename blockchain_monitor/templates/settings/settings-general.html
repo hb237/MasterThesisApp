@@ -73,9 +73,13 @@ General Settings
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
             <select id="selectCurrency" name="selectCurrency" class="form-select">
                 <option disabled selected value>Select a currency ...</option>
-                <option value="EUR">EUR</option>
                 <option value="USD">USD</option>
-                <!-- get options from server -->
+                <option value="EUR">EUR</option>
+                <option value="JPY">JPY</option>
+                <option value="GBP">GBP</option>
+                <option value="AUD">AUD</option>
+                <option value="CAD">CAD</option>
+                <option value="CNY">CNY</option>
             </select>
         </div>
     </div>
@@ -136,6 +140,14 @@ General Settings
                 min="0" max="1">
         </div>
     </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="monitoring-status" class="col-form-label form-label">Monitoring status:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <div id="monitoring-status" class="col-form-label"></div>
+        </div>
+    </div>
     <div class="row mt-3">
         <div class="col-md-4 col-xl-3"></div>
         <div class="col">
@@ -143,8 +155,8 @@ General Settings
                     class="fas fa-save"></i></button>
             <button type="button" onclick="start_monitoring();" class="btn btn-outline-success border-2"
                 title="save settings and start new monitoring"><i class="fas fa-play"></i></button>
-            <button type="button" class="btn btn-outline-danger border-2" title="stop monitoring"><i
-                    class="fas fa-stop"></i></button>
+            <button type="button" onclick="stop_monitoring();" class="btn btn-outline-danger border-2"
+                title="stop monitoring"><i class="fas fa-stop"></i></button>
         </div>
     </div>
 </form>
@@ -163,6 +175,30 @@ General Settings
                     input_elem.val(val)
                 }
             });
+        }
+    });
+
+    // check status if monitoring is running
+    function is_monitoring_running() {
+        $.ajax({
+            url: "/api/is_monitoring_running",
+            type: 'GET',
+            success: function (res) {
+                if (res == "True") {
+                    $('#monitoring-status').text('running')
+                } else {
+                    $('#monitoring-status').text('stopped')
+                }
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        if ($('#selectInputMode').val() == 'static') {
+            $('#monitoring-status').text('static mode')
+        } else {
+            // query every second
+            setInterval(is_monitoring_running, 1000);
         }
     });
 

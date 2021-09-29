@@ -15,6 +15,7 @@ import blockchain_connector as bc
 import requests
 import bpmn_with_costs
 import json
+import time
 
 
 STREAM_LIVE = 'streaming-live-data'
@@ -25,6 +26,12 @@ STATIC = 'static'
 class DataProcessor():
     def __init__(self) -> None:
         self.analysis_process: Process = None
+
+    def check_monitoring_running(self) -> bool:
+        if self.analysis_process is None:
+            return False
+        else:
+            return self.analysis_process.is_alive()
 
     def set_settings(self):
         with open(const.SETTINGS_PATH) as json_file:
@@ -54,8 +61,9 @@ class DataProcessor():
             config.get('selectInputMode', STREAM_EXAMPLE))
 
     def stop_processing(self):
-        process
-        return
+        if self.analysis_process is not None:
+            self.analysis_process.join(timeout=1)
+            self.analysis_process.terminate()
 
     def init_processing(self):
         self.set_settings()
@@ -70,11 +78,6 @@ class DataProcessor():
 
         if self.input_mode == STATIC:
             self.process_data()
-            # self.analysis_process = Process(
-            #     target=self.process_data,
-            #     daemon=True
-            # )
-            # self.analysis_process.start()
         elif self.input_mode == STREAM_EXAMPLE:
             # TODO launch file feeder
             # TODO get selected example files

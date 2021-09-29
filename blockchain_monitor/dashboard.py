@@ -12,6 +12,16 @@ dp = DataProcessor()
 dashboard_bp = Blueprint('dashboard', __name__, template_folder='templates')
 
 
+@dashboard_bp.route('/api/is_monitoring_running', methods=['GET'])
+def is_monitoring_running():
+    return str(dp.check_monitoring_running())
+
+
+@dashboard_bp.route('/api/refresh_rate', methods=['GET'])
+def get_refresh_rate():
+    return str(dp.refresh_rate)
+
+
 @dashboard_bp.route('/api/start_monitoring', methods=['GET'])
 def start_monitoring():
     dp.init_processing()
