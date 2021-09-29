@@ -26,11 +26,6 @@ def show_dashboard_secondary():
     return render_template("dashboards/secondary.html")
 
 
-@ app.route("/dashboards/tertiary")
-def show_dashboard_tertiary():
-    return render_template("dashboards/tertiary.html")
-
-
 @ app.route("/settings/general")
 def show_settings_general():
     return render_template("/settings/settings-general.html")
