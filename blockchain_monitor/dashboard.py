@@ -35,6 +35,14 @@ def handle_settings():
         return send_file(const.SETTINGS_PATH)
 
 
+@dashboard_bp.route('/api/monitoring_status', methods=['GET'])
+def get_monitoring_status():
+    if dp.process == None:
+        return "stopped", 200
+    else:
+        return "running", 200
+
+
 def allowed_file(filename, allow_extensions):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower(

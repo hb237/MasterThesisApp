@@ -135,18 +135,21 @@ General Settings
                 min="0" max="1">
         </div>
     </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputNoiseThreshold" class="col-form-label form-label">Monitoring status:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <div id="monitoring-status" class="col-form-label">running or stopped</div>
+        </div>
+    </div>
     <div class="row mt-3">
         <div class="col-md-4 col-xl-3"></div>
         <div class="col">
             <button type="submit" class="btn btn-outline-primary border-2" title="save settings to server"><i
                     class="fas fa-save"></i></button>
-            <button class="btn btn-outline-success border-2" title="save settings start monitoring"><i
+            <button class="btn btn-outline-success border-2" title="save settings and start new monitoring"><i
                     class="fas fa-play"></i></button>
-            <button class="btn btn-outline-dark border-2" title="restart monitoring with current settings">
-                <span class="fa-flip-horizontal" style="display: inline-block;">
-                    <i class="fas fa-redo-alt"></i>
-                </span>
-            </button>
             <button class="btn btn-outline-danger border-2" title="stop monitoring"><i class="fas fa-stop"></i></button>
         </div>
     </div>
@@ -166,6 +169,14 @@ General Settings
                     input_elem.val(val)
                 }
             });
+        }
+    });
+
+    $.ajax({
+        url: "/api/monitoring_status",
+        type: 'GET',
+        success: function (res) {
+            $('#monitoring-status').text(res)
         }
     });
 </script>
