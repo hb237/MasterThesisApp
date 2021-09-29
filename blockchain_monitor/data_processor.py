@@ -98,6 +98,7 @@ class DataProcessor():
         self.create_shared_datastructures()
 
         # Execute all analysis methods
+        self.retreive_eth_rates()  # TODO perhaps not all the time
         self.create_petri_net()
         self.create_bmpn_diagram(noise_threshold=0.8)
         self.create_bpmn_diagram_with_costs(
@@ -106,7 +107,6 @@ class DataProcessor():
         self.create_dfg_performance()
         self.retreive_traces()
         self.retreive_events()
-        self.retreive_eth_rates()
         self.reitreive_sender_stats()
         self.retreive_receiver_stats()
         # self.execute_conformance_checking() TODO
@@ -191,7 +191,7 @@ class DataProcessor():
         rates = res.json()['data']['rates']
         for rate in rates:
             rates[rate] = float(rates[rate])
-        self.rates = rates
+        self.eth_rates = rates
 
     def retreive_block_stats(self) -> dict:
         '''Returns a dictionary with all blocks as key and how many events happend in that block.'''
@@ -216,7 +216,7 @@ class DataProcessor():
 
     def execute_conformance_checking(self):  # TODO not done yet
         bpmn_graph = self.create_bmpn_diagram(
-            6605100, 6606100, 1)  # TODO remove
+            6605100, 6606100, 1)  # TODO remove, redundant
         # bpmn_graph = pm4py.read_bpmn("path_to_bpmn") #TODO change path and check if path location not empty
         net, initial_marking, final_marking = bpmn_converter.apply(bpmn_graph)
         replayed_traces = token_replay.apply(

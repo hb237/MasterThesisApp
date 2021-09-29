@@ -85,11 +85,26 @@ def handle_mainfest():
     return redirect('/settings/manifest')
 
 
-@ dashboard_bp.route("/api/sender_stats", methods=['GET'])
+@dashboard_bp.route('/api/events', methods=['GET'])
+def get_traces():
+    return dp.events
+
+
+@dashboard_bp.route('/api/traces', methods=['GET'])
+def get_traces():
+    return dp.traces
+
+
+@dashboard_bp.route('/api/sender_stats', methods=['GET'])
 def get_sender_stats():
-    return dp.reitreive_sender_stats()
+    return dp.sender_stats
 
 
-@ dashboard_bp.route("/api/receiver_stats", methods=['GET'])
+@dashboard_bp.route('/api/receiver_stats', methods=['GET'])
 def get_receiver_stats():
-    return dp.retreive_receiver_stats()
+    return dp.receiver_stats
+
+
+@dashboard_bp.route('/api/eth_rates', methods=['GET'])
+def get_eth_rates():
+    return dp.eth_rates
