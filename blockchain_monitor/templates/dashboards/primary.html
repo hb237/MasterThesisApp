@@ -101,7 +101,6 @@ Primary Dashboard
             url: "/api/sender_stats",
             type: 'GET',
             success: function (res) {
-                console.log(res)
                 sender_stats.import({
                     type: "json",
                     data: res
@@ -113,13 +112,64 @@ Primary Dashboard
             url: "/api/receiver_stats",
             type: 'GET',
             success: function (res) {
-                console.log(res)
                 receiver_stats.import({
                     type: "json",
                     data: res
                 });
             }
         });
+
+        $.ajax({
+            url: "/api/block_stats",
+            type: 'GET',
+            success: function (res) {
+                blk_stats = JSON.parse(res)
+
+                // sort response
+                blk_stats.sort(function (a, b) {
+                    var keyA = a["Block"],
+                        keyB = b["Block"];
+                    if (keyA < keyB) return -1;
+                    if (keyA > keyB) return 1;
+                    return 0;
+                });
+
+                first_blk_number = blk_stats[0]["Block"];
+                last_blk_number = blk_stats.at(-1)["Block"];
+                blocks = []
+                stats = []
+                for (var i = first_blk_number; i <= last_blk_number; i++) {
+                    blocks.push(i)
+                    let obj = blk_stats.find(o => o["Block"] === i);
+                    if (obj === undefined) {
+                        stats.push(0)
+                    } else {
+                        stats.push(obj["Number of Events"])
+                    }
+                }
+
+                const data = {
+                    labels: blocks,
+                    datasets: [{
+                        label: 'Number of Events',
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: stats,
+                    }]
+                };
+
+                const config = {
+                    type: 'bar',
+                    data: data,
+                    options: {}
+                };
+                var myChart = new Chart(
+                    document.getElementById('myChart'),
+                    config
+                );
+            }
+        });
+
     });
 </script>
 {% endblock %}

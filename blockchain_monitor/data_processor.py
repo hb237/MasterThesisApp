@@ -208,8 +208,8 @@ class DataProcessor():
         stats = attributes_filter.get_attribute_values(
             self.pm4py_log, "tx_blocknumber")
         result = []
-        for sender, cnt in stats.items():
-            result.append({'Sender': sender, 'Number of Events': str(cnt)})
+        for block, cnt in stats.items():
+            result.append({'Block': block, 'Number of Events': cnt})
         with open(const.BLOCK_STATS, "w") as file:
             json.dump(result, file)
 
@@ -223,11 +223,11 @@ class DataProcessor():
             json.dump(result, file)
 
     def retreive_receiver_stats(self) -> dict:
-        sender_stats = attributes_filter.get_attribute_values(
+        stats = attributes_filter.get_attribute_values(
             self.pm4py_log, "tx_to")
         result = []
-        for sender, cnt in sender_stats.items():
-            result.append({'Receiver': sender, 'Number of Events': str(cnt)})
+        for receiver, cnt in stats.items():
+            result.append({'Receiver': receiver, 'Number of Events': str(cnt)})
         self.receiver_stats = result
         with open(const.RECEIVER_STATS, "w") as file:
             json.dump(result, file)
