@@ -113,6 +113,12 @@ def get_receiver_stats():
         return json.dumps(json.load(f))
 
 
+@dashboard_bp.route('/api/current_blockstats', methods=['GET'])
+def get_current_blockstats():
+    return
+    # TODO include in dashboard
+
+
 @dashboard_bp.route('/api/events', methods=['GET'])
 def get_events():
     with open(const.EVENTS) as f:
