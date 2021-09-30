@@ -87,36 +87,45 @@ Primary Dashboard
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-3">
         <div class="card bg-primary text-white mb-4">
             <div class="card-header">
-                Current Block
+                Most recent block
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col">
+                    <div class="col-4">
                         <div>Number:</div>
                     </div>
-                    <div class="col">
+                    <div class="col-8">
                         <span id="current_block_number"></span>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
+                    <div class="col-4">
                         <div>Timestamp:</div>
                     </div>
-                    <div class="col">
+                    <div class="col-8">
                         <span id="current_block_timestamp"></span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card mb-4">
+    <div class="col-md-3">
+        <div class="card bg-success text-white mb-4">
             <div class="card-header">
+                <div>Dataset</div>
             </div>
             <div class="card-body">
+                <div class="row">
+                    <div class="col-4">
+                        <div>Last update:</div>
+                    </div>
+                    <div class="col-8">
+                        <span id="dataset_last_update"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -165,6 +174,15 @@ Primary Dashboard
                     type: "json",
                     data: res
                 });
+            }
+        });
+
+        $.ajax({
+            url: "/api/dataset_last_update",
+            type: 'GET',
+            success: function (res) {
+                last_update = JSON.parse(res);
+                $('#dataset_last_update').text(last_update);
             }
         });
 

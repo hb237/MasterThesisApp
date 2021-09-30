@@ -114,11 +114,16 @@ def get_receiver_stats():
         return json.dumps(json.load(f))
 
 
+@dashboard_bp.route('/api/dataset_last_update', methods=['GET'])
+def get_data_set_last_update():
+    with open(const.DATASET_LAST_UPDATE) as f:
+        return json.dumps(json.load(f))
+
+
 @dashboard_bp.route('/api/current_blockstats', methods=['GET'])
 def get_current_blockstats():
     with open(const.CURRENT_BLOCK_STATS) as f:
         return json.dumps(json.load(f))
-        # TODO include in dashboard
 
 
 @dashboard_bp.route('/api/events', methods=['GET'])

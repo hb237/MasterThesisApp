@@ -9,7 +9,8 @@ from pm4py.algo.filtering.log.attributes import attributes_filter
 from pm4py.objects.conversion.log.variants.to_event_log import Parameters
 from pm4py.objects.conversion.bpmn import converter as bpmn_converter
 from pm4py.visualization.bpmn import visualizer as bpmn_visualizer
-from multiprocessing import Process, process
+from multiprocessing import Process
+from datetime import datetime
 import constants as const
 import blockchain_connector as bc
 import requests
@@ -115,6 +116,7 @@ class DataProcessor():
         self.retreive_sender_stats()
         self.retreive_receiver_stats()
         # self.execute_conformance_checking() TODO
+        self.write_last_time_updated()
 
     def create_shared_datastructures(self):
         self.retreive_current_block_stats()
@@ -129,6 +131,13 @@ class DataProcessor():
                                                                      attributes_filter.Parameters.POSITIVE: True})
         # Read in log as tree
         self.xes_log_tree = ET.parse(const.XES_FILES_COMBINED_PATH_TEST)
+
+    def write_last_time_updated(self):
+        t = time.time()
+        date_time_value = datetime.utcfromtimestamp(
+            t).strftime('%Y-%m-%d %H:%M:%S UTC+0')
+        with open(const.DATASET_LAST_UPDATE, "w") as file:
+            json.dump(date_time_value, file)
 
     def create_petri_net(self):
         net, initial_marking, final_marking = inductive_miner.apply(
