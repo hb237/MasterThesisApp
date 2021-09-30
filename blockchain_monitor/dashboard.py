@@ -1,3 +1,4 @@
+from web3 import method
 from werkzeug.utils import redirect
 from data_processor import DataProcessor
 from flask import Blueprint, request, make_response, send_file, jsonify
@@ -115,21 +116,22 @@ def get_receiver_stats():
 
 @dashboard_bp.route('/api/current_blockstats', methods=['GET'])
 def get_current_blockstats():
-    return
-    # TODO include in dashboard
+    with open(const.CURRENT_BLOCK_STATS) as f:
+        return json.dumps(json.load(f))
+        # TODO include in dashboard
 
 
 @dashboard_bp.route('/api/events', methods=['GET'])
 def get_events():
     with open(const.EVENTS) as f:
-        return json.load(f)
+        return json.dumps(json.load(f))
         # TODO include in dashboard
 
 
 @dashboard_bp.route('/api/traces', methods=['GET'])
 def get_traces():
     with open(const.TRACES) as f:
-        return json.load(f)
+        return json.dumps(json.load(f))
         # TODO include in dashboard
 
 

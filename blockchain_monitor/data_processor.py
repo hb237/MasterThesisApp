@@ -117,17 +117,7 @@ class DataProcessor():
         # self.execute_conformance_checking() TODO
 
     def create_shared_datastructures(self):
-        # Default values
-        self.pm4py_log = None
-        self.xes_log_tree = None
-        self.current_block_number = 100200300
-        self.current_block_timestamp = None
-
-        # Get current block number and its timestamp
-        cbs = bc.get_current_block_stats()
-        if cbs is not None:
-            self.current_block_number = cbs['current_block_number']
-            self.current_block_timestamp = cbs['current_block_timestamp']
+        self.retreive_current_block_stats()
 
         # Create a pm4py log as on input for further analysis
         log = xes_importer.apply(
@@ -203,7 +193,17 @@ class DataProcessor():
         with open(const.ETH_RATES, "w") as file:
             json.dump(rates, file)
 
-    def retreive_block_stats(self) -> dict:  # TODO
+    def retreive_current_block_stats(self):
+        # Get current block number and its timestamp
+        stats = bc.get_current_block_stats()
+        if stats is not None:
+            self.current_block_number = stats.get('current_block_number', 0)
+            self.current_block_timestamp = stats.get(
+                'current_block_timestamp', 0)
+        with open(const.CURRENT_BLOCK_STATS, "w") as file:
+            json.dump(stats, file)
+
+    def retreive_block_stats(self):
         '''Returns a dictionary with all blocks as key and how many events happend in that block.'''
         stats = attributes_filter.get_attribute_values(
             self.pm4py_log, "tx_blocknumber")
@@ -213,7 +213,7 @@ class DataProcessor():
         with open(const.BLOCK_STATS, "w") as file:
             json.dump(result, file)
 
-    def retreive_sender_stats(self) -> dict:
+    def retreive_sender_stats(self):
         stats = attributes_filter.get_attribute_values(
             self.pm4py_log, "tx_from")
         result = []
@@ -222,7 +222,7 @@ class DataProcessor():
         with open(const.SENDER_STATS, "w") as file:
             json.dump(result, file)
 
-    def retreive_receiver_stats(self) -> dict:
+    def retreive_receiver_stats(self):
         stats = attributes_filter.get_attribute_values(
             self.pm4py_log, "tx_to")
         result = []

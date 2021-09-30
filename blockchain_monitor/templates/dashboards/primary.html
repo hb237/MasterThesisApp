@@ -87,6 +87,55 @@ Primary Dashboard
             </div>
         </div>
     </div>
+    <div class="col-md-6">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-header">
+                Current Block
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div>Number:</div>
+                    </div>
+                    <div class="col">
+                        <span id="current_block_number"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div>Timestamp:</div>
+                    </div>
+                    <div class="col">
+                        <span id="current_block_timestamp"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+            </div>
+            <div class="card-body">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+            </div>
+            <div class="card-body">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+            </div>
+            <div class="card-body">
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -116,6 +165,16 @@ Primary Dashboard
                     type: "json",
                     data: res
                 });
+            }
+        });
+
+        $.ajax({
+            url: "/api/current_blockstats",
+            type: 'GET',
+            success: function (res) {
+                stats = JSON.parse(res);
+                $('#current_block_number').text(stats['current_block_number']);
+                $('#current_block_timestamp').text(stats['current_block_timestamp']);
             }
         });
 
