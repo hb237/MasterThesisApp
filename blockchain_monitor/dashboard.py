@@ -126,25 +126,31 @@ def get_current_blockstats():
         return json.dumps(json.load(f))
 
 
+# Implemented but not included in dashboard
 @dashboard_bp.route('/api/events', methods=['GET'])
 def get_events():
     with open(const.EVENTS) as f:
         return json.dumps(json.load(f))
-        # TODO include in dashboard
 
 
+# Implemented but not included in dashboard
 @dashboard_bp.route('/api/traces', methods=['GET'])
 def get_traces():
     with open(const.TRACES) as f:
         return json.dumps(json.load(f))
-        # TODO include in dashboard
 
 
-@dashboard_bp.route('/api/eth_rates', methods=['GET'])
+@dashboard_bp.route('/api/get_eth_rate', methods=['GET'])
 def get_eth_rates():
-    with open(const.ETH_RATES) as f:
-        return json.dumps(json.load(f))
-        # TODO include in dashboard
+    with open(const.SETTINGS_PATH) as s:
+        settings = json.load(s)
+        currency = settings['selectCurrency']
+        with open(const.ETH_RATES) as f:
+            currencies = json.load(f)
+            rate = currencies[currency]
+            result = {'currency': currency, 'rate': rate}
+            return json.dumps(result)
+            # TODO include in dashboard
 
 
 @dashboard_bp.route('/api/conformance_checking', methods=['GET'])

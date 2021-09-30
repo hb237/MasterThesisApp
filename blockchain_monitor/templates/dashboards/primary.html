@@ -90,7 +90,7 @@ Primary Dashboard
     <div class="col-md-3">
         <div class="card bg-primary text-white mb-4">
             <div class="card-header">
-                Most recent block
+                <i class="fas fa-th-large me-1"></i>Most recent block
             </div>
             <div class="card-body">
                 <div class="row">
@@ -115,7 +115,7 @@ Primary Dashboard
     <div class="col-md-3">
         <div class="card bg-success text-white mb-4">
             <div class="card-header">
-                <div>Dataset</div>
+                <div><i class="fas fa-database me-1"></i>Dataset</div>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -129,11 +129,20 @@ Primary Dashboard
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card mb-4">
+    <div class="col-md-3">
+        <div class="card bg-warning text-white mb-4">
             <div class="card-header">
+                <i class="fas fa-coins me-1"></i>Exchange rate for 1 ETH:
             </div>
             <div class="card-body">
+                <div class="row">
+                    <div class="col-4">
+                        <div id="currency"></div>
+                    </div>
+                    <div class="col-8">
+                        <span id="exchange_rate"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -183,6 +192,16 @@ Primary Dashboard
             success: function (res) {
                 last_update = JSON.parse(res);
                 $('#dataset_last_update').text(last_update);
+            }
+        });
+
+        $.ajax({
+            url: "/api/get_eth_rate",
+            type: 'GET',
+            success: function (res) {
+                rate_stats = JSON.parse(res);
+                $('#currency').text(rate_stats['currency'] + ':');
+                $('#exchange_rate').text(rate_stats['rate']);
             }
         });
 
