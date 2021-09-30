@@ -95,18 +95,6 @@ def handle_mainfest():
     return redirect('/settings/manifest')
 
 
-@dashboard_bp.route('/api/events', methods=['GET'])
-def get_events():
-    with open(const.EVENTS) as f:
-        return json.load(f)
-
-
-@dashboard_bp.route('/api/traces', methods=['GET'])
-def get_traces():
-    with open(const.TRACES) as f:
-        return json.load(f)
-
-
 @dashboard_bp.route('/api/block_stats', methods=['GET'])
 def get_block_stats():
     with open(const.BLOCK_STATS) as f:
@@ -125,7 +113,28 @@ def get_receiver_stats():
         return json.dumps(json.load(f))
 
 
+@dashboard_bp.route('/api/events', methods=['GET'])
+def get_events():
+    with open(const.EVENTS) as f:
+        return json.load(f)
+        # TODO include in dashboard
+
+
+@dashboard_bp.route('/api/traces', methods=['GET'])
+def get_traces():
+    with open(const.TRACES) as f:
+        return json.load(f)
+        # TODO include in dashboard
+
+
 @dashboard_bp.route('/api/eth_rates', methods=['GET'])
 def get_eth_rates():
     with open(const.ETH_RATES) as f:
         return json.dumps(json.load(f))
+        # TODO include in dashboard
+
+
+@dashboard_bp.route('/api/conformance_checking', methods=['GET'])
+def get_conformance_checking_results():
+    return
+    # TODO implement and include in dashboard
