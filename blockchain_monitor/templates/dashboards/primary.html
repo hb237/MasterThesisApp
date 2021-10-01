@@ -277,7 +277,6 @@ Primary Dashboard
                 const data = {
                     labels: fitness,
                     datasets: [{
-                        label: 'Number of Events',
                         backgroundColor: 'rgb(255, 99, 132)',
                         borderColor: 'rgb(255, 99, 132)',
                         data: counts,
@@ -287,7 +286,25 @@ Primary Dashboard
                 const config = {
                     type: 'bar',
                     data: data,
-                    options: {}
+                    options: {
+                        legend: {
+                            display: false
+                        },
+                        scales: {
+                            yAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'number of traces'
+                                }
+                            }],
+                            xAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'fitness'
+                                }
+                            }],
+                        }
+                    }
                 };
                 var fitness_stats_chart = new Chart(
                     document.getElementById('fitness_stats_chart'),
@@ -352,7 +369,8 @@ Primary Dashboard
                 blocks = []
                 stats = []
                 for (var i = first_blk_number; i <= last_blk_number; i++) {
-                    blocks.push(i)
+                    // thousands separator
+                    blocks.push(i.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
                     let obj = blk_stats.find(o => o["Block"] === i);
                     if (obj === undefined) {
                         stats.push(0)
