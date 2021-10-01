@@ -251,29 +251,30 @@ class DataProcessor():
         replayed_traces, place_fitness, trans_fitness, unwanted_activities = \
             token_based_replay.apply(
                 self.pm4py_log, net, initial_marking, final_marking, parameters=parameters_tbr)
-        # replayed_traces: group py fitness in deciles and show bar chart how many traces per decile
-        # trans_fitness: take tasks with {'underfed_traces': {}, 'fit_traces': {}} meaning they are in the model but not in the log -> list them
-        # unwanted_activities: list all task and how many events with this missing task
 
-        unwanted_activities_stats = {}
+        # activities that are recorded in the log but not in the model
+        # count how of they occur
+        unwanted_activities_stats = []
         for activity in unwanted_activities.keys():
-            unwanted_activities_stats[activity] = len(
-                unwanted_activities[activity])
-        print(unwanted_activities_stats)
+            unwanted_activities_stats.append({'unwanted_activity': activity, 'count': len(
+                unwanted_activities[activity])})
 
-        activities_stats = {}
+        # activities that are in model but not in the log
+        activities_stats = []
         for activity in trans_fitness.keys():
             not_in_model = len(trans_fitness[activity]['underfed_traces']) == 0 and len(
                 trans_fitness[activity]['fit_traces']) == 0
-            activities_stats[activity] = not_in_model
-        print(activities_stats)
+            activities_stats.append(
+                {'activity': activity, 'not_in_model': not_in_model})
 
-        traces_stats = {}
+        # the different fitness values and how often each occurred
+        trace_fitness_stats = []
         trace_fitnesses = []
         for t in replayed_traces:
             trace_fitnesses.append(t['trace_fitness'])
-        traces_stats = dict(Counter(trace_fitnesses))
-        print(traces_stats)
+        counted = dict(Counter(trace_fitnesses))
+        for k in counted.keys():
+            trace_fitness_stats.append({'fitness': k, 'count': counted[k]})
 
         # with open(const.CONFORMANCE_CHECKING_RESULTS, "w") as file:
         #     json.dump(result, file)
