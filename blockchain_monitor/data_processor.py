@@ -3,7 +3,7 @@ import pm4py
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.algo.discovery.dfg import algorithm as dfg_discovery
-from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
+from pm4py.algo.conformance.tokenreplay import algorithm as token_based_replay
 from pm4py.visualization.dfg import visualizer as dfg_visualization
 from pm4py.algo.filtering.log.attributes import attributes_filter
 from pm4py.objects.conversion.log.variants.to_event_log import Parameters
@@ -11,6 +11,7 @@ from pm4py.objects.conversion.bpmn import converter as bpmn_converter
 from pm4py.visualization.bpmn import visualizer as bpmn_visualizer
 from multiprocessing import Process
 from datetime import datetime
+from collections import Counter
 import constants as const
 import blockchain_connector as bc
 import requests
@@ -103,7 +104,7 @@ class DataProcessor():
         self.create_shared_datastructures()
 
         # Execute all analysis methods
-        self.retreive_eth_rates()  # TODO perhaps not all the time
+        self.retreive_eth_rates()
         self.create_petri_net()
         self.create_bmpn_diagram(noise_threshold=0.8)
         self.create_bpmn_diagram_with_costs(
@@ -115,7 +116,7 @@ class DataProcessor():
         self.retreive_block_stats()
         self.retreive_sender_stats()
         self.retreive_receiver_stats()
-        # self.execute_conformance_checking() TODO
+        self.execute_conformance_checking()
         self.write_last_time_updated()
 
     def create_shared_datastructures(self):
@@ -140,10 +141,10 @@ class DataProcessor():
             json.dump(date_time_value, file)
 
     def create_petri_net(self):
-        net, initial_marking, final_marking = inductive_miner.apply(
+        net, im, fm = inductive_miner.apply(
             self.pm4py_log)
-        pm4py.save_vis_petri_net(net, initial_marking,
-                                 final_marking, const.PETRI_NET)
+        pm4py.save_vis_petri_net(
+            net, im, fm, const.PETRI_NET)
 
     def create_bmpn_diagram(self, noise_threshold: float = 0.8):
         bpmn_graph = pm4py.discover_bpmn_inductive(
@@ -241,11 +242,39 @@ class DataProcessor():
         with open(const.RECEIVER_STATS, "w") as file:
             json.dump(result, file)
 
-    def execute_conformance_checking(self):  # TODO not done yet
-        bpmn_graph = self.create_bmpn_diagram(
-            6605100, 6606100, 1)  # TODO remove, redundant
-        # bpmn_graph = pm4py.read_bpmn("path_to_bpmn") #TODO change path and check if path location not empty
+    def execute_conformance_checking(self):
+        bpmn_graph = pm4py.read_bpmn(const.BPMN_PATH)
         net, initial_marking, final_marking = bpmn_converter.apply(bpmn_graph)
-        replayed_traces = token_replay.apply(
-            self.pm4py_log, net, initial_marking, final_marking)
-        return replayed_traces  # TODO
+
+        parameters_tbr = {token_based_replay.Variants.TOKEN_REPLAY.value.Parameters.DISABLE_VARIANTS: True,
+                          token_based_replay.Variants.TOKEN_REPLAY.value.Parameters.ENABLE_PLTR_FITNESS: True}
+        replayed_traces, place_fitness, trans_fitness, unwanted_activities = \
+            token_based_replay.apply(
+                self.pm4py_log, net, initial_marking, final_marking, parameters=parameters_tbr)
+        # replayed_traces: group py fitness in deciles and show bar chart how many traces per decile
+        # trans_fitness: take tasks with {'underfed_traces': {}, 'fit_traces': {}} meaning they are in the model but not in the log -> list them
+        # unwanted_activities: list all task and how many events with this missing task
+
+        unwanted_activities_stats = {}
+        for activity in unwanted_activities.keys():
+            unwanted_activities_stats[activity] = len(
+                unwanted_activities[activity])
+        print(unwanted_activities_stats)
+
+        activities_stats = {}
+        for activity in trans_fitness.keys():
+            not_in_model = len(trans_fitness[activity]['underfed_traces']) == 0 and len(
+                trans_fitness[activity]['fit_traces']) == 0
+            activities_stats[activity] = not_in_model
+        print(activities_stats)
+
+        traces_stats = {}
+        trace_fitnesses = []
+        for t in replayed_traces:
+            trace_fitnesses.append(t['trace_fitness'])
+        traces_stats = dict(Counter(trace_fitnesses))
+        print(traces_stats)
+
+        # with open(const.CONFORMANCE_CHECKING_RESULTS, "w") as file:
+        #     json.dump(result, file)
+        return

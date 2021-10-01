@@ -109,6 +109,11 @@ Primary Dashboard
                         <span id="current_block_timestamp"></span>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col">
+                        <div id="current_block_error"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -209,9 +214,16 @@ Primary Dashboard
             url: "/api/current_blockstats",
             type: 'GET',
             success: function (res) {
-                stats = JSON.parse(res);
-                $('#current_block_number').text(stats['current_block_number']);
-                $('#current_block_timestamp').text(stats['current_block_timestamp']);
+                if (res == "null" || res == null) {
+                    $('#current_block_error').text('The server could not provide the requested data. ' +
+                        'Perhaps the blockchain monitor is not connected to an Ethereum node.')
+                    $('#current_block_number').text('N/A');
+                    $('#current_block_timestamp').text('N/A');
+                } else {
+                    stats = JSON.parse(res);
+                    $('#current_block_number').text(stats['current_block_number']);
+                    $('#current_block_timestamp').text(stats['current_block_timestamp']);
+                }
             }
         });
 

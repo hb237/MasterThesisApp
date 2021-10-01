@@ -1,7 +1,6 @@
-from web3 import method
 from werkzeug.utils import redirect
 from data_processor import DataProcessor
-from flask import Blueprint, request, make_response, send_file, jsonify
+from flask import Blueprint, request, make_response, send_file
 import constants as const
 import os
 import app
@@ -155,5 +154,4 @@ def get_eth_rates():
 
 @dashboard_bp.route('/api/conformance_checking', methods=['GET'])
 def get_conformance_checking_results():
-    return
-    # TODO implement and include in dashboard
+    return '', 200  # TODO

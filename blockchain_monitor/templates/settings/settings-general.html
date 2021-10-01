@@ -49,38 +49,14 @@ General Settings
             </div>
         </div>
     </div>
-    <!-- Mention it is a Websocket connection -->
     <div class="row mb-2">
         <div class="col-md-4 col-xl-3">
-            <label for="inputGethIP" class="col-form-label form-label">Geth node IP address:</label>
+            <!-- applies only for live mode  -->
+            <label for="inputConfirmationBlocks" class="col-form-label form-label">Confirmation blocks</label>
         </div>
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-            <input type="text" class="form-control" id="inputGethIP" name="inputGethIP" min="0">
-        </div>
-    </div>
-    <div class="row mb-2">
-        <div class="col-md-4 col-xl-3">
-            <label for="inputGethPort" class="col-form-label form-label">Geth node port:</label>
-        </div>
-        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-            <input type="number" class="form-control" id="inputGethPort" name="inputGethPort" step="1" min="0">
-        </div>
-    </div>
-    <div class="row mb-2">
-        <div class="col-md-4 col-xl-3">
-            <label for="selectCurrency" class="col-form-label form-label">Convert ETH to currency:</label>
-        </div>
-        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-            <select id="selectCurrency" name="selectCurrency" class="form-select">
-                <option disabled selected value>Select a currency ...</option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="JPY">JPY</option>
-                <option value="GBP">GBP</option>
-                <option value="AUD">AUD</option>
-                <option value="CAD">CAD</option>
-                <option value="CNY">CNY</option>
-            </select>
+            <input type="number" class="form-control" id="inputConfirmationBlocks" name="inputConfirmationBlocks"
+                min="0">
         </div>
     </div>
     <div class="row mb-2">
@@ -123,21 +99,45 @@ General Settings
     </div>
     <div class="row mb-2">
         <div class="col-md-4 col-xl-3">
-            <!-- applies only for live mode  -->
-            <label for="inputConfirmationBlocks" class="col-form-label form-label">Confirmation blocks</label>
-        </div>
-        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-            <input type="number" class="form-control" id="inputConfirmationBlocks" name="inputConfirmationBlocks"
-                min="0">
-        </div>
-    </div>
-    <div class="row mb-2">
-        <div class="col-md-4 col-xl-3">
             <label for="inputNoiseThreshold" class="col-form-label form-label">Noise threshold:</label>
         </div>
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
             <input type="number" class="form-control" id="inputNoiseThreshold" name="inputNoiseThreshold" step="0.01"
                 min="0" max="1">
+        </div>
+    </div>
+    <!-- Mention it is a Websocket connection -->
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputGethIP" class="col-form-label form-label">Geth node IP address:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="text" class="form-control" id="inputGethIP" name="inputGethIP" min="0">
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputGethPort" class="col-form-label form-label">Geth node port:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="number" class="form-control" id="inputGethPort" name="inputGethPort" step="1" min="0">
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="selectCurrency" class="col-form-label form-label">Convert ETH to currency:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <select id="selectCurrency" name="selectCurrency" class="form-select">
+                <option disabled selected value>Select a currency ...</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="JPY">JPY</option>
+                <option value="GBP">GBP</option>
+                <option value="AUD">AUD</option>
+                <option value="CAD">CAD</option>
+                <option value="CNY">CNY</option>
+            </select>
         </div>
     </div>
     <div class="row mb-2">
