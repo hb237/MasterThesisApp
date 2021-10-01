@@ -28,5 +28,7 @@ SENDER_STATS = MONITORING_DATA_DIR + 'sender_stats.json'
 RECEIVER_STATS = MONITORING_DATA_DIR + 'receiver_stats.json'
 ETH_RATES = MONITORING_DATA_DIR + 'eth_rates.json'
 DATASET_LAST_UPDATE = MONITORING_DATA_DIR + 'dataset_last_update.json'
-CONFORMANCE_CHECKING_RESULTS = MONITORING_DATA_DIR + \
-    'conformance_checking_results.json'
+CC_UNWANTED_ACTIVITIES_STATS = MONITORING_DATA_DIR + \
+    'cc_unwanted_activities_stats.json'
+CC_ACTIVITIES_STATS = MONITORING_DATA_DIR + 'cc_activities_stats.json'
+CC_TRACE_FITNESS_STATS = MONITORING_DATA_DIR + 'cc_trace_fitness_stats.json'

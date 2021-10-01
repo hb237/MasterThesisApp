@@ -154,6 +154,28 @@ Primary Dashboard
     <div class="col-md-6">
         <div class="card mb-4">
             <div class="card-header">
+                <i class="fas fa-check me-1"></i>Conformance checking - Activities not in the model
+            </div>
+            <div class="card-body">
+                <table id="cc_unwanted_activities_stats">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                Conformance checking - Activities not in the log
+            </div>
+            <div class="card-body">
+                <table id="cc_activities_stats">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
             </div>
             <div class="card-body">
             </div>
@@ -164,11 +186,9 @@ Primary Dashboard
 <script>
     $(document).ready(function () {
         /* TODO change to web-socket or query every second */
-        sender_stats = new simpleDatatables.DataTable(document.getElementById('sender-stats'),
-            { perPage: 5 })
-        receiver_stats = new simpleDatatables.DataTable(document.getElementById('receiver-stats'),
-            { perPage: 5 })
 
+        sender_stats = new simpleDatatables.DataTable(document.getElementById('sender-stats'),
+            { perPage: 5 });
         $.ajax({
             url: "/api/sender_stats",
             type: 'GET',
@@ -180,6 +200,8 @@ Primary Dashboard
             }
         });
 
+        receiver_stats = new simpleDatatables.DataTable(document.getElementById('receiver-stats'),
+            { perPage: 5 });
         $.ajax({
             url: "/api/receiver_stats",
             type: 'GET',
@@ -201,7 +223,7 @@ Primary Dashboard
         });
 
         $.ajax({
-            url: "/api/get_eth_rate",
+            url: "/api/eth_rate",
             type: 'GET',
             success: function (res) {
                 rate_stats = JSON.parse(res);
@@ -224,6 +246,45 @@ Primary Dashboard
                     $('#current_block_number').text(stats['current_block_number']);
                     $('#current_block_timestamp').text(stats['current_block_timestamp']);
                 }
+            }
+        });
+
+        cc_activities_stats = new simpleDatatables.DataTable(document.getElementById('cc_activities_stats'),
+            { perPage: 5 });
+        $.ajax({
+            url: "/api/cc_activities_stats",
+            type: 'GET',
+            success: function (res) {
+                let activities_stats = JSON.parse(res)
+                // let result = activities_stats.filter(function (el) {
+                //     return el['not_in_model'] == true
+                // });
+                let result = [];
+                for (i = 0; i < activities_stats.length; i++) {
+                    if (activities_stats[i]['not_in_model'] == true) {
+                        result.push([activities_stats[i]["activity"]]);
+                    }
+                }
+
+                let newData = {
+                    headings: ["Activity"],
+                    data: result
+                };
+
+                cc_activities_stats.insert(newData)
+            }
+        });
+
+        cc_unwanted_activities_stats = new simpleDatatables.DataTable(document.getElementById('cc_unwanted_activities_stats'),
+            { perPage: 5 });
+        $.ajax({
+            url: "/api/cc_unwanted_activities_stats",
+            type: 'GET',
+            success: function (res) {
+                cc_unwanted_activities_stats.import({
+                    type: "json",
+                    data: res
+                });
             }
         });
 

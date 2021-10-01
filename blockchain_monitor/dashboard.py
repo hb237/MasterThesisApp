@@ -139,7 +139,7 @@ def get_traces():
         return json.dumps(json.load(f))
 
 
-@dashboard_bp.route('/api/get_eth_rate', methods=['GET'])
+@dashboard_bp.route('/api/eth_rate', methods=['GET'])
 def get_eth_rates():
     with open(const.SETTINGS_PATH) as s:
         settings = json.load(s)
@@ -152,6 +152,19 @@ def get_eth_rates():
             # TODO include in dashboard
 
 
-@dashboard_bp.route('/api/conformance_checking', methods=['GET'])
-def get_conformance_checking_results():
-    return '', 200  # TODO
+@dashboard_bp.route('/api/cc_unwanted_activities_stats', methods=['GET'])
+def get_cc_unwanted_activities_stats():
+    with open(const.CC_UNWANTED_ACTIVITIES_STATS) as f:
+        return json.dumps(json.load(f))
+
+
+@dashboard_bp.route('/api/cc_activities_stats', methods=['GET'])
+def get_cc_activities_stats():
+    with open(const.CC_ACTIVITIES_STATS) as f:
+        return json.dumps(json.load(f))
+
+
+@dashboard_bp.route('/api/cc_trace_fitness_stats', methods=['GET'])
+def get_cc_trace_fitness_stats():
+    with open(const.CC_TRACE_FITNESS_STATS) as f:
+        return json.dumps(json.load(f))

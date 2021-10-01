@@ -253,11 +253,13 @@ class DataProcessor():
                 self.pm4py_log, net, initial_marking, final_marking, parameters=parameters_tbr)
 
         # activities that are recorded in the log but not in the model
-        # count how of they occur
+        # count how often they occur
         unwanted_activities_stats = []
         for activity in unwanted_activities.keys():
-            unwanted_activities_stats.append({'unwanted_activity': activity, 'count': len(
-                unwanted_activities[activity])})
+            unwanted_activities_stats.append({'Activity': activity, 'Count in log': str(len(
+                unwanted_activities[activity]))})
+        with open(const.CC_UNWANTED_ACTIVITIES_STATS, "w") as file:
+            json.dump(unwanted_activities_stats, file)
 
         # activities that are in model but not in the log
         activities_stats = []
@@ -265,7 +267,9 @@ class DataProcessor():
             not_in_model = len(trans_fitness[activity]['underfed_traces']) == 0 and len(
                 trans_fitness[activity]['fit_traces']) == 0
             activities_stats.append(
-                {'activity': activity, 'not_in_model': not_in_model})
+                {'activity': str(activity), 'not_in_model': not_in_model})
+        with open(const.CC_ACTIVITIES_STATS, "w") as file:
+            json.dump(activities_stats, file)
 
         # the different fitness values and how often each occurred
         trace_fitness_stats = []
@@ -275,7 +279,5 @@ class DataProcessor():
         counted = dict(Counter(trace_fitnesses))
         for k in counted.keys():
             trace_fitness_stats.append({'fitness': k, 'count': counted[k]})
-
-        # with open(const.CONFORMANCE_CHECKING_RESULTS, "w") as file:
-        #     json.dump(result, file)
-        return
+        with open(const.CC_TRACE_FITNESS_STATS, "w") as file:
+            json.dump(trace_fitness_stats, file)
