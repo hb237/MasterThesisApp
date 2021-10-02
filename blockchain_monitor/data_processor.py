@@ -18,11 +18,12 @@ import requests
 import bpmn_with_costs
 import json
 import time
+import app
 
 
 STREAM_LIVE = 'streaming-live-data'
 STREAM_EXAMPLE = 'streaming-example-data'
-STATIC = 'static'
+STATIC = 'static-example-data'
 
 
 class DataProcessor():
@@ -30,9 +31,7 @@ class DataProcessor():
         self.analysis_process: Process = None
 
     def check_monitoring_running(self) -> bool:
-        if self.analysis_process is None:
-            return False
-        else:
+        if self.analysis_process is not None:
             return self.analysis_process.is_alive()
 
     def set_settings(self):
@@ -64,7 +63,7 @@ class DataProcessor():
 
     def stop_processing(self):
         if self.analysis_process is not None:
-            self.analysis_process.join(timeout=1)
+            self.analysis_process.join(timeout=0)
             self.analysis_process.terminate()
 
     def init_processing(self):
@@ -72,33 +71,35 @@ class DataProcessor():
 
         # Terminate running process
         if self.analysis_process is not None:
-            self.analysis_process.terminate()
+            self.stop_processing()
 
         # Fixed range: start = static and end = static
         # Floating range: start = current and end = current - x blocks
         # Growing range: start = current and end = static
 
         if self.input_mode == STATIC:
-            self.process_data()
+            self.analysis_process = Process(
+                target=self.process_data,
+            )
+            self.analysis_process.start()
         elif self.input_mode == STREAM_EXAMPLE:
-            # TODO launch file feeder
+            app.launch_file_feeder()
             # TODO get selected example files
             pass
         elif self.input_mode == STREAM_LIVE:
-            # TODO launch BLF
+            app.launch_file_feeder()
+            app.extract_current_manifest()
             pass
 
         if self.input_mode == STREAM_EXAMPLE or self.input_mode == STREAM_LIVE:
             self.analysis_process = Process(
                 target=self.continuously_process_data,
-                daemon=True
             )
             self.analysis_process.start()
 
     def continuously_process_data(self):
-        pass
-        # while(True):
-        #     self.process_data()
+        while(True):
+            self.process_data()
 
     def process_data(self):
         self.create_shared_datastructures()
