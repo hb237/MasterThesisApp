@@ -1,21 +1,12 @@
-from re import findall
-from eth_utils import currency
-import lxml.etree as ET
-from lxml.etree import Element, SubElement
-import constants as const
+from lxml.etree import SubElement
 from datetime import datetime
 from web3 import Web3
 
 
 class DataTransformer():
-    def __init__(self) -> None:
-        self.combined_xes: Element = None
-        self.combined_xes = ET.parse(
-            const.XES_FILES_COMBINED_PATH)  # TODO remove
-
     def add_time_stamps(self) -> None:
-        events = self.combined_xes.findall(".//event")
-        for e in events:
+        # events = self.combined_xes.findall(".//event")
+        for e in self.tranformed_xes.iter('event'):
             block_timestamp = int(
                 e.find(".//int[@key='block_timestamp']").get('value'))
             date_time_value = datetime.utcfromtimestamp(
@@ -26,8 +17,8 @@ class DataTransformer():
             data_time.attrib['value'] = date_time_value
 
     def add_cost(self) -> None:
-        traces = self.combined_xes.findall(".//trace")
-        for t in traces:
+        # traces = self.combined_xes.findall(".//trace")
+        for t in self.tranformed_xes.iter('trace'):
             event_tx_elems = t.findall(".//event/string[@key='tx_hash']")
             event_txs = []
             for et in event_tx_elems:
@@ -37,8 +28,8 @@ class DataTransformer():
             for i in event_txs:
                 event_txs_counts[i] = event_txs_counts.get(i, 0) + 1
 
-            events = t.findall(".//event")
-            for e in events:
+            # events = t.findall(".//event")
+            for e in t.iter('event'):
                 currency = SubElement(e, 'string')
                 currency.attrib['key'] = 'cost:currency'
                 currency.attrib['value'] = 'ETH'
@@ -58,14 +49,11 @@ class DataTransformer():
                 tx_number_of_events.attrib['value'] = str(event_txs_counts.get(
                     tx_hash))
 
-    def save_combined_xes_to_file(self) -> None:
-        with open(const.XES_FILES_COMBINED_PATH_TEST, 'wb') as f:  # TODO change path
-            self.combined_xes.write(f)
-
-    def transform_data(self) -> None:
+    def transform_data(self, xes) -> None:
+        self.tranformed_xes = xes
         self.add_time_stamps()
         self.add_cost()
-        self.save_combined_xes_to_file()
+        return self.tranformed_xes
 
 
 # TODO remove, only for testing
