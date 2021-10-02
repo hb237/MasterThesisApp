@@ -193,14 +193,9 @@ General Settings
         });
     }
 
-    $(document).ready(function () {
-        if ($('#selectInputMode').val() == 'static') {
-            $('#monitoring-status').text('static mode')
-        } else {
-            // query every second
-            setInterval(is_monitoring_running, 1000);
-        }
-    });
+
+    setInterval(is_monitoring_running, 1000);
+
 
     function start_monitoring() {
         $.ajax({
