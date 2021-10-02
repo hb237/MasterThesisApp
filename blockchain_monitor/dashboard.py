@@ -24,7 +24,7 @@ def get_refresh_rate():
 
 @dashboard_bp.route('/api/start_monitoring', methods=['GET'])
 def start_monitoring():
-    dp.init_processing()
+    dp.start_processing()
     return '', 202
 
 

@@ -1,12 +1,8 @@
 # Keep in mind that lxml supports only xPath 1.0
-#from web3 import Web3
-#w3 = Web3(Web3.WebsocketProvider('wss://mainnet.infura.io/ws/v3/bcf5331eacae4b0c8fba1751b28c6768'))
-import os
 import time
+import os
 import lxml.etree as ET
 from lxml.etree import Element
-from watchdog.observers import Observer
-from watchdog.events import FileCreatedEvent, FileSystemEventHandler
 from data_transformer import DataTransformer
 import constants as const
 
@@ -18,6 +14,7 @@ class FileMerger():
         self.last_blk = None
         self.first_blk = None
         self.max_block_range = 200
+        self.proccessed_files = []
 
     def add_traces(self, path: str):
         # read in new xes file as tree
@@ -77,7 +74,7 @@ class FileMerger():
                 for event in new_events:
                     trace.append(event)
 
-        with open(const.XES_FILES_COMBINED_PATH_TEST, 'wb') as f:  # TODO change path
+        with open(const.XES_FILES_COMBINED_PATH, 'wb') as f:
             print('Combined XES was extended by: ' + path)
             f.write(ET.tostring(self.combined_xes, pretty_print=True))
 
@@ -89,16 +86,7 @@ class FileMerger():
             if(trace.find(".//event") is None):
                 trace.getparent().remove(trace)
 
-    class InputHandler(FileSystemEventHandler):
-        def __init__(self) -> None:
-            super().__init__()
-
-        # Once BLF extracted a XES file from a new block write its trace to the combined log.
-        def on_created(self, event):
-            if type(event) == FileCreatedEvent:
-                self.add_traces(event.src_path, self.dp)  # TODO
-
-    def start(self):
+    def merge(self):
         print('Started file reader.')
 
         # setup xes log structure
@@ -107,34 +95,11 @@ class FileMerger():
         self.combined_xes.attrib['xes.features'] = 'nested-attributes'
         self.combined_xes.attrib['openxes.version'] = '1.0RC7'
 
-        i = 0
-        # TODO remove files in input directory + combined xes
-        for filename in os.listdir(const.XES_FILES_DIR):  # only for testing
-            if ".xes" in filename:
-                path = os.path.join(const.XES_FILES_DIR, filename)
-                self.add_traces(path)
-                i += 1
-                print(i)
-                # if i > 1000:
-                # break
-
-        # continuously monitor xes_files folder
-        # input_handler = self.InputHandler()
-        # observer = Observer()
-        # observer.schedule(
-        #     input_handler, path=const.XES_FILES_DIR, recursive=False)
-        # observer.start()
-
-        # keep the program running
-        # try:
-        #     while True:
-        #         time.sleep(1)
-        # except KeyboardInterrupt:
-        #     observer.stop()
-
-        # observer.join()
-
-
-if __name__ == '__main__':
-    fm = FileMerger()
-    fm.start()
+        while True:  # TODO add waiting time
+            time.sleep(1)
+            current_files = os.listdir(const.XES_FILES_DIR)
+            unprocessed_files = list(
+                set(current_files) - set(self.proccessed_files))
+            for file_name in unprocessed_files:
+                self.add_traces(os.path.join(const.XES_FILES_DIR, file_name))
+                self.proccessed_files.append(file_name)

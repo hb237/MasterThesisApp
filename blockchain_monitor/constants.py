@@ -1,11 +1,9 @@
-XES_FILES_DIR = 'test_files/xes_logs/seperated/cryptokitties'
-XES_FILES_COMBINED_PATH = './xes_files_combined/combined_log.xml'
-XES_FILES_COMBINED_PATH_TEST = 'test_files/xes_logs/complete/cryptokitties/cryptokitties_combined_6606103_6615099.xml'  # TODO remove
-BLF_JAR_PATH = './blf/blf-cmd.jar'
+BLF_JAR_PATH = 'blf/blf-cmd.jar'
 BLF_VALIDATE = 'validate'
 BLF_EXTRACT = 'extract'
-TEST_FILES_LOCATION = './test_app/test_files'
-TEST_FILES_DESTINATION = "./xes_files"
+XES_FILES_DIR = 'input_xes_files'
+XES_FILES_COMBINED_PATH = 'input_xes_files_combined/combined_log.xml'
+TEST_FILES_LOCATION = 'test_files/xes_logs/seperated/cryptokitties'
 MANIFEST_PATH = 'static/user_uploads/manifest.bcql'
 BPMN_PATH = 'static/user_uploads/diagram.bpmn'
 BPMN_EMPTY_PATH = 'static/empty-diagram.bpmn'

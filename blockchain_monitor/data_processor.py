@@ -19,6 +19,11 @@ import bpmn_with_costs
 import json
 import time
 import app
+import os
+import shutil
+from test_app import file_feeder
+from file_merger import FileMerger
+import time
 
 
 STREAM_LIVE = 'streaming-live-data'
@@ -29,6 +34,8 @@ STATIC = 'static-example-data'
 class DataProcessor():
     def __init__(self) -> None:
         self.analysis_process: Process = None
+        self.file_feeder_process: Process = None
+        self.file_merger_process: Process = None
 
     def check_monitoring_running(self) -> bool:
         if self.analysis_process is not None:
@@ -62,20 +69,34 @@ class DataProcessor():
             config.get('selectInputMode', STREAM_EXAMPLE))
 
     def stop_processing(self):
+        if self.file_feeder_process is not None:
+            self.file_feeder_process.join(timeout=0)
+            self.file_feeder_process.terminate()
+        if self.file_merger_process is not None:
+            self.file_merger_process.join(timeout=0)
+            self.file_merger_process.terminate()
         if self.analysis_process is not None:
             self.analysis_process.join(timeout=0)
             self.analysis_process.terminate()
+        # delete all xes files in input folder
+        shutil.rmtree(const.XES_FILES_DIR)
+        if not os.path.exists(const.XES_FILES_DIR):
+            os.makedirs(const.XES_FILES_DIR)
 
-    def init_processing(self):
+    def start_processing(self):
         self.set_settings()
 
-        # Terminate running process
-        if self.analysis_process is not None:
-            self.stop_processing()
+        self.stop_processing()
 
+        # TODO
         # Fixed range: start = static and end = static
         # Floating range: start = current and end = current - x blocks
         # Growing range: start = current and end = static
+        fm = FileMerger()
+        self.file_merger_process = Process(
+            target=fm.merge
+        )
+        self.file_merger_process.start()
 
         if self.input_mode == STATIC:
             self.analysis_process = Process(
@@ -83,14 +104,12 @@ class DataProcessor():
             )
             self.analysis_process.start()
         elif self.input_mode == STREAM_EXAMPLE:
-            app.launch_file_feeder()
-            # TODO get selected example files
-            pass
+            self.file_feeder_process = Process(
+                target=file_feeder.feed_files
+            )
+            self.file_feeder_process.start()
         elif self.input_mode == STREAM_LIVE:
-            app.launch_file_feeder()
             app.extract_current_manifest()
-            pass
-
         if self.input_mode == STREAM_EXAMPLE or self.input_mode == STREAM_LIVE:
             self.analysis_process = Process(
                 target=self.continuously_process_data,
@@ -102,6 +121,11 @@ class DataProcessor():
             self.process_data()
 
     def process_data(self):
+        if not os.path.exists(const.XES_FILES_COMBINED_PATH):
+            time.sleep(1)
+            return
+
+        self.retreive_current_block_stats()
         self.create_shared_datastructures()
 
         # Execute all analysis methods
@@ -121,18 +145,16 @@ class DataProcessor():
         self.write_last_time_updated()
 
     def create_shared_datastructures(self):
-        self.retreive_current_block_stats()
-
         # Create a pm4py log as on input for further analysis
         log = xes_importer.apply(
-            const.XES_FILES_COMBINED_PATH_TEST)  # TODO change path
+            const.XES_FILES_COMBINED_PATH)
         self.pm4py_log = attributes_filter.apply_numeric(log, self.start_block, self.end_block,
                                                          parameters={Parameters.CASE_ATTRIBUTE_PREFIX: '',
                                                                      attributes_filter.Parameters.CASE_ID_KEY: 'ident:piid',
                                                                      attributes_filter.Parameters.ATTRIBUTE_KEY: 'tx_blocknumber',
                                                                      attributes_filter.Parameters.POSITIVE: True})
         # Read in log as tree
-        self.xes_log_tree = ET.parse(const.XES_FILES_COMBINED_PATH_TEST)
+        self.xes_log_tree = ET.parse(const.XES_FILES_COMBINED_PATH)
 
     def write_last_time_updated(self):
         t = time.time()

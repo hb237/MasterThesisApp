@@ -14,11 +14,14 @@ def get_time(path: str) -> int:
     return timestamp
 
 
-def feed_files(speed: int):
+def feed_files():
+    speed = 100
     print('Started file feeder.')
     print('Start feeding files with speed: ' + str(speed))
 
     prev_block_time = -1
+
+    # TODO get feeding speed
 
     # move files one by one
     for filename in sorted(os.listdir(const.TEST_FILES_LOCATION)):
@@ -31,7 +34,7 @@ def feed_files(speed: int):
             print('sleep for ' + str(waiting_time) + ' seconds')
             time.sleep(waiting_time)
             prev_block_time = current_block_time
-            copy(filepath, const.TEST_FILES_DESTINATION)
+            copy(filepath, const.XES_FILES_DIR)
             print('copied ' + filepath)
 
 
