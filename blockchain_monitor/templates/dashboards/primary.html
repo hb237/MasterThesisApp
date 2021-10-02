@@ -6,87 +6,6 @@ Primary Dashboard
 
 {% block main_content %}
 <div class="row">
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-table me-1"></i>
-                Sender Statistics
-            </div>
-            <div class="card-body">
-                <table id="sender-stats">
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-table me-1"></i>
-                Receiver Statistics
-            </div>
-            <div class="card-body">
-                <table id="receiver-stats">
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-chart-bar me-1"></i>
-                Block Statistics
-            </div>
-            <div class="card-body">
-                <div>
-                    <canvas id="block_stats_chart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-project-diagram me-1"></i>
-                BPMN diagram with costs
-            </div>
-            <div class=" card-body">
-                <img class="w-100" src="{{ url_for('static', filename='monitoring_data/bpmn_costs_diagram.png') }}">
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-project-diagram me-1"></i>
-                Directly-Follows Graphs Performance
-            </div>
-            <div class="card-body">
-                <img class="w-100" src="{{ url_for('static', filename='monitoring_data/dfg_performance.png') }}">
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-project-diagram me-1"></i>
-                Directly-Follows Graphs Frequency
-            </div>
-            <div class="card-body">
-                <img class="w-100" src="{{ url_for('static', filename='monitoring_data/dfg_frequency.png') }}">
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="fas fa-project-diagram me-1"></i>
-                Petri Net
-            </div>
-            <div class="card-body">
-                <img class="w-100" src="{{ url_for('static', filename='monitoring_data/petri_net.png') }}">
-            </div>
-        </div>
-    </div>
     <div class="col-md-3">
         <div class="card bg-primary text-white mb-4">
             <div class="card-header">
@@ -151,18 +70,44 @@ Primary Dashboard
             </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="card mb-4">
+    <div class="col-md-3">
+        <div class="card bg-danger text-white mb-4">
             <div class="card-header">
-                <i class="fas fa-check me-1"></i>Conformance checking - Activities not in the model
+                <i class="fas fa-coins me-1"></i>Monitoring status:
             </div>
             <div class="card-body">
-                <table id="cc_unwanted_activities_stats">
-                </table>
+                <div class="row">
+                    <div class="col-4">
+                        <div id="currency"></div>
+                    </div>
+                    <div class="col-8">
+                        <span id="exchange_rate"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-project-diagram me-1"></i>
+                BPMN diagram with costs
+            </div>
+            <div class=" card-body">
+                <img class="w-100" src="{{ url_for('static', filename='monitoring_data/bpmn_costs_diagram.png') }}">
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-bar me-1"></i>
+                Block Statistics
+            </div>
+            <div class="card-body">
+                <div>
+                    <canvas id="block_stats_chart"></canvas>
+                </div>
+            </div>
+        </div>
         <div class="card mb-4">
             <div class="card-header">
                 Conformance checking - Activities not in the log
@@ -184,39 +129,21 @@ Primary Dashboard
                 </div>
             </div>
         </div>
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-check me-1"></i>Conformance checking - Activities not in the model
+            </div>
+            <div class="card-body">
+                <table id="cc_unwanted_activities_stats">
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
     $(document).ready(function () {
         /* TODO change to web-socket or query every second */
-
-        sender_stats = new simpleDatatables.DataTable(document.getElementById('sender-stats'),
-            { perPage: 5 });
-        $.ajax({
-            url: "/api/sender_stats",
-            type: 'GET',
-            success: function (res) {
-                sender_stats.import({
-                    type: "json",
-                    data: res
-                });
-            }
-        });
-
-        receiver_stats = new simpleDatatables.DataTable(document.getElementById('receiver-stats'),
-            { perPage: 5 });
-        $.ajax({
-            url: "/api/receiver_stats",
-            type: 'GET',
-            success: function (res) {
-                receiver_stats.import({
-                    type: "json",
-                    data: res
-                });
-            }
-        });
-
         $.ajax({
             url: "/api/dataset_last_update",
             type: 'GET',
@@ -390,9 +317,22 @@ Primary Dashboard
                 };
 
                 const config = {
-                    type: 'bar',
+                    type: 'line',
                     data: data,
-                    options: {}
+                    options: {
+                        animation: {
+                            duration: 0 // general animation time
+                        },
+                        hover: {
+                            animationDuration: 0 // duration of animations when hovering an item
+                        },
+                        responsiveAnimationDuration: 0, // animation duration after a resize
+                        elements: {
+                            line: {
+                                tension: 0 // disables bezier curves
+                            }
+                        }
+                    }
                 };
                 var block_stats_chart = new Chart(
                     document.getElementById('block_stats_chart'),

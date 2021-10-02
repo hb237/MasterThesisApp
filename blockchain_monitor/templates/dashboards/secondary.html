@@ -6,117 +6,91 @@ Secondary Dashboard
 
 {% block main_content %}
 <div class="row">
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-primary text-white mb-4">
-            <div class="card-body">Primary Card</div>
-            <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="#">View Details</a>
-                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-warning text-white mb-4">
-            <div class="card-body">Warning Card</div>
-            <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="#">View Details</a>
-                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-success text-white mb-4">
-            <div class="card-body">Success Card</div>
-            <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="#">View Details</a>
-                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-            </div>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="card bg-danger text-white mb-4">
-            <div class="card-body">Danger Card</div>
-            <div class="card-footer d-flex align-items-center justify-content-between">
-                <a class="small text-white stretched-link" href="#">View Details</a>
-                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-xl-6">
+    <div class="col-lg-4">
         <div class="card mb-4">
             <div class="card-header">
-                <i class="fas fa-chart-area me-1"></i>
-                Area Chart Example
+                <i class="fas fa-project-diagram me-1"></i>
+                Directly-Follows Graphs Performance
             </div>
-            <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
+            <div class="card-body">
+                <img class="w-100" src="{{ url_for('static', filename='monitoring_data/dfg_performance.png') }}">
+            </div>
         </div>
     </div>
-    <div class="col-xl-6">
+    <div class="col-lg-4">
         <div class="card mb-4">
             <div class="card-header">
-                <i class="fas fa-chart-bar me-1"></i>
-                Bar Chart Example
+                <i class="fas fa-project-diagram me-1"></i>
+                Directly-Follows Graphs Frequency
             </div>
-            <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
+            <div class="card-body">
+                <img class="w-100" src="{{ url_for('static', filename='monitoring_data/dfg_frequency.png') }}">
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-project-diagram me-1"></i>
+                Petri Net
+            </div>
+            <div class="card-body">
+                <img class="w-100" src="{{ url_for('static', filename='monitoring_data/petri_net.png') }}">
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                Sender Statistics
+            </div>
+            <div class="card-body">
+                <table id="sender-stats">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                Receiver Statistics
+            </div>
+            <div class="card-body">
+                <table id="receiver-stats">
+                </table>
+            </div>
         </div>
     </div>
 </div>
-<div class="card mb-4">
-    <div class="card-header">
-        <i class="fas fa-table me-1"></i>
-        DataTable Example
-    </div>
-    <div class="card-body">
-        <table id="datatablesSimple">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th>Office</th>
-                    <th>Age</th>
-                    <th>Start date</th>
-                    <th>Salary</th>
-                </tr>
-            </thead>
-            <tfoot>
-                <tr>
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th>Office</th>
-                    <th>Age</th>
-                    <th>Start date</th>
-                    <th>Salary</th>
-                </tr>
-            </tfoot>
-            <tbody>
-                <tr>
-                    <td>Tiger Nixon</td>
-                    <td>System Architect</td>
-                    <td>Edinburgh</td>
-                    <td>61</td>
-                    <td>2011/04/25</td>
-                    <td>$320,800</td>
-                </tr>
-                <tr>
-                    <td>Garrett Winters</td>
-                    <td>Accountant</td>
-                    <td>Tokyo</td>
-                    <td>63</td>
-                    <td>2011/07/25</td>
-                    <td>$170,750</td>
-                </tr>
-                <tr>
-                    <td>Ashton Cox</td>
-                    <td>Junior Technical Author</td>
-                    <td>San Francisco</td>
-                    <td>66</td>
-                    <td>2009/01/12</td>
-                    <td>$86,000</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+<script>
+    $(document).ready(function () {
+        sender_stats = new simpleDatatables.DataTable(document.getElementById('sender-stats'),
+            { perPage: 5 });
+        $.ajax({
+            url: "/api/sender_stats",
+            type: 'GET',
+            success: function (res) {
+                sender_stats.import({
+                    type: "json",
+                    data: res
+                });
+            }
+        });
+
+        receiver_stats = new simpleDatatables.DataTable(document.getElementById('receiver-stats'),
+            { perPage: 5 });
+        $.ajax({
+            url: "/api/receiver_stats",
+            type: 'GET',
+            success: function (res) {
+                receiver_stats.import({
+                    type: "json",
+                    data: res
+                });
+            }
+        });
+    });
+</script>
 {% endblock %}

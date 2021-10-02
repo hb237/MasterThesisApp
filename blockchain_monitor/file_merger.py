@@ -17,7 +17,7 @@ class FileMerger():
         self.combined_xes = None
         self.last_blk = None
         self.first_blk = None
-        self.max_block_range = 200
+        self.max_block_range = 10000
 
     def add_traces(self, path: str):
         # read in new xes file as tree

@@ -1,6 +1,6 @@
 XES_FILES_DIR = 'test_files/xes_logs/seperated/cryptokitties'
 XES_FILES_COMBINED_PATH = './xes_files_combined/combined_log.xml'
-XES_FILES_COMBINED_PATH_TEST = 'test_files/xes_logs/complete/cryptokitties/cryptokitties_combined1.xml'  # TODO remove
+XES_FILES_COMBINED_PATH_TEST = 'test_files/xes_logs/complete/cryptokitties/cryptokitties_combined_6606103_6615099.xml'  # TODO remove
 BLF_JAR_PATH = './blf/blf-cmd.jar'
 BLF_VALIDATE = 'validate'
 BLF_EXTRACT = 'extract'

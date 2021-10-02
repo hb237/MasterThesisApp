@@ -155,7 +155,7 @@ class DataProcessor():
         bpmn_graph = pm4py.discover_bpmn_inductive(
             self.pm4py_log, noise_threshold)
         gviz = bpmn_with_costs.apply(
-            bpmn_graph, self.xes_log_tree, currency, currency_rate, ndigits=2, format='png')
+            bpmn_graph, self.xes_log_tree, currency, currency_rate=3000, ndigits=2, format='png')  # TODO
         bpmn_visualizer.save(gviz, const.BPMN_COSTS_DIAGRAM)
 
     def create_dfg_frequency(self):
