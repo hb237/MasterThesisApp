@@ -54,9 +54,3 @@ class DataTransformer():
         self.add_time_stamps()
         self.add_cost()
         return self.tranformed_xes
-
-
-# TODO remove, only for testing
-if __name__ == '__main__':
-    df = DataTransformer()
-    df.transform_data()

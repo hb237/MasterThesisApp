@@ -149,7 +149,6 @@ def get_eth_rates():
             rate = currencies[currency]
             result = {'currency': currency, 'rate': rate}
             return json.dumps(result)
-            # TODO include in dashboard
 
 
 @dashboard_bp.route('/api/cc_unwanted_activities_stats', methods=['GET'])

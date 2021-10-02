@@ -148,7 +148,6 @@ Primary Dashboard
     function retrieve_data() {
         $('#bpmn_costs_diagram').attr('src', $('#bpmn_costs_diagram').attr('src') + '#' + new Date().getTime());
 
-        /* TODO change to web-socket or query every second */
         $.ajax({
             url: "/api/dataset_last_update",
             type: 'GET',

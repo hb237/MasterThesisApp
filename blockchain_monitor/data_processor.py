@@ -136,8 +136,6 @@ class DataProcessor():
             currency='EUR', currency_rate=1.0, noise_threshold=0.8)
         self.create_dfg_frequency()
         self.create_dfg_performance()
-        self.retreive_traces()
-        self.retreive_events()
         self.retreive_block_stats()
         self.retreive_sender_stats()
         self.retreive_receiver_stats()
@@ -205,20 +203,6 @@ class DataProcessor():
         gviz = dfg_visualization.apply(
             dfg, log=self.pm4py_log, variant=dfg_visualization.Variants.PERFORMANCE, parameters=parameters)
         dfg_visualization.save(gviz, const.DFG_PERFORMANCE)
-
-    def retreive_traces(self):
-        traces = self.xes_log_tree.findall(".//trace")  # TODO
-        # with open(const.TRACES, "w") as file:
-        #     json.dump(traces, file, indent=4, sort_keys=True)
-
-    def retreive_events(self):
-        events = self.xes_log_tree.findall(".//event")
-        events = filter(lambda e: self.start_block <= int(
-            e.find(".//int[@key='tx_blocknumber']").get('value')) <= self.end_block, events)
-        events = sorted(events, key=lambda e: int(
-            e.find(".//int[@key='tx_blocknumber']").get('value')), reverse=True)
-        # with open(const.EVENTS, "w") as file: #TODO
-        #     json.dump(events, file, indent=4, sort_keys=True)
 
     def retreive_eth_rates(self):
         'Retrieves the current currency rates fro a multitude of currencies to pay for 1 ETH.'
