@@ -99,6 +99,17 @@
             </main>
         </div>
     </div>
+    <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <img src="" class="imagepreview w-100">
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Startbootstrap Dashboard -->
     <script src="{{ url_for('static', filename='js/startbootstrap-sb-admin.js') }}"></script>
     <!-- Bootstrap -->
@@ -108,6 +119,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
     <!-- Simple Datatables -->
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" crossorigin="anonymous"></script>
+    <script>
+        $(function () {
+            $('.pop').on('click', function () {
+                $('.imagepreview').attr('src', $(this).find('img').attr('src'));
+                $('#imagemodal').modal('show');
+            });
+        });
+    </script>
 </body>
 
 </html>

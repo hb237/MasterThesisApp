@@ -91,7 +91,9 @@ Primary Dashboard
                 BPMN diagram with costs
             </div>
             <div class=" card-body">
-                <img class="w-100" src="{{ url_for('static', filename='monitoring_data/bpmn_costs_diagram.png') }}">
+                <a href="#" class="pop">
+                    <img class="w-100" src="{{ url_for('static', filename='monitoring_data/bpmn_costs_diagram.png') }}">
+                </a>
             </div>
         </div>
         <div class="card mb-4">
@@ -137,7 +139,6 @@ Primary Dashboard
         </div>
     </div>
 </div>
-
 <script>
     $(document).ready(function () {
         /* TODO change to web-socket or query every second */
