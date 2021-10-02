@@ -146,8 +146,15 @@ class DataProcessor():
 
     def create_shared_datastructures(self):
         # Create a pm4py log as on input for further analysis
-        log = xes_importer.apply(
-            const.XES_FILES_COMBINED_PATH)
+        successful = False
+        while not successful:
+            try:
+                log = xes_importer.apply(
+                    const.XES_FILES_COMBINED_PATH)
+                successful = True
+            except ET.XMLSyntaxError as e:
+                print(e)
+                time.sleep(0.1)
         self.pm4py_log = attributes_filter.apply_numeric(log, self.start_block, self.end_block,
                                                          parameters={Parameters.CASE_ATTRIBUTE_PREFIX: '',
                                                                      attributes_filter.Parameters.CASE_ID_KEY: 'ident:piid',

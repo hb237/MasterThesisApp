@@ -92,7 +92,8 @@ Primary Dashboard
             </div>
             <div class=" card-body">
                 <a href="#" class="pop">
-                    <img class="w-100" src="{{ url_for('static', filename='monitoring_data/bpmn_costs_diagram.png') }}">
+                    <img id="bpmn_costs_diagram" class="w-100"
+                        src="{{ url_for('static', filename='monitoring_data/bpmn_costs_diagram.png') }}">
                 </a>
             </div>
         </div>
@@ -141,6 +142,12 @@ Primary Dashboard
 </div>
 <script>
     $(document).ready(function () {
+        setInterval(retrieve_data, 1000);
+    });
+
+    function retrieve_data() {
+        $('#bpmn_costs_diagram').attr('src', $('#bpmn_costs_diagram').attr('src') + '#' + new Date().getTime());
+
         /* TODO change to web-socket or query every second */
         $.ajax({
             url: "/api/dataset_last_update",
@@ -228,6 +235,18 @@ Primary Dashboard
                                     labelString: 'fitness'
                                 }
                             }],
+                        },
+                        animation: {
+                            duration: 0 // general animation time
+                        },
+                        hover: {
+                            animationDuration: 0 // duration of animations when hovering an item
+                        },
+                        responsiveAnimationDuration: 0, // animation duration after a resize
+                        elements: {
+                            line: {
+                                tension: 0 // disables bezier curves
+                            }
                         }
                     }
                 };
@@ -350,7 +369,6 @@ Primary Dashboard
                 );
             }
         });
-
-    });
+    };
 </script>
 {% endblock %}

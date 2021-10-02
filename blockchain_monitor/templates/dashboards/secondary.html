@@ -14,7 +14,8 @@ Secondary Dashboard
             </div>
             <div class="card-body">
                 <a href="#" class="pop">
-                    <img class="w-100" src="{{ url_for('static', filename='monitoring_data/dfg_performance.png') }}">
+                    <img id="dfg_performance" class="w-100"
+                        src="{{ url_for('static', filename='monitoring_data/dfg_performance.png') }}">
                 </a>
             </div>
         </div>
@@ -27,7 +28,8 @@ Secondary Dashboard
             </div>
             <div class="card-body">
                 <a href="#" class="pop">
-                    <img class="w-100" src="{{ url_for('static', filename='monitoring_data/dfg_frequency.png') }}">
+                    <img id="dfg_frequency" class="w-100"
+                        src="{{ url_for('static', filename='monitoring_data/dfg_frequency.png') }}">
                 </a>
             </div>
         </div>
@@ -40,7 +42,8 @@ Secondary Dashboard
             </div>
             <div class="card-body">
                 <a href="#" class="pop">
-                    <img class="w-100" src="{{ url_for('static', filename='monitoring_data/petri_net.png') }}">
+                    <img id="petri_net" class="w-100"
+                        src="{{ url_for('static', filename='monitoring_data/petri_net.png') }}">
                 </a>
             </div>
         </div>
@@ -71,7 +74,11 @@ Secondary Dashboard
     </div>
 </div>
 <script>
-    $(document).ready(function () {
+    function retrieve_data() {
+        $('#dfg_performance').attr('src', $('#dfg_performance').attr('src') + '#' + new Date().getTime());
+        $('#dfg_frequency').attr('src', $('#dfg_frequency').attr('src') + '#' + new Date().getTime());
+        $('#petri_net').attr('src', $('#petri_net').attr('src') + '#' + new Date().getTime());
+
         sender_stats = new simpleDatatables.DataTable(document.getElementById('sender-stats'),
             { perPage: 5 });
         $.ajax({
@@ -97,6 +104,10 @@ Secondary Dashboard
                 });
             }
         });
+    };
+
+    $(document).ready(function () {
+        setInterval(retrieve_data, 1000);
     });
 </script>
 {% endblock %}
