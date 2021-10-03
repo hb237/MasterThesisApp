@@ -11,7 +11,7 @@ General Settings
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
             <div class="input-group">
                 <input type="number" class="form-control" id="inputRefreshRate" name="inputRefreshRate" step="0.1"
-                    min="0.1">
+                    min="0.1" required>
             </div>
         </div>
     </div>
@@ -20,16 +20,8 @@ General Settings
             <label for="inputStartBlock" class="col-form-label form-label">Start block:</label>
         </div>
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-            <div class=" input-group">
-                <input type="number" class="form-control" id="inputStartBlock" name="inputStartBlock" step="1" min="0">
-                <div class="input-group-text">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="chkLastXBlocks" name="chkLastXBlocks"
-                            value="true">
-                        <label class="form-check-label" for="chkLastXBlocks">Use as last blocks</label>
-                    </div>
-                </div>
-            </div>
+            <input type="number" class="form-control" id="inputStartBlock" name="inputStartBlock" step="1" min="0"
+                required>
         </div>
     </div>
     <div class="row mb-2">
@@ -37,16 +29,16 @@ General Settings
             <label for="inputEndBlock" class="col-form-label form-label">End block:</label>
         </div>
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-            <div class=" input-group">
-                <input type="number" class="form-control" id="inputEndBlock" name="inputEndBlock" step="1" min="0">
-                <div class="input-group-text">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="chkRecentBlock" name="chkRecentBlock"
-                            value="true">
-                        <label class="form-check-label" for="chkRecentBlock">Use most recent block</label>
-                    </div>
-                </div>
-            </div>
+            <input type="number" class="form-control" id="inputEndBlock" name="inputEndBlock" step="1" min="0" required>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputMonitoringWindow" class="col-form-label form-label">Monitoring window block size:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="number" class="form-control" id="inputMonitoringWindow" name="inputMonitoringWindow" step="1"
+                min="1" required>
         </div>
     </div>
     <div class="row mb-2">
@@ -56,7 +48,7 @@ General Settings
         </div>
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
             <input type="number" class="form-control" id="inputConfirmationBlocks" name="inputConfirmationBlocks"
-                min="0">
+                min="0" required>
         </div>
     </div>
     <div class="row mb-2">
@@ -64,7 +56,7 @@ General Settings
             <label for="selectInputMode" class="col-form-label form-label">Data input mode:</label>
         </div>
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-            <select id="selectInputMode" name="selectInputMode" class="form-select">
+            <select id="selectInputMode" name="selectInputMode" class="form-select" required>
                 <option disabled selected value>Select an input mode ...</option>
                 <option value="streaming-live-data">Streaming - live data</option>
                 <option value="streaming-example-data">Streaming - example data</option>
@@ -80,10 +72,9 @@ General Settings
             <label for="selectDataSet" class="col-form-label form-label">Example data set:</label>
         </div>
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-            <select id="selectDataSet" name="selectDataSet" class="form-select">
+            <select id="selectDataSet" name="selectDataSet" class="form-select" required>
                 <option disabled selected value>Select an example data set ...</option>
                 <option value="Cryptokitties">Cryptokitties</option>
-                <!-- get options from server -->
             </select>
         </div>
     </div>
@@ -93,8 +84,8 @@ General Settings
             <label for="inputReplaySpeed" class="col-form-label form-label">Replay speed:</label>
         </div>
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-            <input type="number" class="form-control" id="inputReplaySpeed" name="inputReplaySpeed" step="0.1"
-                min="0.1">
+            <input type="number" class="form-control" id="inputReplaySpeed" name="inputReplaySpeed" step="0.1" min="0.1"
+                required>
         </div>
     </div>
     <div class="row mb-2">
@@ -103,7 +94,7 @@ General Settings
         </div>
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
             <input type="number" class="form-control" id="inputNoiseThreshold" name="inputNoiseThreshold" step="0.01"
-                min="0" max="1">
+                min="0" max="1" required>
         </div>
     </div>
     <!-- Mention it is a Websocket connection -->
@@ -112,7 +103,7 @@ General Settings
             <label for="inputGethIP" class="col-form-label form-label">Geth node IP address:</label>
         </div>
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-            <input type="text" class="form-control" id="inputGethIP" name="inputGethIP" min="0">
+            <input type="text" class="form-control" id="inputGethIP" name="inputGethIP" min="0" required>
         </div>
     </div>
     <div class="row mb-2">
@@ -120,7 +111,7 @@ General Settings
             <label for="inputGethPort" class="col-form-label form-label">Geth node port:</label>
         </div>
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-            <input type="number" class="form-control" id="inputGethPort" name="inputGethPort" step="1" min="0">
+            <input type="number" class="form-control" id="inputGethPort" name="inputGethPort" step="1" min="0" required>
         </div>
     </div>
     <div class="row mb-2">
@@ -128,7 +119,7 @@ General Settings
             <label for="selectCurrency" class="col-form-label form-label">Convert ETH to currency:</label>
         </div>
         <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
-            <select id="selectCurrency" name="selectCurrency" class="form-select">
+            <select id="selectCurrency" name="selectCurrency" class="form-select" required>
                 <option disabled selected value>Select a currency ...</option>
                 <option value="USD">USD</option>
                 <option value="EUR">EUR</option>

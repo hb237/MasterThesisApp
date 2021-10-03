@@ -45,16 +45,14 @@ class DataProcessor():
         with open(const.SETTINGS_PATH) as json_file:
             config = json.loads(json_file.read())
 
-        self.last_x_blocks: bool = json.loads(
-            config.get('chkLastXBlocks', 'false'))
-        self.recent_block: bool = json.loads(
-            config.get('chkRecentBlock', 'false'))
         self.confirmation_blocks = int(config.get(
             'inputConfirmationBlocks', 0))
         self.end_block = int(config.get(
-            'inputEndBlock', 0))
+            'inputEndBlock', 100200300))
         self.start_block = int(config.get(
             'inputStartBlock', 0))
+        self.monitoring_windows_size = int(
+            config.get('inputMonitoringWindow', 1))
         self.refresh_rate = int(config.get(
             'inputRefreshRate', 1))
         self.replay_speed = int(config.get(
@@ -82,38 +80,32 @@ class DataProcessor():
         shutil.rmtree(const.XES_FILES_DIR)
         if not os.path.exists(const.XES_FILES_DIR):
             os.makedirs(const.XES_FILES_DIR)
+        if os.path.exists(const.XES_FILES_COMBINED_PATH):
+            os.remove(const.XES_FILES_COMBINED_PATH)
 
     def start_processing(self):
         self.set_settings()
-
         self.stop_processing()
 
-        # TODO
-        # Fixed range: start = static and end = static
-        # Floating range: start = current and end = current - x blocks
-        # Growing range: start = current and end = static
         fm = FileMerger()
-        self.file_merger_process = Process(
-            target=fm.merge
-        )
+        self.file_merger_process = Process(target=fm.merge)
         self.file_merger_process.start()
 
         if self.input_mode == STATIC:
-            self.analysis_process = Process(
-                target=self.process_data,
-            )
+            self.analysis_process = Process(target=self.process_data)
             self.analysis_process.start()
+
         elif self.input_mode == STREAM_EXAMPLE:
-            self.file_feeder_process = Process(
-                target=file_feeder.feed_files
-            )
+            self.replay_speed
+            self.file_feeder_process = Process(target=file_feeder.feed_files)
             self.file_feeder_process.start()
+
         elif self.input_mode == STREAM_LIVE:
             app.extract_current_manifest()
+
         if self.input_mode == STREAM_EXAMPLE or self.input_mode == STREAM_LIVE:
             self.analysis_process = Process(
-                target=self.continuously_process_data,
-            )
+                target=self.continuously_process_data)
             self.analysis_process.start()
 
     def continuously_process_data(self):

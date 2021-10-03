@@ -1,20 +1,28 @@
 # Keep in mind that lxml supports only xPath 1.0
 import time
 import os
+import sys
+import json
 import lxml.etree as ET
 from lxml.etree import Element
 from data_transformer import DataTransformer
 import constants as const
+import blockchain_connector as bc
 
 
 class FileMerger():
     def __init__(self) -> None:
-        # TODO set parameters
         self.combined_xes = None
-        self.last_blk = None
-        self.first_blk = None
-        self.max_block_range = 500
         self.proccessed_files = []
+
+        with open(const.SETTINGS_PATH) as file:
+            config = json.loads(file.read())
+            self.confirm_blocks = int(
+                config.get('inputConfirmationBlocks', 12))
+            self.last_blk = int(config.get('inputEndBlock', 100200300))
+            self.start_blk = int(config.get('inputStartBlock', 0))
+            self.monitoring_windows_size = int(
+                config.get('inputMonitoringWindow', 1))
 
     def add_traces(self, path: str):
         # read in new xes file as tree
@@ -36,19 +44,25 @@ class FileMerger():
         # retreive all new trace from the xes file's tree
         root = tree.getroot()
 
+        # pretend most current block in chain is also comign from xes
         current_block_number = int(root.find(
             ".//int[@key='tx_blocknumber']").get('value'))
 
-        self.first_blk = current_block_number
-        if(self.last_blk is not None):
-            block_range = self.first_blk - self.last_blk
-            if block_range >= self.max_block_range:
-                self.last_blk = self.first_blk - self.max_block_range
-                self.remove_old_events(self.last_blk)
-        else:
-            self.last_blk = self.first_blk
+        block_range = current_block_number - self.start_blk
+        if block_range >= self.monitoring_windows_size:
+            self.start_blk = current_block_number - self.monitoring_windows_size
+            print('removing events before: ' + str(self.start_blk))
+            self.remove_old_events(self.start_blk)
 
         for new_trace in root.iter('trace'):
+            trace_blk_nr = int(
+                root.find(".//int[@key='tx_blocknumber']").get('value'))
+            if(trace_blk_nr > self.last_blk or trace_blk_nr < self.start_blk):
+                print('outside of range :' + str(trace_blk_nr))
+                continue
+            else:
+                print('processing :' + str(trace_blk_nr))
+
             new_trace_piid = new_trace.find(
                 ".//string[@key='ident:piid']").get('value')
             existing_piids = self.combined_xes.findall(
