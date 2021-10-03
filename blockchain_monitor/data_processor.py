@@ -123,9 +123,8 @@ class DataProcessor():
         # Execute all analysis methods
         self.retreive_eth_rates()
         self.create_petri_net()
-        self.create_bmpn_diagram(noise_threshold=0.8)
-        self.create_bpmn_diagram_with_costs(
-            currency='EUR', currency_rate=1.0, noise_threshold=0.8)
+        self.create_bmpn_diagram()
+        self.create_bpmn_diagram_with_costs()
         self.create_dfg_frequency()
         self.create_dfg_performance()
         self.retreive_block_stats()
@@ -166,16 +165,19 @@ class DataProcessor():
         pm4py.save_vis_petri_net(
             net, im, fm, const.PETRI_NET)
 
-    def create_bmpn_diagram(self, noise_threshold: float = 0.8):
+    def create_bmpn_diagram(self):
         bpmn_graph = pm4py.discover_bpmn_inductive(
-            self.pm4py_log, noise_threshold)
+            self.pm4py_log, self.noise_threshold)
         pm4py.save_vis_bpmn(bpmn_graph, const.BPMN_DIAGRAM)
 
-    def create_bpmn_diagram_with_costs(self, currency: str, currency_rate: float, noise_threshold: float = 0.8):
+    def create_bpmn_diagram_with_costs(self):
+        with open(const.ETH_RATES) as f:
+            currencies = json.load(f)
+            rate = currencies[self.currency]
         bpmn_graph = pm4py.discover_bpmn_inductive(
-            self.pm4py_log, noise_threshold)
+            self.pm4py_log, self.noise_threshold)
         gviz = bpmn_with_costs.apply(
-            bpmn_graph, self.xes_log_tree, currency, currency_rate=3000, ndigits=2, format='png')  # TODO
+            bpmn_graph, self.xes_log_tree, self.currency, currency_rate=rate, ndigits=2, format='png')
         bpmn_visualizer.save(gviz, const.BPMN_COSTS_DIAGRAM)
 
     def create_dfg_frequency(self):

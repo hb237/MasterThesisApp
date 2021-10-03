@@ -109,8 +109,8 @@ class FileMerger():
         self.combined_xes.attrib['xes.features'] = 'nested-attributes'
         self.combined_xes.attrib['openxes.version'] = '1.0RC7'
 
-        while True:  # TODO add waiting time
-            time.sleep(1)
+        while True:
+            time.sleep(1)  # minimum wait one second
             current_files = os.listdir(const.XES_FILES_DIR)
             unprocessed_files = list(
                 set(current_files) - set(self.proccessed_files))
