@@ -184,21 +184,21 @@ General Settings
         });
     }
 
-
     setInterval(is_monitoring_running, 1000);
-
 
     function start_monitoring() {
         $.ajax({
             url: "/api/start_monitoring",
-            type: 'GET'
+            type: 'GET',
+            success: is_monitoring_running()
         });
     }
 
     function stop_monitoring() {
         $.ajax({
             url: "/api/stop_monitoring",
-            type: 'GET'
+            type: 'GET',
+            success: is_monitoring_running()
         });
     }
 </script>

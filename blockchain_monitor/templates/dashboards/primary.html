@@ -141,10 +141,6 @@ Primary Dashboard
     </div>
 </div>
 <script>
-    $(document).ready(function () {
-        setInterval(retrieve_data, 1000);
-    });
-
     function retrieve_data() {
         $('#bpmn_costs_diagram').attr('src', $('#bpmn_costs_diagram').attr('src') + '#' + new Date().getTime());
 
@@ -369,5 +365,17 @@ Primary Dashboard
             }
         });
     };
+
+    $(document).ready(function () {
+        retrieve_data();
+
+        $.ajax({
+            url: "/api/refresh_rate",
+            type: 'GET',
+            success: function (res) {
+                setInterval(retrieve_data, Number(res) * 1000);
+            }
+        });
+    });
 </script>
 {% endblock %}

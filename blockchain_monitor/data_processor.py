@@ -141,7 +141,7 @@ class DataProcessor():
                 log = xes_importer.apply(
                     const.XES_FILES_COMBINED_PATH)
                 successful = True
-            except ET.XMLSyntaxError as e:
+            except Exception as e:
                 print(e)
                 time.sleep(0.1)
         self.pm4py_log = attributes_filter.apply_numeric(log, self.start_block, self.end_block,

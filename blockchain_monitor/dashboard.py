@@ -19,7 +19,9 @@ def is_monitoring_running():
 
 @dashboard_bp.route('/api/refresh_rate', methods=['GET'])
 def get_refresh_rate():
-    return str(dp.refresh_rate)
+    with open(const.SETTINGS_PATH) as json_file:
+        config = json.loads(json_file.read())
+        return str(config.get('inputRefreshRate', 1))
 
 
 @dashboard_bp.route('/api/start_monitoring', methods=['GET'])
