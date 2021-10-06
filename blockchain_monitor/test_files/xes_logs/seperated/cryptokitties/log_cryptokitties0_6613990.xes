@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- This file has been generated with the OpenXES library. It conforms -->
+<!-- to the XML serialization of the XES standard for log storage and -->
+<!-- management. -->
+<!-- XES standard version: 1.0 -->
+<!-- OpenXES library version: 1.0RC7 -->
+<!-- OpenXES is available from http://www.openxes.org/ -->
+<log xes.version="1.0" xes.features="nested-attributes" openxes.version="1.0RC7">
+	<string key="ident:pid" value="cryptokitties0"/>
+	<trace>
+		<string key="ident:piid" value="1140789"/>
+		<event>
+			<int key="gas_price" value="51487359096"/>
+			<string key="concept:name" value="birth"/>
+			<string key="ident:eid" value="eid4805"/>
+			<string key="tx_from" value="0xa5f9bbb432baaad03f7031e2f650c5e7d6ce9f5b"/>
+			<int key="block_timestamp" value="1540939433"/>
+			<int key="gas_used" value="157615"/>
+			<int key="tx_blocknumber" value="6613990"/>
+			<boolean key="tx_success" value="true"/>
+			<string key="tx_hash" value="0x64dc9d6bd4a38f5608da2af984f41a0e6a99aa7682f4bbd441407e7529260c09"/>
+			<string key="tx_to" value="0x1b1262544cc56a7ac6de47ecac46394d017ff3e7"/>
+		</event>
+		<event>
+			<int key="gas_price" value="51487359096"/>
+			<string key="concept:name" value="transferred"/>
+			<string key="ident:eid" value="eid4806"/>
+			<string key="tx_from" value="0xa5f9bbb432baaad03f7031e2f650c5e7d6ce9f5b"/>
+			<int key="block_timestamp" value="1540939433"/>
+			<int key="gas_used" value="157615"/>
+			<int key="tx_blocknumber" value="6613990"/>
+			<boolean key="tx_success" value="true"/>
+			<string key="tx_hash" value="0x64dc9d6bd4a38f5608da2af984f41a0e6a99aa7682f4bbd441407e7529260c09"/>
+			<string key="tx_to" value="0x1b1262544cc56a7ac6de47ecac46394d017ff3e7"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="ident:piid" value="1139704"/>
+		<event>
+			<int key="gas_price" value="5000000000"/>
+			<string key="concept:name" value="transferred"/>
+			<string key="ident:eid" value="eid4807"/>
+			<string key="tx_from" value="0x48c94e8f4c0f0a125bed72e292c8dc84673e4dfc"/>
+			<int key="block_timestamp" value="1540939433"/>
+			<int key="gas_used" value="56344"/>
+			<int key="tx_blocknumber" value="6613990"/>
+			<boolean key="tx_success" value="true"/>
+			<string key="tx_hash" value="0xd8b0339916813a6e14bc6b7c1b548a4843bdc08517728c7ead498b58488498f8"/>
+			<string key="tx_to" value="0xb1690c08e213a35ed9bab7b318de14420fb57d8c"/>
+		</event>
+		<event>
+			<int key="gas_price" value="5000000000"/>
+			<string key="concept:name" value="auctioned"/>
+			<string key="ident:eid" value="eid4810"/>
+			<string key="tx_from" value="0x48c94e8f4c0f0a125bed72e292c8dc84673e4dfc"/>
+			<int key="block_timestamp" value="1540939433"/>
+			<int key="gas_used" value="56344"/>
+			<int key="tx_blocknumber" value="6613990"/>
+			<boolean key="tx_success" value="true"/>
+			<string key="tx_hash" value="0xd8b0339916813a6e14bc6b7c1b548a4843bdc08517728c7ead498b58488498f8"/>
+			<string key="tx_to" value="0xb1690c08e213a35ed9bab7b318de14420fb57d8c"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="ident:piid" value="1140734"/>
+		<event>
+			<int key="gas_price" value="6000000000"/>
+			<string key="concept:name" value="conceived as father"/>
+			<string key="ident:eid" value="eid4808"/>
+			<string key="tx_from" value="0x68b42e44079d1d0a4a037e8c6ecd62c48967e69f"/>
+			<int key="block_timestamp" value="1540939433"/>
+			<int key="gas_used" value="79985"/>
+			<int key="tx_blocknumber" value="6613990"/>
+			<boolean key="tx_success" value="true"/>
+			<string key="tx_hash" value="0x6a6663df34559aeff02f3d5643755b03818c2d04dad910f51d03ed387e1f101b"/>
+			<string key="tx_to" value="0x06012c8cf97bead5deae237070f9587f8e7a266d"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="ident:piid" value="1139309"/>
+		<event>
+			<int key="gas_price" value="3000000000"/>
+			<string key="concept:name" value="conceived as mother"/>
+			<string key="ident:eid" value="eid4809"/>
+			<string key="tx_from" value="0x732de7495deecae6424c3fc3c46e47d6b4c5374e"/>
+			<int key="block_timestamp" value="1540939433"/>
+			<int key="gas_used" value="79985"/>
+			<int key="tx_blocknumber" value="6613990"/>
+			<boolean key="tx_success" value="true"/>
+			<string key="tx_hash" value="0x4634296427532d5256762047543257f6d1943dd54be1d58cb28da2676895054f"/>
+			<string key="tx_to" value="0x06012c8cf97bead5deae237070f9587f8e7a266d"/>
+		</event>
+	</trace>
+</log>

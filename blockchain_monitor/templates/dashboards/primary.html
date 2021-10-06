@@ -1,0 +1,381 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Primary Dashboard
+{% endblock %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white mb-4">
+            <div class="card-header">
+                <i class="fas fa-th-large me-1"></i>Most recent block
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-4">
+                        <div>Number:</div>
+                    </div>
+                    <div class="col-8">
+                        <span id="current_block_number"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4">
+                        <div>Timestamp:</div>
+                    </div>
+                    <div class="col-8">
+                        <span id="current_block_timestamp"></span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div id="current_block_error"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white mb-4">
+            <div class="card-header">
+                <div><i class="fas fa-database me-1"></i>Dataset</div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-4">
+                        <div>Last update:</div>
+                    </div>
+                    <div class="col-8">
+                        <span id="dataset_last_update"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white mb-4">
+            <div class="card-header">
+                <i class="fas fa-coins me-1"></i>Exchange rate for 1 ETH:
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-4">
+                        <div id="currency"></div>
+                    </div>
+                    <div class="col-8">
+                        <span id="exchange_rate"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white mb-4">
+            <div class="card-header">
+                <i class="fas fa-eye me-1"></i>Monitoring status:
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <div id="monitoring-status"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-project-diagram me-1"></i>
+                BPMN diagram with costs
+            </div>
+            <div class=" card-body">
+                <a href="#" class="pop">
+                    <img id="bpmn_costs_diagram" class="w-100"
+                        src="{{ url_for('static', filename='monitoring_data/bpmn_costs_diagram.png') }}">
+                </a>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-chart-bar me-1"></i>
+                Block Statistics
+            </div>
+            <div class="card-body">
+                <div>
+                    <canvas id="block_stats_chart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-header">
+                Conformance checking - Activities not in the log
+            </div>
+            <div class="card-body">
+                <table id="cc_activities_stats">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                Conformance checking - Trace fitness stats
+            </div>
+            <div class="card-body">
+                <div>
+                    <canvas id="fitness_stats_chart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-check me-1"></i>Conformance checking - Activities not in the model
+            </div>
+            <div class="card-body">
+                <table id="cc_unwanted_activities_stats">
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function retrieve_data() {
+        $('#bpmn_costs_diagram').attr('src', $('#bpmn_costs_diagram').attr('src') + '#' + new Date().getTime());
+
+        $.ajax({
+            url: "/api/dataset_last_update",
+            type: 'GET',
+            success: function (res) {
+                last_update = JSON.parse(res);
+                $('#dataset_last_update').text(last_update);
+            }
+        });
+
+        $.ajax({
+            url: "/api/eth_rate",
+            type: 'GET',
+            success: function (res) {
+                rate_stats = JSON.parse(res);
+                $('#currency').text(rate_stats['currency'] + ':');
+                $('#exchange_rate').text(rate_stats['rate']);
+            }
+        });
+
+        $.ajax({
+            url: "/api/current_blockstats",
+            type: 'GET',
+            success: function (res) {
+                if (res == "null" || res == null) {
+                    $('#current_block_error').text('The server could not provide the requested data. ' +
+                        'Perhaps the blockchain monitor is not connected to an Ethereum node.')
+                    $('#current_block_number').text('N/A');
+                    $('#current_block_timestamp').text('N/A');
+                } else {
+                    stats = JSON.parse(res);
+                    $('#current_block_number').text(stats['current_block_number']);
+                    $('#current_block_timestamp').text(stats['current_block_timestamp']);
+                }
+            }
+        });
+
+        $.ajax({
+            url: "/api/cc_trace_fitness_stats",
+            type: 'GET',
+            success: function (res) {
+                fitness_stats = JSON.parse(res);
+
+                fitness_stats.sort(function (a, b) {
+                    var keyA = a["fitness"],
+                        keyB = b["fitness"];
+                    if (keyA < keyB) return -1;
+                    if (keyA > keyB) return 1;
+                    return 0;
+                });
+
+                let fitness = [];
+                let counts = [];
+                for (i = 0; i < fitness_stats.length; i++) {
+                    fitness.push(fitness_stats[i]["fitness"].toFixed(3))
+                    counts.push(fitness_stats[i]["count"])
+                }
+
+                const data = {
+                    labels: fitness,
+                    datasets: [{
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: counts,
+                    }]
+                };
+
+                const config = {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        legend: {
+                            display: false
+                        },
+                        scales: {
+                            yAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'number of traces'
+                                }
+                            }],
+                            xAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'fitness'
+                                }
+                            }],
+                        },
+                        animation: {
+                            duration: 0 // general animation time
+                        },
+                        hover: {
+                            animationDuration: 0 // duration of animations when hovering an item
+                        },
+                        responsiveAnimationDuration: 0, // animation duration after a resize
+                        elements: {
+                            line: {
+                                tension: 0 // disables bezier curves
+                            }
+                        }
+                    }
+                };
+                var fitness_stats_chart = new Chart(
+                    document.getElementById('fitness_stats_chart'),
+                    config
+                );
+            }
+        });
+
+        cc_activities_stats = new simpleDatatables.DataTable(document.getElementById('cc_activities_stats'),
+            { perPage: 5 });
+        $.ajax({
+            url: "/api/cc_activities_stats",
+            type: 'GET',
+            success: function (res) {
+                let activities_stats = JSON.parse(res)
+                let result = [];
+                for (i = 0; i < activities_stats.length; i++) {
+                    if (activities_stats[i]['not_in_model'] == true) {
+                        result.push([activities_stats[i]["activity"]]);
+                    }
+                }
+
+                let newData = {
+                    headings: ["Activity"],
+                    data: result
+                };
+
+                cc_activities_stats.insert(newData)
+            }
+        });
+
+        cc_unwanted_activities_stats = new simpleDatatables.DataTable(document.getElementById('cc_unwanted_activities_stats'),
+            { perPage: 5 });
+        $.ajax({
+            url: "/api/cc_unwanted_activities_stats",
+            type: 'GET',
+            success: function (res) {
+                cc_unwanted_activities_stats.import({
+                    type: "json",
+                    data: res
+                });
+            }
+        });
+
+        $.ajax({
+            url: "/api/is_monitoring_running",
+            type: 'GET',
+            success: function (res) {
+                if (res == "True") {
+                    $('#monitoring-status').text('Is running')
+                } else {
+                    $('#monitoring-status').text('Currently stopped')
+                }
+            }
+        });
+
+        $.ajax({
+            url: "/api/block_stats",
+            type: 'GET',
+            success: function (res) {
+                blk_stats = JSON.parse(res)
+
+                // sort response
+                blk_stats.sort(function (a, b) {
+                    var keyA = a["Block"],
+                        keyB = b["Block"];
+                    if (keyA < keyB) return -1;
+                    if (keyA > keyB) return 1;
+                    return 0;
+                });
+
+                first_blk_number = blk_stats[0]["Block"];
+                last_blk_number = blk_stats.at(-1)["Block"];
+                blocks = []
+                stats = []
+                for (var i = first_blk_number; i <= last_blk_number; i++) {
+                    // thousands separator
+                    blocks.push(i.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))
+                    let obj = blk_stats.find(o => o["Block"] === i);
+                    if (obj === undefined) {
+                        stats.push(0)
+                    } else {
+                        stats.push(obj["Number of Events"])
+                    }
+                }
+
+                const data = {
+                    labels: blocks,
+                    datasets: [{
+                        label: 'Number of Events',
+                        backgroundColor: 'rgb(255, 99, 132)',
+                        borderColor: 'rgb(255, 99, 132)',
+                        data: stats,
+                    }]
+                };
+
+                const config = {
+                    type: 'line',
+                    data: data,
+                    options: {
+                        animation: {
+                            duration: 0 // general animation time
+                        },
+                        hover: {
+                            animationDuration: 0 // duration of animations when hovering an item
+                        },
+                        responsiveAnimationDuration: 0, // animation duration after a resize
+                        elements: {
+                            line: {
+                                tension: 0 // disables bezier curves
+                            }
+                        }
+                    }
+                };
+                var block_stats_chart = new Chart(
+                    document.getElementById('block_stats_chart'),
+                    config
+                );
+            }
+        });
+    };
+
+    $(document).ready(function () {
+        retrieve_data();
+
+        $.ajax({
+            url: "/api/refresh_rate",
+            type: 'GET',
+            success: function (res) {
+                setInterval(retrieve_data, Number(res) * 1000);
+            }
+        });
+    });
+</script>
+{% endblock %}

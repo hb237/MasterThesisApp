@@ -1,0 +1,17 @@
+#canvas {
+    height: 700px;
+}
+
+#ace-editor-parent {
+    height: 500px;
+    display: inline-block;
+    position: relative;
+}
+
+#ace-editor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}

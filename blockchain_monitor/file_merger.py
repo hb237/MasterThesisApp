@@ -1,106 +1,119 @@
 # Keep in mind that lxml supports only xPath 1.0
-#from web3 import Web3
-#w3 = Web3(Web3.WebsocketProvider('wss://mainnet.infura.io/ws/v3/bcf5331eacae4b0c8fba1751b28c6768'))
-import os
 import time
+import os
+import sys
+import json
 import lxml.etree as ET
 from lxml.etree import Element
-from watchdog.observers import Observer
-from watchdog.events import FileCreatedEvent, FileSystemEventHandler
 from data_transformer import DataTransformer
 import constants as const
+import blockchain_connector as bc
 
 
-def add_traces(path: str, dp: DataTransformer):
-    # read in new xes file as tree
-    tree = None
-    attempts = 0
-    # Sometimes the file is not fully created yet.
-    # However, the parser already tries to read the empty file.
-    # A few milliseconds later the file should not be empty anymore.
-    while tree is None and attempts < 5:
-        try:
-            tree = ET.parse(path)
-            attempts += 1
-        except ET.XMLSyntaxError:
-            time.sleep(0.1)
+class FileMerger():
+    def __init__(self) -> None:
+        self.combined_xes = None
+        self.proccessed_files = []
 
-    if tree is None:
-        raise Exception('Could not parse file: ' + path)
+        with open(const.SETTINGS_PATH) as file:
+            config = json.loads(file.read())
+            self.confirm_blocks = int(
+                config.get('inputConfirmationBlocks', 12))
+            self.last_blk = int(config.get('inputEndBlock', 100200300))
+            self.start_blk = int(config.get('inputStartBlock', 0))
+            self.monitoring_windows_size = int(
+                config.get('inputMonitoringWindow', 1))
 
-    # retreive all new trace from the xes file's tree
-    root = tree.getroot()
+    def add_traces(self, path: str):
+        # read in new xes file as tree
+        tree = None
+        attempts = 0
+        # Sometimes the file is not fully created yet.
+        # However, the parser already tries to read the empty file.
+        # A few milliseconds later the file should not be empty anymore.
+        while tree is None and attempts < 5:
+            try:
+                tree = ET.parse(path)
+                attempts += 1
+            except ET.XMLSyntaxError:
+                time.sleep(0.1)
 
-    for new_trace in root.iter('trace'):
-        new_trace_piid = new_trace.find(
-            ".//string[@key='ident:piid']").get('value')
-        existing_piids = dp.combined_xes.findall(
-            ".//string[@key='ident:piid']")
+        if tree is None:
+            raise Exception('Could not parse file: ' + path)
 
-        # find if a trace with the new process instance id exists
-        trace = None
-        for ep in existing_piids:
-            if(ep.get('value') == new_trace_piid):
-                trace = ep.find("..")
-                break
+        # retreive all new trace from the xes file's tree
+        root = tree.getroot()
 
-        # append the trace if it does not exist yet
-        if(trace == None):
-            dp.combined_xes.append(new_trace)
-        # add all new events to the existing trace
-        else:
-            new_events = new_trace.findall(".//event")
-            for event in new_events:
-                trace.append(event)
+        # pretend most current block in chain is also comign from xes
+        current_block_number = int(root.find(
+            ".//int[@key='tx_blocknumber']").get('value'))
 
-    # after all traces and events were added process the new data
-    dp.transform_data()
+        block_range = current_block_number - self.start_blk
+        if block_range >= self.monitoring_windows_size:
+            self.start_blk = current_block_number - self.monitoring_windows_size
+            print('removing events before: ' + str(self.start_blk))
+            self.remove_old_events(self.start_blk)
 
+        for new_trace in root.iter('trace'):
+            trace_blk_nr = int(
+                root.find(".//int[@key='tx_blocknumber']").get('value'))
+            if(trace_blk_nr > self.last_blk or trace_blk_nr < self.start_blk):
+                print('outside of range :' + str(trace_blk_nr))
+                continue
+            else:
+                print('processing :' + str(trace_blk_nr))
 
-class InputHandler(FileSystemEventHandler):
-    def __init__(self, dp: DataTransformer) -> None:
-        super().__init__()
-        self.dp = dp
+            new_trace_piid = new_trace.find(
+                ".//string[@key='ident:piid']").get('value')
+            existing_piids = self.combined_xes.findall(
+                ".//string[@key='ident:piid']")
 
-    # Once BLF extracted a XES file from a new block write its trace to the combined log.
-    def on_created(self, event):
-        if type(event) == FileCreatedEvent:
-            print('continuous')
-            add_traces(event.src_path, self.dp)
+            # find if a trace with the new process instance id exists
+            # only one or none should exist
+            trace = None
+            for ep in existing_piids:
+                if(ep.get('value') == new_trace_piid):
+                    trace = ep.find("..")
+                    break
 
+            dt = DataTransformer()
+            new_trace = dt.transform_data(new_trace)
 
-def read_in():
-    print('Started file reader.')
+            # append the trace if it does not exist yet
+            if(trace == None):
+                self.combined_xes.append(new_trace)
+            # add all new events to the existing trace
+            else:
+                new_events = new_trace.findall(".//event")
+                for event in new_events:
+                    trace.append(event)
 
-    dp = DataTransformer()
+        with open(const.XES_FILES_COMBINED_PATH, 'wb') as f:
+            print('Combined XES was extended by: ' + path)
+            f.write(ET.tostring(self.combined_xes, pretty_print=True))
 
-    # setup xes log structure
-    dp.combined_xes = Element('log')
-    dp.combined_xes.attrib['xes.version'] = '1.0'
-    dp.combined_xes.attrib['xes.features'] = 'nested-attributes'
-    dp.combined_xes.attrib['openxes.version'] = '1.0RC7'
+    def remove_old_events(self, block_nr: int):
+        for event in self.combined_xes.iter('event'):
+            if int(event.find(".//int[@key='tx_blocknumber']").get('value')) <= block_nr:
+                event.getparent().remove(event)
+        for trace in self.combined_xes.iter('trace'):
+            if(trace.find(".//event") is None):
+                trace.getparent().remove(trace)
 
-    # read in already existing files in xes_files folder # TODO do I need that or should I delete it + file in xes_files_combined
-    for filename in os.listdir(const.XES_FILES_DIR):
-        if ".xes" in filename:
-            path = os.path.join(const.XES_FILES_DIR, filename)
-            add_traces(path, dp)
+    def merge(self):
+        print('Started file reader.')
 
-    # continuously monitor xes_files folder
-    input_handler = InputHandler(dp)
-    observer = Observer()
-    observer.schedule(input_handler, path=const.XES_FILES_DIR, recursive=False)
-    observer.start()
+        # setup xes log structure
+        self.combined_xes = Element('log')
+        self.combined_xes.attrib['xes.version'] = '1.0'
+        self.combined_xes.attrib['xes.features'] = 'nested-attributes'
+        self.combined_xes.attrib['openxes.version'] = '1.0RC7'
 
-    # keep the programm running
-    try:
         while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        observer.stop()
-
-    observer.join()
-
-
-if __name__ == '__main__':
-    read_in()
+            time.sleep(1)  # minimum wait one second
+            current_files = os.listdir(const.XES_FILES_DIR)
+            unprocessed_files = list(
+                set(current_files) - set(self.proccessed_files))
+            for file_name in unprocessed_files:
+                self.add_traces(os.path.join(const.XES_FILES_DIR, file_name))
+                self.proccessed_files.append(file_name)

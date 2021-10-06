@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Start Page
+{% endblock %}
+{% set title_main = "" %}
+
+{% block main_content %}
+<div class="p-5 mb-4 bg-light border rounded-3">
+    <div class="container-fluid">
+        <div class="col-md-8">
+            <h1 class="display-5 fw-bold">Welcome to the Blockchain Monitor</h1>
+            <p class="fs-5">The Blockchain Monitor is a tool to monitor blockchain application in regards of
+                costs,
+                business processes and other metrics. The artifact was created by Hendrik Bockrath as part of his master
+                thesis.</p>
+            <h3>How to get started?</h3>
+            <p class="fs-5">On the left hand side you can find a menu featuring different dashboards, the settings and a
+                small documentation. </p>
+
+            <a href="/help/documentation" class="btn btn-primary fw-bold" role="button">Read the
+                documentation!</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

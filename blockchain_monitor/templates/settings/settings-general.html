@@ -1,0 +1,205 @@
+{% extends "layout.html" %}
+{% block title %}
+General Settings
+{% endblock %}
+{% block main_content %}
+<form id="settings-form" class="mt-3 me-xl-5" method="POST" action="/api/settings">
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputRefreshRate" class="col-form-label form-label">Dashboard refresh rate:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <div class="input-group">
+                <input type="number" class="form-control" id="inputRefreshRate" name="inputRefreshRate" step="0.1"
+                    min="0.1" required>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputStartBlock" class="col-form-label form-label">Start block:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="number" class="form-control" id="inputStartBlock" name="inputStartBlock" step="1" min="0"
+                required>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputEndBlock" class="col-form-label form-label">End block:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="number" class="form-control" id="inputEndBlock" name="inputEndBlock" step="1" min="0" required>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputMonitoringWindow" class="col-form-label form-label">Monitoring window block size:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="number" class="form-control" id="inputMonitoringWindow" name="inputMonitoringWindow" step="1"
+                min="1" required>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <!-- applies only for live mode  -->
+            <label for="inputConfirmationBlocks" class="col-form-label form-label">Confirmation blocks</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="number" class="form-control" id="inputConfirmationBlocks" name="inputConfirmationBlocks"
+                min="0" required>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="selectInputMode" class="col-form-label form-label">Data input mode:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <select id="selectInputMode" name="selectInputMode" class="form-select" required>
+                <option disabled selected value>Select an input mode ...</option>
+                <option value="streaming-live-data">Streaming - live data</option>
+                <option value="streaming-example-data">Streaming - example data</option>
+                <option value="static-example-data">Static - example data</option>
+            </select>
+        </div>
+    </div>
+    <!-- if example data or static select xes input source -->
+    <!-- some js like: if option = static or streaming-example-data then enable select else disable select -->
+    <!-- add to js on load -->
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="selectDataSet" class="col-form-label form-label">Example data set:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <select id="selectDataSet" name="selectDataSet" class="form-select" required>
+                <option disabled selected value>Select an example data set ...</option>
+                <option value="Cryptokitties">Cryptokitties</option>
+            </select>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <!-- applies only for streaming mode example data -->
+            <label for="inputReplaySpeed" class="col-form-label form-label">Replay speed:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="number" class="form-control" id="inputReplaySpeed" name="inputReplaySpeed" step="0.1" min="0.1"
+                required>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputNoiseThreshold" class="col-form-label form-label">Noise threshold:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="number" class="form-control" id="inputNoiseThreshold" name="inputNoiseThreshold" step="0.01"
+                min="0" max="1" required>
+        </div>
+    </div>
+    <!-- Mention it is a Websocket connection -->
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputGethIP" class="col-form-label form-label">Geth node IP address:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="text" class="form-control" id="inputGethIP" name="inputGethIP" min="0" required>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="inputGethPort" class="col-form-label form-label">Geth node port:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <input type="number" class="form-control" id="inputGethPort" name="inputGethPort" step="1" min="0" required>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="selectCurrency" class="col-form-label form-label">Convert ETH to currency:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <select id="selectCurrency" name="selectCurrency" class="form-select" required>
+                <option disabled selected value>Select a currency ...</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="JPY">JPY</option>
+                <option value="GBP">GBP</option>
+                <option value="AUD">AUD</option>
+                <option value="CAD">CAD</option>
+                <option value="CNY">CNY</option>
+            </select>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-md-4 col-xl-3">
+            <label for="monitoring-status" class="col-form-label form-label">Monitoring status:</label>
+        </div>
+        <div class="col-md-8 col-lg-6 col-xl-5 col-xxl-4">
+            <div id="monitoring-status" class="col-form-label"></div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-4 col-xl-3"></div>
+        <div class="col">
+            <button type="submit" class="btn btn-outline-primary border-2" title="save settings to server"><i
+                    class="fas fa-save"></i></button>
+            <button type="button" onclick="start_monitoring();" class="btn btn-outline-success border-2"
+                title="start new monitoring"><i class="fas fa-play"></i></button>
+            <button type="button" onclick="stop_monitoring();" class="btn btn-outline-danger border-2"
+                title="stop monitoring"><i class="fas fa-stop"></i></button>
+        </div>
+    </div>
+</form>
+<script>
+    // get current settings stored on server
+    $.ajax({
+        url: "/api/settings",
+        type: 'GET',
+        success: function (res) {
+            Object.keys(res).forEach(function (key) {
+                val = res[key]
+                input_elem = $('#' + key)
+                if (input_elem.attr('type') == 'checkbox') {
+                    input_elem.prop('checked', val == 'true');
+                } else {
+                    input_elem.val(val)
+                }
+            });
+        }
+    });
+
+    // check status if monitoring is running
+    function is_monitoring_running() {
+        $.ajax({
+            url: "/api/is_monitoring_running",
+            type: 'GET',
+            success: function (res) {
+                if (res == "True") {
+                    $('#monitoring-status').text('running')
+                } else {
+                    $('#monitoring-status').text('stopped')
+                }
+            }
+        });
+    }
+
+    setInterval(is_monitoring_running, 1000);
+
+    function start_monitoring() {
+        $.ajax({
+            url: "/api/start_monitoring",
+            type: 'GET',
+            success: is_monitoring_running()
+        });
+    }
+
+    function stop_monitoring() {
+        $.ajax({
+            url: "/api/stop_monitoring",
+            type: 'GET',
+            success: is_monitoring_running()
+        });
+    }
+</script>
+{% endblock %}

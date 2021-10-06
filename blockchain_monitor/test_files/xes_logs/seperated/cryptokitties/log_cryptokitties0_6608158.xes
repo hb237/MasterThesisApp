@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- This file has been generated with the OpenXES library. It conforms -->
+<!-- to the XML serialization of the XES standard for log storage and -->
+<!-- management. -->
+<!-- XES standard version: 1.0 -->
+<!-- OpenXES library version: 1.0RC7 -->
+<!-- OpenXES is available from http://www.openxes.org/ -->
+<log xes.version="1.0" xes.features="nested-attributes" openxes.version="1.0RC7">
+	<string key="ident:pid" value="cryptokitties0"/>
+	<trace>
+		<string key="ident:piid" value="1138102"/>
+		<event>
+			<int key="gas_price" value="3500000000"/>
+			<string key="concept:name" value="transferred"/>
+			<string key="ident:eid" value="eid2622"/>
+			<string key="tx_from" value="0xc35a5fec6be6957899e15559be252db882220b37"/>
+			<int key="block_timestamp" value="1540855983"/>
+			<int key="gas_used" value="54379"/>
+			<int key="tx_blocknumber" value="6608158"/>
+			<boolean key="tx_success" value="true"/>
+			<string key="tx_hash" value="0x06ffc8e2b00b9beaaee74e111d9e6b367626a0291e1b4051f2493682aa99505e"/>
+			<string key="tx_to" value="0x06012c8cf97bead5deae237070f9587f8e7a266d"/>
+		</event>
+	</trace>
+	<trace>
+		<string key="ident:piid" value="1138532"/>
+		<event>
+			<int key="gas_price" value="8000000000"/>
+			<string key="concept:name" value="conceived as father"/>
+			<string key="ident:eid" value="eid2623"/>
+			<string key="tx_from" value="0x3f537764f0b09436d1794fecb8713d5fcb8f182f"/>
+			<int key="block_timestamp" value="1540855983"/>
+			<int key="gas_used" value="79985"/>
+			<int key="tx_blocknumber" value="6608158"/>
+			<boolean key="tx_success" value="true"/>
+			<string key="tx_hash" value="0xf5a485074843376790998e0d87d4b43bda925078899843f7882e2114206e4160"/>
+			<string key="tx_to" value="0x06012c8cf97bead5deae237070f9587f8e7a266d"/>
+		</event>
+	</trace>
+</log>

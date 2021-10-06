@@ -106,7 +106,7 @@ celerybeat.pid
 
 # Environments
 .env
-.venv
+# .venv exclude because we want to include the dependencies
 env/
 venv/
 ENV/
@@ -139,6 +139,8 @@ cython_debug/
 
 # Custom folders and files
 blf/*.jar
-xes_files/
-xes_files_combined/
-static/diagrams
+input_xes_files/
+input_xes_files_combined/
+static/monitoring_data/*
+static/user_uploads
+static/node_modules

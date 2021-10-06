@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Documentation
+{% endblock %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-xl-6 col-lg-7 col-md-8">
+        <h4>Start and Stop</h4>
+        <p>
+            In the page General settings there are a green play and a red stop discard button. Before launching a new
+            monitoring instance the user must save the changes they made to the settings. If they later on decide to
+            stop the application it will delete all intermediate data structures.
+        </p>
+
+        <h4>General settings</h4>
+        Below you can find a description of each configuration parameter:
+        <p>
+        <ul>
+            <li>
+                <strong>Dashboard refresh rate:</strong><br>
+                The rate that defines how often a AJAX query will fetch data from the server. The value is the time in
+                seconds in between two requests.
+            </li>
+            <li>
+                <strong>Start block:</strong><br>
+                The lowest block number that the application should still include into the monitoring.
+            </li>
+            <li>
+                <strong>End block:</strong><br>
+                The highest block number that the application should still include into the monitoring.
+            </li>
+            <li>
+                <strong>Monitoring window block size:</strong><br>
+                The maximum number of blocks that will serve as an input for the monitoring.
+            </li>
+            <li>
+                <strong>Confirmation blocks</strong><br>
+                Number of most recent blocks the monitoring application should not process.
+            </li>
+            <li>
+                <strong>Data input mode:</strong><br>
+                Select whether the application should work with test data or live streaming data.
+
+            </li>
+            <li>
+                <strong>Example data set:</strong><br>
+                This setting applies if the data input mode defines to work with test data. The user can select the test
+                data set they want to use.
+            </li>
+            <li>
+                <strong>Replay speed:</strong><br>
+                This setting applies if the data input mode defines to work with test data. The user can accelerate or
+                slow down the replay of the blocks in the tas data set. Numbers above 1 accelerate and below 1 slow
+                down the replay.
+            </li>
+            <li>
+                <strong>Noise threshold:</strong><br>
+                When creating BPMN diagram the noise parameter defines how many activities the algorithm includes into
+                the model. The values range between 0 and 1.
+
+            </li>
+            <li>
+                <strong>Geth node IP address:</strong><br>
+                The IP of the Geth node the application should connect to.
+            </li>
+            <li>
+                <strong>Geth node port:</strong><br>
+                The Port of the Geth node the application should connect to.
+            </li>
+            <li>
+                <strong>Convert ETH to currency:</strong><br>
+                The currency the dashboard prices should be displayed in. It converts costs in Ether in to the current
+                market price for the selected currency.
+            </li>
+            <li>
+                <strong>Monitoring status</strong><br>
+                The monitoring status shows whether the monitoring process is currently running or if it is stopped.
+            </li>
+        </ul>
+        </p>
+
+        <h4>BLF manifest</h4>
+        <p>The manifest editor provides the user with a simple option to edit, validate and save BLF manifest to the
+            server. One can also download from the server the currently stored manifest or upload an already existing
+            manifest from the local machine.</p>
+
+        <h4>BPMN Model</h4>
+        <p>
+            The BPMN editor provides the user with an appealing editor to create simple BPMN diagrams and then save them
+            to
+            the server. It provides only a small subset of all BPMN elements, du to pm4py's limitations. One can also
+            download from the server the currently stored BPMN model or upload an already existing BPMN model from the
+            local
+            machine.
+        </p>
+    </div>
+</div>
+{% endblock %}

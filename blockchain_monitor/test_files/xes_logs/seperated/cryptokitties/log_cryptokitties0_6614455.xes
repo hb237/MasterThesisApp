@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- This file has been generated with the OpenXES library. It conforms -->
+<!-- to the XML serialization of the XES standard for log storage and -->
+<!-- management. -->
+<!-- XES standard version: 1.0 -->
+<!-- OpenXES library version: 1.0RC7 -->
+<!-- OpenXES is available from http://www.openxes.org/ -->
+<log xes.version="1.0" xes.features="nested-attributes" openxes.version="1.0RC7">
+	<string key="ident:pid" value="cryptokitties0"/>
+	<trace>
+		<string key="ident:piid" value="1140837"/>
+		<event>
+			<int key="gas_price" value="3100000000"/>
+			<string key="concept:name" value="conceived as father"/>
+			<string key="ident:eid" value="eid5505"/>
+			<string key="tx_from" value="0x447331e3e8e1d9fd2878e345c7fe11c88db0858f"/>
+			<int key="block_timestamp" value="1540945996"/>
+			<int key="gas_used" value="79985"/>
+			<int key="tx_blocknumber" value="6614455"/>
+			<boolean key="tx_success" value="true"/>
+			<string key="tx_hash" value="0x7bea8d47fc97279541ed0d4693cf27a6e27d350b3e12893be2b5f7816680d6c3"/>
+			<string key="tx_to" value="0x06012c8cf97bead5deae237070f9587f8e7a266d"/>
+		</event>
+	</trace>
+</log>

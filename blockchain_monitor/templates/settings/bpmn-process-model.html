@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Process Model
+{% endblock %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="my-2 btn-toolbar">
+            <div class="hstack gap-1">
+                <div class="input-group">
+                    <form id="bpmn-diagram-form" method="POST" enctype="multipart/form-data"
+                        action="/api/process_model">
+                        <label class=" btn btn-outline-dark border-2" for="bpmn-diagram" title="upload BPMN diagram">
+                            <i class="fas fa-upload"></i></label>
+                        <input style="display:none;" type="file" id="bpmn-diagram" name="bpmn-diagram"
+                            onchange="this.form.submit();" />
+                    </form>
+                </div>
+                <a id="save-button" class="btn btn-outline-dark border-2" href="/api/process_model"
+                    download="diagram.bpmn" title="download currently stored BPMN 2.0 diagram"><i
+                        class="fas fa-download"></i></a>
+                <button id="new-diagram-button" class="btn btn-outline-danger border-2" onclick="resetDiagram()"
+                    title="replace current BPMN diagram with an empty one"><i class="fas fa-trash"></i></button>
+                <button class="btn btn-outline-primary border-2" onclick="saveProcessDiagram();"
+                    title="save the displayed model to the server">
+                    <i class="fas fa-save"></i></button>
+            </div>
+            <div class="ms-4 zoom-buttons hstack gap-1">
+                <button id="zoomin-button" class="btn btn-outline-dark border-2" onclick="zoomIn()" title="zoom in"><i
+                        class="fas fa-plus"></i></button>
+                <button id="zoomout-button" class="btn btn-outline-dark border-2" onclick="zoomOut()"
+                    title="zoom out"><i class="fas fa-minus"></i></button>
+                <button id="zoomreset-button" class="btn btn-outline-dark border-2" onclick="zoomReset()"
+                    title="reset zoom"><i class="fas fa-crosshairs"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="border w-100" id="canvas">
+        </div>
+    </div>
+</div>
+
+<script>
+    // modeler instance
+    var bpmnModeler = new BpmnJS({
+        container: '#canvas',
+        keyboard: {
+            bindTo: window
+        }
+    });
+
+    // get current manifest stored on server
+    $.ajax({
+        url: "/api/process_model",
+        type: 'GET',
+        success: function (res) {
+            openDiagram(res)
+        }
+    });
+
+
+    function zoomIn() {
+        bpmnModeler.get('zoomScroll').stepZoom(1);
+    }
+
+    function zoomOut() {
+        bpmnModeler.get('zoomScroll').stepZoom(-1);
+    }
+
+    function zoomReset() {
+        bpmnModeler.get('zoomScroll').reset();
+    }
+
+    function resetDiagram() {
+        $.ajax({
+            url: '/api/process_model',
+            type: 'DELETE',
+            complete: function () {
+                location.reload();
+            }
+        });
+    }
+
+    async function uploadDiagram() {
+        try {
+
+        } catch (err) {
+            console.error('could not upload BPMN 2.0 diagram', err);
+        }
+    }
+
+    async function saveProcessDiagram() {
+        try {
+            var result = await bpmnModeler.saveXML({ format: true });
+            $.ajax({
+                url: '/api/process_model',
+                type: 'POST',
+                contentType: "text/xml",
+                dataType: "text",
+                data: result.xml,
+                error: function (xhr, ajaxOptions, thrownError) {
+                    console.log(xhr.status);
+                    console.log(thrownError);
+                }
+            });
+        } catch (err) {
+            console.error('could not save BPMN 2.0 diagram', err);
+        }
+
+    }
+
+    /**
+     * Open diagram in our modeler instance.
+     *
+     * @param {String} bpmnXML diagram to display
+     */
+    async function openDiagram(bpmnXML) {
+        // import diagram
+        try {
+            await bpmnModeler.importXML(bpmnXML);
+
+            // access modeler components
+            var canvas = bpmnModeler.get('canvas');
+
+            // zoom to fit full viewport
+            canvas.zoom('fit-viewport');
+        } catch (err) {
+            console.error('could not import BPMN 2.0 diagram', err);
+        }
+    }
+
+</script>
+{% endblock %}

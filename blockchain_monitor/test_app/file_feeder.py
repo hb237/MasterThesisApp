@@ -1,24 +1,20 @@
 import os
-import sys
 import time
+import json
 import lxml.etree as ET
-from lxml.etree import Element
 from shutil import copy
 import constants as const
 
 
-
-
-def get_time(path: str) -> int:
-    tree = ET.parse(path)
-    root = tree.getroot()
-    timestamp = int(root.find(".//event[1]/int[@key='block_timestamp']").get('value'))
-    return timestamp
-
-def feed_files(speed: int):
+def feed_files():
     print('Started file feeder.')
-    print('Start feeding files with speed: ' + str(speed))
 
+    speed = 1
+    with open(const.SETTINGS_PATH) as s:
+        settings = json.load(s)
+        speed = int(settings['inputReplaySpeed'])
+
+    print('Start feeding files with speed: ' + str(speed))
     prev_block_time = -1
 
     # move files one by one
@@ -32,16 +28,13 @@ def feed_files(speed: int):
             print('sleep for ' + str(waiting_time) + ' seconds')
             time.sleep(waiting_time)
             prev_block_time = current_block_time
-            copy(filepath, const.TEST_FILES_DESTINATION)
+            copy(filepath, const.XES_FILES_DIR)
             print('copied ' + filepath)
 
-if __name__ == '__main__':
-    speed = 1
-    if (len(sys.argv) > 1):
-        try:
-            speed = int(sys.argv[1])
-        except ValueError:
-            print('arg must be int')
-            exit()
 
-    feed_files(speed)
+def get_time(path: str) -> int:
+    tree = ET.parse(path)
+    root = tree.getroot()
+    timestamp = int(
+        root.find(".//event[1]/int[@key='block_timestamp']").get('value'))
+    return timestamp

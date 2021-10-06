@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Secondary Dashboard
+{% endblock %}
+
+{% block main_content %}
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-project-diagram me-1"></i>
+                Directly-Follows Graphs Performance
+            </div>
+            <div class="card-body">
+                <a href="#" class="pop">
+                    <img id="dfg_performance" class="w-100"
+                        src="{{ url_for('static', filename='monitoring_data/dfg_performance.png') }}">
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-project-diagram me-1"></i>
+                Directly-Follows Graphs Frequency
+            </div>
+            <div class="card-body">
+                <a href="#" class="pop">
+                    <img id="dfg_frequency" class="w-100"
+                        src="{{ url_for('static', filename='monitoring_data/dfg_frequency.png') }}">
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-project-diagram me-1"></i>
+                Petri Net
+            </div>
+            <div class="card-body">
+                <a href="#" class="pop">
+                    <img id="petri_net" class="w-100"
+                        src="{{ url_for('static', filename='monitoring_data/petri_net.png') }}">
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                Sender Statistics
+            </div>
+            <div class="card-body">
+                <table id="sender-stats">
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="fas fa-table me-1"></i>
+                Receiver Statistics
+            </div>
+            <div class="card-body">
+                <table id="receiver-stats">
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function retrieve_data() {
+        $('#dfg_performance').attr('src', $('#dfg_performance').attr('src') + '#' + new Date().getTime());
+        $('#dfg_frequency').attr('src', $('#dfg_frequency').attr('src') + '#' + new Date().getTime());
+        $('#petri_net').attr('src', $('#petri_net').attr('src') + '#' + new Date().getTime());
+
+        sender_stats = new simpleDatatables.DataTable(document.getElementById('sender-stats'),
+            { perPage: 5 });
+        $.ajax({
+            url: "/api/sender_stats",
+            type: 'GET',
+            success: function (res) {
+                sender_stats.import({
+                    type: "json",
+                    data: res
+                });
+            }
+        });
+
+        receiver_stats = new simpleDatatables.DataTable(document.getElementById('receiver-stats'),
+            { perPage: 5 });
+        $.ajax({
+            url: "/api/receiver_stats",
+            type: 'GET',
+            success: function (res) {
+                receiver_stats.import({
+                    type: "json",
+                    data: res
+                });
+            }
+        });
+    };
+
+    $(document).ready(function () {
+        retrieve_data();
+
+        $.ajax({
+            url: "/api/refresh_rate",
+            type: 'GET',
+            success: function (res) {
+                setInterval(retrieve_data, Number(res) * 1000);
+            }
+        });
+    });
+</script>
+{% endblock %}
