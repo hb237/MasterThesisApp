@@ -11,4 +11,4 @@ This repository contains the code for my master thesis Monitoring Blockchain App
 6. Open the application in the browser: http://localhost:5000/index
 
 ## Note ##
-This project relies on the pm4py dependency. However, theere might be a small bug in their code. In the file pm4py-core/pm4py/util/constants.py in line 21 replace PARAMETER_CONSTANT_CASEID_KEY = 'case_id_glue' with PARAMETER_CONSTANT_CASEID_KEY = 'pm4py:param:caseid_key'
+This project relies on the pm4py dependency. However, there might be a small bug in their code. In the file _pm4py-core/pm4py/util/constants.py_ in _line 21_ replace `PARAMETER_CONSTANT_CASEID_KEY = 'case_id_glue'` with `PARAMETER_CONSTANT_CASEID_KEY = 'pm4py:param:caseid_key'`
