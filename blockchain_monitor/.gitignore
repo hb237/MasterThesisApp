@@ -106,7 +106,7 @@ celerybeat.pid
 
 # Environments
 .env
-.venv
+# .venv exclude because we want to include the dependencies
 env/
 venv/
 ENV/
