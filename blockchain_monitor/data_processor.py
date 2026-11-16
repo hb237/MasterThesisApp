@@ -147,8 +147,10 @@ class DataProcessor():
         self.pm4py_log = attributes_filter.apply_numeric(log, self.start_block, self.end_block,
                                                          parameters={Parameters.CASE_ATTRIBUTE_PREFIX: '',
                                                                      attributes_filter.Parameters.CASE_ID_KEY: 'ident:piid',
+                                                                     attributes_filter.Parameters.PARAMETER_KEY_CASE_GLUE: '',
                                                                      attributes_filter.Parameters.ATTRIBUTE_KEY: 'tx_blocknumber',
                                                                      attributes_filter.Parameters.POSITIVE: True})
+
         # Read in log as tree
         self.xes_log_tree = ET.parse(const.XES_FILES_COMBINED_PATH)
 
